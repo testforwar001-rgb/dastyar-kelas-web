@@ -25,36 +25,40 @@ try{ var __t=localStorage.getItem('dk_theme'); if(__t&&__t!=='sunny') document.d
 }
 /* ===== تم‌ها (فقط صفحهٔ نمایش؛ چاپ رنگ‌های خودش را دارد) ===== */
 html[data-theme="pink"]{
-  --bg:#FFF8FA; --muted:#A87A8C; --pri:#F06BA0; --pri-d:#B03060; --acc:#F59EBC;
+  --bg:#FFF8FA; --card:#FFFBFC; --ink:#46222F; --warn:#C2274B; --muted:#A87A8C; --pri:#F06BA0; --pri-d:#B03060; --acc:#F59EBC;
   --line:#F9DEE8; --line2:#F5C6D8; --chip:#FCE4EE; --chip2:#FAD3E3; --shadow:0 2px 10px rgba(230,110,160,.12);
   --pri-l:#F78FB8; --hdr-a:#FFB3D1; --hdr-b:#F06BA0; --hdr-c:#E84E8A;
   --hero-a:#FFC2DA; --hero-b:#F78FB8; --hero-c:#E84E8A;
   --deep:#8F2350; --on-pri:#4A0E28; --shc:230,110,160;
   --grad-num:linear-gradient(180deg,#C2437C,#8F2350);
+  --shadow-sm:0 1px 2px rgba(var(--shc),.06),0 4px 12px rgba(var(--shc),.13);
 }
 html[data-theme="sky"]{
-  --bg:#F4FAFE; --muted:#6E93A8; --pri:#2B9FD8; --pri-d:#1668A0; --acc:#5BBFEA;
+  --bg:#F4FAFE; --card:#FCFEFF; --ink:#17384A; --warn:#C0392B; --muted:#6E93A8; --pri:#2B9FD8; --pri-d:#1668A0; --acc:#5BBFEA;
   --line:#D6EDF9; --line2:#B4DFF2; --chip:#DFF2FC; --chip2:#C4E8F9; --shadow:0 2px 10px rgba(60,160,215,.12);
   --pri-l:#5BBFEA; --hdr-a:#8FD4F5; --hdr-b:#2B9FD8; --hdr-c:#1B83B8;
   --hero-a:#A5DFF8; --hero-b:#4FB3E8; --hero-c:#1B83B8;
   --deep:#0F5580; --on-pri:#0B2E47; --shc:60,160,215;
   --grad-num:linear-gradient(180deg,#1B83B8,#0F5580);
+  --shadow-sm:0 1px 2px rgba(var(--shc),.06),0 4px 12px rgba(var(--shc),.13);
 }
 html[data-theme="spring"]{
-  --bg:#F5FCF5; --muted:#7A9A7E; --pri:#58B368; --pri-d:#2F7D46; --acc:#8CC084;
+  --bg:#F5FCF5; --card:#FCFEFC; --ink:#22452B; --warn:#C0392B; --muted:#7A9A7E; --pri:#58B368; --pri-d:#2F7D46; --acc:#8CC084;
   --line:#D9F0DC; --line2:#BEE5C4; --chip:#E2F5E5; --chip2:#C9EDCF; --shadow:0 2px 10px rgba(80,170,100,.12);
   --pri-l:#7CC98A; --hdr-a:#A5DFAE; --hdr-b:#58B368; --hdr-c:#3E9B52;
   --hero-a:#BCECC2; --hero-b:#6FC37E; --hero-c:#3E9B52;
   --deep:#1F6136; --on-pri:#0E3520; --shc:80,170,100;
   --grad-num:linear-gradient(180deg,#3E9B52,#1F6136);
+  --shadow-sm:0 1px 2px rgba(var(--shc),.06),0 4px 12px rgba(var(--shc),.13);
 }
 html[data-theme="purple"]{
-  --bg:#FAF7FF; --muted:#8E7FB3; --pri:#9B7ED9; --pri-d:#5E3FA8; --acc:#B79CED;
+  --bg:#FAF7FF; --card:#FDFBFF; --ink:#322154; --warn:#B03060; --muted:#8E7FB3; --pri:#9B7ED9; --pri-d:#5E3FA8; --acc:#B79CED;
   --line:#E6DFF7; --line2:#CDBDF0; --chip:#EEE7FB; --chip2:#DFD2F7; --shadow:0 2px 10px rgba(150,120,220,.13);
   --pri-l:#B79CED; --hdr-a:#CDBBF5; --hdr-b:#9B7ED9; --hdr-c:#7E5CC4;
   --hero-a:#DCCFFA; --hero-b:#A98AE0; --hero-c:#7E5CC4;
   --deep:#452A85; --on-pri:#241147; --shc:150,120,220;
   --grad-num:linear-gradient(180deg,#7E5CC4,#452A85);
+  --shadow-sm:0 1px 2px rgba(var(--shc),.06),0 4px 12px rgba(var(--shc),.13);
 }
 /* ===== پوستهٔ ضدخطای دستگاه: ستون فلکس تمام‌قد (بدون position:fixed و بدون واحدهای نمایشی) ===== */
 html,body{margin:0;padding:0;height:100%}
@@ -65,10 +69,10 @@ header h1{margin:0;font-size:19px;font-weight:800}
 header p{margin:2px 0 0;font-size:12.5px;opacity:.92}
 main{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;width:100%;max-width:560px;margin:0 auto;padding:10px 12px 8px}
 h2.sec{font-size:16px;margin:12px 2px 6px;color:var(--pri-d)}
-h2.sec::before{content:'';display:inline-block;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#FFDF6B,#F5B301);margin-left:7px;box-shadow:0 0 0 3px #FFF3C4;vertical-align:-1px}
-.guide{background:#FFF8DC;border:1px dashed #EFD586;border-radius:12px;padding:7px 11px;font-size:13px;color:#8A6A45;margin:0 0 9px}
-.empty{background:linear-gradient(180deg,#FFFFFF,#FFFBEB);border:1.5px dashed #F0D98C;border-radius:18px;padding:16px 14px;text-align:center;color:var(--muted);font-size:14px}
-.empty .big{font-size:28px;display:flex;align-items:center;justify-content:center;width:54px;height:54px;margin:0 auto 7px;background:#FFF3C4;border-radius:50%;box-shadow:0 3px 10px rgba(214,164,32,.25)}
+h2.sec::before{content:'';display:inline-block;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--hero-a),var(--pri));margin-left:7px;box-shadow:0 0 0 3px var(--chip);vertical-align:-1px}
+.guide{background:var(--chip);border:1px dashed var(--line2);border-radius:12px;padding:7px 11px;font-size:13px;color:#8A6A45;margin:0 0 9px}
+.empty{background:linear-gradient(180deg,var(--card),var(--chip));border:1.5px dashed var(--line2);border-radius:18px;padding:16px 14px;text-align:center;color:var(--muted);font-size:14px}
+.empty .big{font-size:28px;display:flex;align-items:center;justify-content:center;width:54px;height:54px;margin:0 auto 7px;background:var(--chip);border-radius:50%;box-shadow:0 3px 10px rgba(var(--shc),.25)}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:10px 12px;box-shadow:var(--shadow)}
 .card .num{font-size:26px;font-weight:800;color:var(--pri-d);line-height:1.3}
@@ -101,13 +105,13 @@ svg.chart{width:100%;height:auto;display:block}
 .iconbtn.red{background:#FDECEA;color:var(--warn)}
 .fab{display:block;width:100%;margin:2px 0 9px}
 input,select,textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink)}
-input:focus,select,textarea:focus{outline:2px solid #FFD94D;border-color:var(--pri)}
+input:focus,select,textarea:focus{outline:2px solid var(--hdr-a);border-color:var(--pri)}
 label.f{display:block;font-size:13px;color:var(--muted);margin:8px 0 3px}
 .searchbar{position:sticky;top:0;z-index:15;background:var(--bg);padding:8px 0 6px;margin:0 0 6px}
 .searchbar input{border:2px solid var(--pri);border-radius:14px;padding:12px 14px;font-size:16px;box-shadow:0 3px 12px rgba(var(--shc),.22);background:#fff}
 .stuAcc{background:var(--card);border:1.5px solid var(--pri);border-radius:16px;padding:12px 14px;margin:-2px 0 10px;box-shadow:var(--shadow);overflow:hidden;animation:accSlide .32s ease}
 @keyframes accSlide{from{max-height:0;opacity:.3;padding-top:0;padding-bottom:0}to{max-height:760px;opacity:1}}
-.rowitem.accOpen{border-color:var(--pri);background:#FFFBEB;box-shadow:0 4px 16px rgba(var(--shc),.25)}
+.rowitem.accOpen{border-color:var(--pri);background:var(--chip);box-shadow:0 4px 16px rgba(var(--shc),.25)}
 .accArrow{flex:none;width:32px;height:32px;border-radius:50%;background:var(--chip);color:var(--pri-d);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;transition:transform .3s ease,background .3s ease;box-shadow:inset 0 0 0 1.5px var(--line2)}
 .accArrow.open{transform:rotate(180deg);background:var(--pri);color:var(--on-pri)}
 nav#tabbar{flex:none;position:relative;z-index:30;background:#fff;border-top:1px solid var(--line);display:flex;box-shadow:0 -2px 10px rgba(var(--shc),.08);padding-bottom:env(safe-area-inset-bottom)}
@@ -158,7 +162,7 @@ input.calField{cursor:pointer;background:#FFFDF5}
 .hint{font-size:12px;color:var(--muted)}
 a{color:var(--pri-d)}
 /* ===== v3: داشبوردها و ظاهر حرفه‌ای ===== */
-.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#FFE066,#FFC93C);color:#4A3205;border-radius:20px;padding:13px 15px;box-shadow:0 4px 16px rgba(214,164,32,.35);margin-bottom:9px}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--hero-a),var(--hero-b));color:var(--on-pri);border-radius:20px;padding:13px 15px;box-shadow:0 4px 16px rgba(var(--shc),.35);margin-bottom:9px}
 .hero .deco{position:absolute;left:-16px;top:-16px;width:118px;height:118px;opacity:.5;pointer-events:none}
 .hero .sch,.hero .cls,.hero .tch{position:relative}
 .hero .sch{font-size:13px;opacity:.92}
@@ -233,9 +237,12 @@ table.grid td.num,table.grid th.num{text-align:center}
 .lvlTag{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;background:var(--chip);color:var(--pri-d)}
 .lvlTag.lv4{background:#E6F4EA;color:#2E7D32}.lvlTag.lv3{background:var(--chip);color:var(--pri-d)}
 .lvlTag.lv2{background:#FFF1E0;color:#B85C12}.lvlTag.lv1{background:#FDECEA;color:var(--warn)}
+.perfChecks{display:flex;flex-wrap:wrap;gap:7px 16px;margin:8px 0}
+.perfChecks label{display:inline-flex;align-items:center;gap:5px;font-size:13.5px;font-weight:700;cursor:pointer}
+.perfChecks input{width:auto!important;margin:0}
 /* ===== هشدارهای داشبورد ===== */
 .alertStrip{background:#FFF7E8;border:1.5px solid #F0B429;border-radius:18px;padding:11px 13px;margin-bottom:11px;box-shadow:var(--shadow)}
-.alertStrip h3{margin:0 0 8px;font-size:15px;color:#8A5A00}
+.alertStrip h3{margin:0 0 8px;font-size:15px;color:var(--pri-d)}
 .alertStrip .achip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid #F0C4BE;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink);margin:0 0 6px 6px}
 /* ===== انتخاب تم در تنظیمات ===== */
 .themes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -246,14 +253,14 @@ table.grid td.num,table.grid th.num{text-align:center}
 /* ===== نمونهٔ گرافیکی: ارتقای ظاهر (فقط CSS، بدون تغییر رفتار) ===== */
 @media screen{
 :root{
-  --line:#F1DFAC; --shadow:0 1px 2px rgba(180,120,10,.05),0 10px 24px rgba(214,164,32,.13);
-  --shadow-sm:0 1px 2px rgba(180,120,10,.05),0 4px 12px rgba(214,164,32,.12);
+  --line:#F1DFAC; --shadow:0 1px 2px rgba(var(--shc),.05),0 10px 24px rgba(var(--shc),.13);
+  --shadow-sm:0 1px 2px rgba(var(--shc),.05),0 4px 12px rgba(var(--shc),.12);
 }
 body{
   background:
-    radial-gradient(340px 200px at 88% -40px, rgba(255,201,60,.35), rgba(255,201,60,0) 70%),
-    radial-gradient(300px 220px at -60px 30%, rgba(240,138,60,.10), rgba(240,138,60,0) 70%),
-    linear-gradient(180deg,#FFF6D8 0,#FFFDF5 260px,#FFFDF5 100%);
+    radial-gradient(340px 200px at 88% -40px, rgba(var(--shc),.35), rgba(var(--shc),0) 70%),
+    radial-gradient(300px 220px at -60px 30%, rgba(var(--shc),.10), rgba(var(--shc),0) 70%),
+    linear-gradient(180deg,var(--chip) 0,var(--bg) 260px,var(--bg) 100%);
   background-attachment:fixed;
   font-size:15.5px;
 }
@@ -261,11 +268,11 @@ body{
 header{
   background:
     radial-gradient(120px 120px at 12% -30px, rgba(255,255,255,.5), rgba(255,255,255,0) 70%),
-    radial-gradient(200px 90px at 95% 130%, rgba(240,138,60,.35), rgba(240,138,60,0) 70%),
-    linear-gradient(135deg,#FFD94D 0%,#F5B301 58%,#F59E0C 100%);
+    radial-gradient(200px 90px at 95% 130%, rgba(var(--shc),.35), rgba(var(--shc),0) 70%),
+    linear-gradient(135deg,var(--hdr-a) 0%,var(--hdr-b) 58%,var(--hdr-c) 100%);
   border-bottom:none;border-radius:0 0 24px 24px;
   padding:14px 18px 13px;
-  box-shadow:0 10px 28px rgba(214,140,10,.35);
+  box-shadow:0 10px 28px rgba(var(--shc),.35);
 }
 header::after{content:'';position:absolute;left:10px;top:6px;width:48px;height:48px;border-radius:50%;border:2px dashed rgba(255,255,255,.32);pointer-events:none}
 header{position:sticky;overflow:hidden}
@@ -276,64 +283,64 @@ header p{opacity:.95;font-weight:600}
 main{max-width:100%;width:100%;margin:0;padding:12px 13px 10px}
 @media(min-width:760px){ main{max-width:720px;margin:0 auto} }
 /* تیتر بخش‌ها: نوار گرادیانی به‌جای دایره */
-h2.sec{font-size:16.5px;margin:14px 2px 8px;color:#7A5200;display:flex;align-items:center;gap:8px}
-h2.sec::before{width:6px;height:19px;border-radius:3px;background:linear-gradient(180deg,#F5B301,#F08A3C);box-shadow:none;margin:0;flex:none}
+h2.sec{font-size:16.5px;margin:14px 2px 8px;color:var(--deep);display:flex;align-items:center;gap:8px}
+h2.sec::before{width:6px;height:19px;border-radius:3px;background:linear-gradient(180deg,var(--pri),var(--acc));box-shadow:none;margin:0;flex:none}
 /* کارت‌ها و پنل‌ها: عمق واقعی */
-.card,.panel,.stat{background:#fff;border:1px solid #F1DFAC;border-radius:20px;box-shadow:var(--shadow)}
+.card,.panel,.stat{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
 .panel{padding:14px 13px;margin-bottom:11px}
-.panel h3{padding-bottom:7px;border-bottom:2px solid #FFF3C4;margin-bottom:10px}
+.panel h3{padding-bottom:7px;border-bottom:2px solid var(--chip);margin-bottom:10px}
 .cards{gap:9px}
 .card{position:relative;padding:13px 13px 11px;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;right:0;left:0;height:4px;background:linear-gradient(90deg,#F5B301,#FFC93C)}
-.cards .card:nth-child(2)::before{background:linear-gradient(90deg,#F08A3C,#FFB37A)}
+.card::before{content:'';position:absolute;top:0;right:0;left:0;height:4px;background:linear-gradient(90deg,var(--pri),var(--pri-l))}
+.cards .card:nth-child(2)::before{background:linear-gradient(90deg,var(--acc),var(--pri-l))}
 .cards .card:nth-child(3)::before{background:linear-gradient(90deg,#3FA34D,#7BC98A)}
-.cards .card:nth-child(4)::before{background:linear-gradient(90deg,#F5B301,#F08A3C)}
-.card .num{font-size:28px;background:linear-gradient(180deg,#B97A04,#8A5A00);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#8A5A00}
-.card .lbl{font-weight:700;color:#6B5320}
+.cards .card:nth-child(4)::before{background:linear-gradient(90deg,var(--pri),var(--acc))}
+.card .num{font-size:28px;background:var(--grad-num);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:var(--deep)}
+.card .lbl{font-weight:700;color:var(--deep)}
 .stats{gap:8px}
 .stat{position:relative;padding:10px 6px 9px;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,#F5B301,#FFC93C)}
+.stat::before{content:'';position:absolute;top:0;right:0;left:0;height:3px;background:linear-gradient(90deg,var(--pri),var(--pri-l))}
 .stat .v{font-size:22px}
 /* هیرو */
-.hero{background:linear-gradient(120deg,#FFDF6B 0%,#FFB52E 55%,#F59E0C 100%);border-radius:22px;padding:15px 17px;box-shadow:0 12px 30px rgba(214,140,10,.38);margin-bottom:11px}
+.hero{background:linear-gradient(120deg,var(--hero-a) 0%,var(--hero-b) 55%,var(--hero-c) 100%);border-radius:22px;padding:15px 17px;box-shadow:0 12px 30px rgba(var(--shc),.38);margin-bottom:11px}
 .hero .cls{font-size:19.5px}
-.heroStu{background:linear-gradient(135deg,#FFFBEB,#FFEFB8);border:1px solid #F1DFAC;border-radius:22px;box-shadow:var(--shadow);padding:14px}
+.heroStu{background:linear-gradient(135deg,var(--card),var(--chip2));border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:14px}
 /* آواتارها: حلقه و گرادیان */
-.avatar{background:linear-gradient(135deg,#FFE98A,#FFC93C);color:#7A5200;box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(245,179,1,.45),0 3px 8px rgba(214,164,32,.3);width:42px;height:42px}
-.bigava{background:linear-gradient(135deg,#FFE98A,#FFC93C);color:#7A5200;border:3px solid #fff;box-shadow:0 0 0 3px rgba(245,179,1,.5),0 6px 16px rgba(214,164,32,.35)}
+.avatar{background:linear-gradient(135deg,var(--chip2),var(--pri-l));color:var(--deep);box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(var(--shc),.45),0 3px 8px rgba(var(--shc),.3);width:42px;height:42px}
+.bigava{background:linear-gradient(135deg,var(--chip2),var(--pri-l));color:var(--deep);border:3px solid #fff;box-shadow:0 0 0 3px rgba(var(--shc),.5),0 6px 16px rgba(var(--shc),.35)}
 /* ردیف‌ها */
-.rowitem{border:1px solid #F1DFAC;border-radius:18px;box-shadow:var(--shadow-sm);padding:10px 12px;margin-bottom:7px;transition:transform .08s,background .08s}
-.rowitem:active{background:#FFFBEB;transform:scale(.99)}
+.rowitem{border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-sm);padding:10px 12px;margin-bottom:7px;transition:transform .08s,background .08s}
+.rowitem:active{background:var(--chip);transform:scale(.99)}
 .rowitem .nm{font-size:15.5px}
 /* دکمه‌ها: گرادیان و عمق */
-.btn{background:linear-gradient(180deg,#FFC93C,#F5B301);border-radius:14px;box-shadow:0 5px 14px rgba(214,140,10,.38),inset 0 1px 0 rgba(255,255,255,.55);color:#4A3205}
-.btn:active{background:linear-gradient(180deg,#F5B301,#E8A90C);transform:translateY(1px)}
-.btn.ghost{background:#fff;border:1.5px solid #F5B301;box-shadow:var(--shadow-sm);color:#8A5A00}
-.btn.soft{background:linear-gradient(180deg,#FFF3C4,#FFE9A8);box-shadow:var(--shadow-sm);color:#8A5A00}
+.btn{background:linear-gradient(180deg,var(--pri-l),var(--pri));border-radius:14px;box-shadow:0 5px 14px rgba(var(--shc),.38),inset 0 1px 0 rgba(255,255,255,.55);color:var(--on-pri)}
+.btn:active{background:linear-gradient(180deg,var(--pri),var(--pri-d));transform:translateY(1px)}
+.btn.ghost{background:var(--card);border:1.5px solid var(--pri);box-shadow:var(--shadow-sm);color:var(--pri-d)}
+.btn.soft{background:linear-gradient(180deg,var(--chip),var(--chip2));box-shadow:var(--shadow-sm);color:var(--pri-d)}
 .btn.danger{background:#fff;box-shadow:var(--shadow-sm)}
-.iconbtn{background:linear-gradient(180deg,#FFF3C4,#FFE9A8);box-shadow:var(--shadow-sm);border-radius:12px}
-.chip{border-color:#F0D98C;box-shadow:var(--shadow-sm)}
-.chip.on{background:linear-gradient(180deg,#FFC93C,#F5B301);border-color:#E8A90C;box-shadow:0 3px 9px rgba(214,140,10,.3)}
-.badge{font-weight:700;border:1px solid rgba(122,82,0,.08)}
+.iconbtn{background:linear-gradient(180deg,var(--chip),var(--chip2));box-shadow:var(--shadow-sm);border-radius:12px}
+.chip{border-color:var(--line2);box-shadow:var(--shadow-sm)}
+.chip.on{background:linear-gradient(180deg,var(--pri-l),var(--pri));border-color:var(--pri-d);box-shadow:0 3px 9px rgba(var(--shc),.3)}
+.badge{font-weight:700;border:1px solid rgba(var(--shc),.18)}
 /* ورودی‌ها */
-input,select,textarea{border:1.5px solid #F0D98C;border-radius:12px;background:#FFFDF8}
-input:focus,select:focus,textarea:focus{outline:none;border-color:#F5B301;box-shadow:0 0 0 3px rgba(245,179,1,.25)}
+input,select,textarea{border:1.5px solid var(--line2);border-radius:12px;background:var(--card)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(var(--shc),.25)}
 /* جدول‌ها */
-table.grid th{background:#FFF6D8;color:#7A5200}
+table.grid th{background:var(--chip);color:var(--deep)}
 table.grid th:first-child{border-radius:8px 0 0 0}table.grid th:last-child{border-radius:0 8px 0 0}
 /* حالت خالی و راهنما: جمع‌وجورتر و شکیل‌تر */
-.empty{background:linear-gradient(180deg,#FFFFFF,#FFFBEB);border:1.5px dashed #EFD586;border-radius:20px;padding:15px 14px;box-shadow:var(--shadow-sm)}
-.empty .big{background:linear-gradient(135deg,#FFE98A,#FFC93C);box-shadow:0 4px 12px rgba(214,164,32,.35)}
-.guide{background:#FFF8DC;border:1px solid #F1DFAC;border-right:4px solid #F5B301;border-radius:14px;box-shadow:var(--shadow-sm);padding:8px 12px}
+.empty{background:linear-gradient(180deg,var(--card),var(--chip));border:1.5px dashed var(--line2);border-radius:20px;padding:15px 14px;box-shadow:var(--shadow-sm)}
+.empty .big{background:linear-gradient(135deg,var(--chip2),var(--pri-l));box-shadow:0 4px 12px rgba(var(--shc),.35)}
+.guide{background:var(--chip);border:1px solid var(--line);border-right:4px solid var(--pri);border-radius:14px;box-shadow:var(--shadow-sm);padding:8px 12px}
 /* نوار تب پایین: سایهٔ نرم + قرص فعال */
-nav#tabbar{background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-top:1px solid #F1DFAC;box-shadow:0 -8px 26px rgba(180,120,10,.15);padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
+nav#tabbar{background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-top:1px solid var(--line);box-shadow:0 -8px 26px rgba(var(--shc),.15);padding:4px 4px calc(4px + env(safe-area-inset-bottom))}
 nav#tabbar button{border-radius:16px;margin:2px;min-height:66px;transition:background .12s}
-nav#tabbar button.on{background:linear-gradient(180deg,#FFF0B8,var(--pri-l));color:#7A5200;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 9px rgba(214,140,10,.22)}
+nav#tabbar button.on{background:linear-gradient(180deg,var(--chip),var(--pri-l));color:var(--deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 3px 9px rgba(var(--shc),.22)}
 nav#tabbar button.on .ic{transform:scale(1.12)}
 nav#tabbar button .ic{transition:transform .12s}
 /* برگهٔ پاپ‌آپ: دستگیره + گوشه‌های گردتر */
 .sheet{width:100%;max-width:560px;border-radius:26px 26px 0 0;box-shadow:0 -10px 34px rgba(61,44,34,.3);padding-top:10px}
-.sheet::before{content:'';display:block;width:46px;height:5px;border-radius:3px;background:#F0D98C;margin:0 auto 12px}
+.sheet::before{content:'';display:block;width:46px;height:5px;border-radius:3px;background:var(--line2);margin:0 auto 12px}
 .attchip{box-shadow:var(--shadow-sm)}
 }
 
@@ -342,6 +349,14 @@ nav#tabbar button .ic{transition:transform .12s}
   html,body{height:auto!important;overflow:visible!important}
   body{padding:0;background:#fff;position:static!important;top:auto!important;left:auto!important;right:auto!important;width:auto!important;overflow:visible!important}
   #printArea{display:block!important;color:#000;font-size:13px}
+  #printArea .perf-page{page-break-after:always}
+  #printArea .perf-page:last-child{page-break-after:auto}
+  #printArea .perf-page.compact{page-break-inside:avoid;font-size:11.5px;line-height:1.5}
+  #printArea .perf-page.compact .rep-h{font-size:12.5px;margin:8px 0 4px}
+  #printArea .perf-page.compact .rep-hero{padding:6px 9px}
+  #printArea .perf-page.compact .rep-photo{width:52px;height:52px}
+  #printArea .perf-page.compact table.grid th,#printArea .perf-page.compact table.grid td{padding:2px 5px;font-size:11.5px}
+  #printArea .perf-page.compact p{margin:2px 0}
   #printArea .phead{text-align:center;border:1.5px solid #444;border-radius:8px;padding:8px 10px;margin-bottom:10px}
   #printArea .phead .l1{font-weight:800;font-size:14.5px}
   #printArea .phead .l2{font-size:13px;margin-top:2px}
@@ -466,6 +481,8 @@ function needsAttention(){
     if(es.length>=2&&es[es.length-1].score<es[es.length-2].score) reasons.push('افت سطح در دو آزمون اخیر');
     var att=attStats(s.id);
     if(att.a>=3) reasons.push('غیبت زیاد ('+fa(att.a)+' جلسه)');
+    var tn=todayDayNum(), recentNeg=(db.behavior||[]).filter(function(b){ return b.studentId===s.id&&b.kind==='neg'; }).filter(function(b){ var dn=jDayNum(b.date); return dn!==null&&(tn-dn)>=0&&(tn-dn)<=30; }).length;
+    if(recentNeg>=2) reasons.push('موارد انضباطی');
     if(reasons.length) out.push({student:s,reasons:reasons,avg:av,trend:studentTrend(s.id)});
   });
   return out;
@@ -677,20 +694,26 @@ function dlgHead(t){ return '<button class="btn soft small x" onclick="closeDlg(
 function field(id,label,val,ph,type){ return '<label class="f" for="'+id+'">'+label+'</label><input id="'+id+'" type="'+(type||'text')+'" value="'+esc(val||'')+'" placeholder="'+esc(ph||'')+'">'; }
 
 /* ===== دانش‌آموزان ===== */
+/* فیلتر و رندر کرکرهٔ دانش‌آموز — فهرست دانش‌آموزان فقط یک جا هست: همین تب دانش‌آموزان. */
+function filterStudents(q){
+  var t=(q||'').trim(), qq=enDigits(t);
+  return db.students.filter(function(s){ var full=(s.name+' '+s.family); return !qq||enDigits(full).indexOf(qq)>=0||full.indexOf(t)>=0; });
+}
+function stuAccRowHtml(s){
+  var av=studentAvg(s.id), open=openStuAcc===s.id;
+  var row='<div class="rowitem'+(open?' accOpen':'')+'" data-sturow="'+s.id+'" onclick="toggleStuAcc(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">'+(s.father?'نام پدر: '+esc(s.father)+' · ':'')+'میانگین: '+faLevel(av)+'</div></div><button class="iconbtn" title="ویرایش" onclick="event.stopPropagation();studentForm(\''+s.id+'\')">✏️</button><span class="accArrow'+(open?' open':'')+'">▾</span></div>';
+  if(open) row+='<div class="stuAcc">'+studentStatusInner(s.id,false)+'</div>';
+  return row;
+}
 function viewStudents(){
   var h='<p class="guide">💡 راهنما: نام دانش‌آموزان کلاس را اینجا ثبت کنید. روی نام هر دانش‌آموز بزنید تا وضعیتش همان‌جا باز شود؛ از کادر جستجو هم می‌توانید سریع پیدایش کنید.</p>';
   h+='<div class="searchbar"><input id="stuSearch" type="search" placeholder="🔍 جستجوی نام دانش‌آموز…" value="'+esc(studentQuery)+'"></div>';
   h+='<button class="btn block fab" onclick="studentForm()">➕ افزودن دانش‌آموز</button>';
   h+='<div class="btnrow" style="margin:0 0 12px"><button class="btn soft" onclick="printStudents()">🖨 چاپ فهرست</button><button class="btn soft" onclick="exportExcel()">📊 خروجی اکسل</button></div>';
-  var list=db.students.filter(function(s){ var q=enDigits(studentQuery.trim()); var full=(s.name+' '+s.family); return !q||enDigits(full).indexOf(q)>=0||full.indexOf(studentQuery.trim())>=0; });
+  var list=filterStudents(studentQuery);
   if(!db.students.length) h+='<div class="empty"><span class="big">👧</span>هنوز دانش‌آموزی ثبت نشده است.<br>با دکمهٔ بالا، اولین دانش‌آموز را اضافه کنید.</div>';
   else if(!list.length) h+='<div class="empty">دانش‌آموزی با این نام پیدا نشد.</div>';
-  else h+=list.map(function(s){
-    var av=studentAvg(s.id), open=openStuAcc===s.id;
-    var row='<div class="rowitem'+(open?' accOpen':'')+'" data-sturow="'+s.id+'" onclick="toggleStuAcc(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">'+(s.father?'نام پدر: '+esc(s.father)+' · ':'')+'میانگین: '+faLevel(av)+'</div></div><button class="iconbtn" title="ویرایش" onclick="event.stopPropagation();studentForm(\''+s.id+'\')">✏️</button><span class="accArrow'+(open?' open':'')+'">▾</span></div>';
-    if(open) row+='<div class="stuAcc">'+studentStatusInner(s.id,false)+'</div>';
-    return row;
-  }).join('');
+  else h+=list.map(stuAccRowHtml).join('');
   return h;
 }
 function openStudent(id){ detailStudent=id; if(curTab!=='students'){curTab='students';} render(); scrollMainTop(); }
@@ -784,12 +807,16 @@ function viewStudentDetail(id){
   if(wn2.length) h+='<div class="monthttl">📰 روزنامه دیواری</div>'+wn2.map(function(w){ return '<div class="rowitem"><div class="grow"><div class="nm">'+esc(w.head)+'</div><div class="meta">روزنامه دیواری — '+esc(w.issueTitle)+(w.date?' · '+esc(w.date):'')+(w.note?' · '+esc(w.note):'')+'</div></div></div>'; }).join('');
   h+='</div>';
   /* ===== رفتار و قوانین کلاسی ===== */
-  var myBeh=studentBehavior(id), bpos=myBeh.filter(function(b){ return b.kind==='pos'; }).length, bneg=myBeh.length-bpos;
+  var myBeh=studentBehavior(id), behPos=myBeh.filter(function(b){ return b.kind==='pos'; }), behNeg=myBeh.filter(function(b){ return b.kind!=='pos'; });
   h+='<div class="panel"><h3>🚦 رفتار و قوانین کلاسی</h3>'
     +'<button class="btn small" style="margin-bottom:8px" onclick="behaviorForm(\''+id+'\')">➕ ثبت رفتار</button>'
-    +'<div class="kv"><span>رفتار مثبت / منفی ثبت‌شده</span><b>'+fa(bpos)+' / '+fa(bneg)+'</b></div>';
-  if(!myBeh.length) h+='<p class="hint">هنوز رفتاری ثبت نشده است؛ نظم، همکاری، بی‌توجهی به قوانین و رفتارهای مثبت را اینجا ثبت کنید.</p>';
-  else h+=myBeh.map(function(b){ return behaviorRowHtml(b); }).join('');
+    +'<div class="kv"><span>رفتار مثبت / منفی ثبت‌شده</span><b>'+fa(behPos.length)+' / '+fa(behNeg.length)+'</b></div>'
+    +'<div class="monthttl">🌟 نقاط قوت ('+fa(behPos.length)+')</div>';
+  if(behPos.length) h+=behPos.map(function(b){ return behaviorRowHtml(b); }).join('');
+  else h+='<p class="hint">هنوز نقطهٔ قوتی ثبت نشده است.</p>';
+  h+='<div class="monthttl">⚠️ موارد انضباطی ('+fa(behNeg.length)+')</div>';
+  if(behNeg.length) h+=behNeg.map(function(b){ return behaviorRowHtml(b); }).join('');
+  else h+='<p class="hint">مورد انضباطی ثبت نشده است. 👏</p>';
   h+='</div>';
   /* ===== دیدار با اولیاء ===== */
   var myMeet=studentMeetings(id);
@@ -914,6 +941,7 @@ function viewExams(){
       +'<button class="iconbtn red" title="حذف" onclick="delExam(\''+e.id+'\')">🗑</button></div>';
   }).join('');
   h+=quizzesSectionHtml();
+  h+=performanceSectionHtml();
   return h;
 }
 function subjectOptions(sel){
@@ -1547,17 +1575,397 @@ function persistDescrep(){
   db.descrep[t][descrepCtx.sid]=Object.assign({},descrepSel||{});
 }
 function saveDescrep(){ persistDescrep(); saveDb(); closeDlg(); render(); toast('کارنامه ذخیره شد ✅'); }
+/* فهرست درس‌های کارنامه: درس‌های اصلی + درس‌های آزمون‌ها + هر درسی که جایی در کارنامهٔ این نوبت آمده */
+function descrepSubjects(term){
+  var subs=SUBJECTS.slice();
+  db.exams.forEach(function(e){ if(subs.indexOf(e.subject)<0) subs.push(e.subject); });
+  var t=(db.descrep||{})[String(term)]||{};
+  Object.keys(t).forEach(function(sid){ Object.keys(t[sid]||{}).forEach(function(sub){ if(subs.indexOf(sub)<0) subs.push(sub); }); });
+  return subs;
+}
+/* بدنهٔ چاپی کارنامهٔ یک دانش‌آموز — منبع واحد برای چاپ تکی و چاپ گروهی.
+   allSubs که باشد (چاپ گروهی) همهٔ درس‌ها می‌آیند و درسِ بدون سطح «—» می‌خورد؛ وگرنه فقط درس‌های ثبت‌شده. */
+function descrepDocInner(s,term,allSubs){
+  var rec=descrepOf(term,s.id);
+  var inner='<table><tr><th>دانش‌آموز</th><td>'+esc(s.name)+' '+esc(s.family)+'</td><th>نام پدر</th><td>'+esc(s.father||'—')+'</td></tr>'
+    +'<tr><th>کد دانش‌آموزی</th><td>'+esc(s.code||'—')+'</td><th>کلاس</th><td>۶/۴</td></tr></table>'
+    +'<h3 style="margin:14px 0 6px;font-size:14px">کارنامهٔ توصیفی — نوبت '+(term===1?'اول':'دوم')+'</h3>';
+  if(allSubs){
+    inner+='<table><tr><th>درس</th><th>سطح</th></tr>'+allSubs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlLabel(rec[sub])+'</td></tr>'; }).join('')+'</table>';
+  }else{
+    var subs=Object.keys(rec);
+    inner+=(subs.length?'<table><tr><th>درس</th><th>سطح</th></tr>'+subs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlLabel(rec[sub])+'</td></tr>'; }).join('')+'</table>':'<p>هنوز سطحی ثبت نشده است.</p>');
+  }
+  inner+='<div class="pfoot" style="margin-top:20px">آموزگار کلاس: مریم خانمحمدی · دبستان دخترانه حافظ</div>';
+  return inner;
+}
 function printDescrep(){
   if(!descrepCtx) return;
   persistDescrep(); saveDb();
   var s=studentById(descrepCtx.sid); if(!s) return;
-  var rec=descrepOf(descrepCtx.term,s.id), subs=Object.keys(rec);
-  var inner='<table><tr><th>دانش‌آموز</th><td>'+esc(s.name)+' '+esc(s.family)+'</td><th>نام پدر</th><td>'+esc(s.father||'—')+'</td></tr>'
-    +'<tr><th>کد دانش‌آموزی</th><td>'+esc(s.code||'—')+'</td><th>کلاس</th><td>۶/۴</td></tr></table>'
-    +'<h3 style="margin:14px 0 6px;font-size:14px">کارنامهٔ توصیفی — نوبت '+(descrepCtx.term===1?'اول':'دوم')+'</h3>'
-    +(subs.length?'<table><tr><th>درس</th><th>سطح</th></tr>'+subs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlLabel(rec[sub])+'</td></tr>'; }).join('')+'</table>':'<p>هنوز سطحی ثبت نشده است.</p>')
-    +'<div class="pfoot" style="margin-top:20px">آموزگار کلاس: مریم خانمحمدی · دبستان دخترانه حافظ</div>';
-  printDoc('کارنامهٔ توصیفی — '+s.name+' '+s.family,inner);
+  printDoc('کارنامهٔ توصیفی — '+s.name+' '+s.family, descrepDocInner(s, descrepCtx.term, null));
+}
+
+/* ===== 📊 عملکرد (گزارش ماهانهٔ عملکرد دانش‌آموز) =====
+   برگ عملکرد هر دانش‌آموز، به این ترتیب: مشخصات ← غیبت و حضور ← پرسش‌ها و میانگین ← فعالیت‌ها ← کارنامه.
+   ماه، نوبت، تیک بخش‌ها، نوع فعالیت و چیدمان از بخش «عملکرد» صفحهٔ آزمون‌ها می‌آید و در dk_perf_cfg می‌ماند.
+   همان برگ در پنجره، چاپ تکی، چاپ گروهی و کارت PNG فایل ZIP استفاده می‌شود. */
+var PERF_MONTHS=[{m:7,n:'مهر'},{m:8,n:'آبان'},{m:9,n:'آذر'},{m:10,n:'دی'},{m:11,n:'بهمن'},{m:12,n:'اسفند'},{m:1,n:'فروردین'},{m:2,n:'اردیبهشت'},{m:3,n:'خرداد'}];
+function monthName(m){ for(var i=0;i<PERF_MONTHS.length;i++) if(PERF_MONTHS[i].m===m) return PERF_MONTHS[i].n; return ''; }
+function jMonthOf(dateStr){ if(!dateStr) return 0; var p=enDigits(String(dateStr)).split('/'); return p.length>=2?(parseInt(p[1],10)||0):0; }
+/* بازهٔ عملکرد = اجتماع ماه‌های تیک‌خورده؛ ماهِ ورودی باید در فهرست تیک‌ها باشد */
+function inMonths(dateStr,months){ return (months||[]).indexOf(jMonthOf(dateStr))>=0; }
+function curJMonth(){ try{ var p=enDigits(new Date().toLocaleDateString('fa-IR')).split('/'); var m=parseInt(p[1],10); if(m>=1&&m<=12) return m; }catch(e){} return 7; }
+function perfPeriodLabel(cfg){
+  var ms=PERF_MONTHS.filter(function(x){ return (cfg.months||[]).indexOf(x.m)>=0; });
+  if(!ms.length) return 'عملکرد: (ماهی انتخاب نشده)';
+  if(ms.length===PERF_MONTHS.length) return 'عملکرد کل سال تحصیلی ۱۴۰۵';
+  if(ms.length===1) return 'عملکرد ماه '+ms[0].n+' ۱۴۰۵';
+  var names=ms.map(function(x){ return x.n; });
+  return 'عملکرد: '+names.slice(0,-1).join('، ')+' و '+names[names.length-1]+' ۱۴۰۵';
+}
+function perfTag(cfg){
+  var ms=PERF_MONTHS.filter(function(x){ return (cfg.months||[]).indexOf(x.m)>=0; });
+  if(!ms.length) return ' (بدون ماه)';
+  if(ms.length===PERF_MONTHS.length) return '';
+  return ' ('+ms.map(function(x){ return x.n; }).join('، ')+')';
+}
+/* کارنامه فقط نوبت‌ها صادر می‌شود، نه ماهانه — پس تیکش پیش‌فرض خاموش است و معلم موقع نوبت روشنش می‌کند. */
+function defaultPerfCfg(){ return {term:1, months:[curJMonth()], layout:'full', actKind:'all', blocks:{id:1,att:1,quiz:1,act:1,beh:1,kar:0}}; }
+/* چیدمان فشردهٔ «نصف گزارش + نصف کارنامه در یک صفحه» فقط وقتی معنا دارد که کارنامه روشن باشد؛
+   کارنامه که خاموش است، برگ عملکرد همهٔ صفحه را برای بخش‌های گزارش می‌گیرد. */
+function perfCompact(cfg){ return cfg.layout==='compact'&&!!cfg.blocks.kar; }
+function perfCfg(){
+  var d=defaultPerfCfg();
+  try{
+    var c=JSON.parse(localStorage.getItem('dk_perf_cfg')||'null');
+    if(c){ ['term','layout','actKind'].forEach(function(k){ if(c[k]!==undefined) d[k]=c[k]; });
+      if(Array.isArray(c.months)) d.months=c.months.filter(function(m){ return m>=1&&m<=12; });
+      else if(c.month!==undefined) d.months=c.month?[c.month]:PERF_MONTHS.map(function(x){ return x.m; });
+      if(c.blocks) Object.keys(d.blocks).forEach(function(k){ if(c.blocks[k]!==undefined) d.blocks[k]=c.blocks[k]; }); }
+  }catch(e){}
+  return d;
+}
+function savePerfCfg(c){ try{ localStorage.setItem('dk_perf_cfg', JSON.stringify(c)); }catch(e){} }
+function perfSetTerm(t){ var c=perfCfg(); c.term=t; savePerfCfg(c); render(); }
+function perfSetMonthTick(m,on){ var c=perfCfg(); var i=c.months.indexOf(m); if(on&&i<0) c.months.push(m); if(!on&&i>=0) c.months.splice(i,1); savePerfCfg(c); render(); }
+function perfMonthsPreset(p){
+  var c=perfCfg();
+  if(p==='all') c.months=PERF_MONTHS.map(function(x){ return x.m; });
+  else if(p==='q1') c.months=[7,8,9];
+  else if(p==='q2') c.months=[10,11,12];
+  else if(p==='q3') c.months=[1,2,3];
+  else c.months=[];
+  savePerfCfg(c); render();
+}
+function perfSetLayout(v){ var c=perfCfg(); c.layout=v; savePerfCfg(c); render(); }
+function perfSetActKind(v){ var c=perfCfg(); c.actKind=v; savePerfCfg(c); render(); }
+function perfSetBlock(k,on){ var c=perfCfg(); c.blocks[k]=on?1:0; savePerfCfg(c); render(); }
+function isDiscItem(b){ return b.kind==='neg'||b.tag==='بی‌توجهی به قوانین کلاس'; }
+function perfBehavior(sid,months){
+  var all=studentBehavior(sid).filter(function(b){ return inMonths(b.date,months); });
+  return { all:all, disc:all.filter(isDiscItem), pos:all.filter(function(b){ return b.kind==='pos'; }) };
+}
+function jDayNum(dateStr){ var p=jParse(dateStr); if(!p) return null; var g=j2g(p.y,p.m,p.d); return Math.floor(Date.UTC(g.y,g.m-1,g.d)/86400000); }
+function todayDayNum(){ var t=jToday(); var g=j2g(t.y,t.m,t.d); return Math.floor(Date.UTC(g.y,g.m-1,g.d)/86400000); }
+function perfAtt(sid,months){
+  var ses=attSessions().filter(function(sn){ return inMonths(sn.date,months); });
+  var p=0,a=0,l=0,abs=[],late=[];
+  ses.forEach(function(sn){ var m=(sn.marks||{})[sid]; if(m==='a'){ a++; abs.push(sn.date); } else if(m==='l'){ l++; late.push(sn.date); } else if(m==='p'){ p++; } });
+  var marked=p+a+l;
+  return { total:ses.length, marked:marked, p:p, a:a, l:l, pct:marked?Math.round((p+l)/marked*100):null, absDates:abs, lateDates:late };
+}
+function perfQuizzes(sid,months){
+  var qs=quizzesSorted().filter(function(q){ return inMonths(q.date,months); });
+  var taken=[];
+  qs.forEach(function(q){ var v=qScoreOf(q.id,sid); if(v!==null) taken.push({quiz:q,score:v}); });
+  return { total:qs.length, taken:taken.length, takenList:taken, avg:avgOf(taken.map(function(x){ return x.score; })) };
+}
+function studentGroupActs(sid){
+  var out=[];
+  groupsOfStudent(sid).forEach(function(g){ groupActs(g.id).forEach(function(a){ out.push({group:g.name, title:a.title, date:a.date||'', score:(a.score===null||a.score===undefined||a.score==='')?null:Number(a.score), note:a.note||''}); }); });
+  out.sort(function(x,y){ var ka=dateKey(x.date), kb=dateKey(y.date); if(ka<kb) return 1; if(ka>kb) return -1; return 0; });
+  return out;
+}
+function descrepTableHtml(s,term){
+  var rec=descrepOf(term,s.id), subs=descrepSubjects(term);
+  return '<h3 class="rep-h">📋 کارنامهٔ توصیفی — نوبت '+(term===1?'اول':'دوم')+'</h3>'
+    +'<table class="grid"><tr><th>درس</th><th>سطح</th></tr>'
+    +subs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlLabel(rec[sub])+'</td></tr>'; }).join('')+'</table>';
+}
+function perfCapLines(lines,cfg,cap){
+  if(perfCompact(cfg)&&lines.length>cap) return lines.slice(0,cap).join('')+'<p style="margin:0">…</p>';
+  return lines.join('');
+}
+function perfSheetHtml(s,cfg){
+  cfg=cfg||perfCfg();
+  var att=perfAtt(s.id,cfg.months), qz=perfQuizzes(s.id,cfg.months);
+  var mTag=perfTag(cfg);
+  var h='<div class="rep perf">'
+    +'<div class="rep-hero"><div class="l1">دبستان دخترانه حافظ — کلاس ۶/۴ — سال تحصیلی ۱۴۰۵ تا ۱۴۰۶</div><div class="l2">برگ عملکرد دانش‌آموز · '+perfPeriodLabel(cfg)+' · آموزگار: مریم خانمحمدی</div></div>';
+  if(cfg.blocks.id){
+    h+='<div class="rep-id">'+(s.photo?'<img class="rep-photo" src="'+s.photo+'" alt="">':'')
+      +'<div><div class="rep-name">'+esc(s.name)+' '+esc(s.family)+'</div><div class="rep-meta">نام پدر: '+esc(s.father||'—')+' · کد دانش‌آموزی: '+esc(s.code||'—')+'</div></div></div>';
+  }
+  if(cfg.blocks.att){
+    h+='<h3 class="rep-h">🗓 غیبت و حضور'+mTag+'</h3>';
+    if(att.total){
+      h+='<p style="margin:0 0 6px;font-size:15px"><b>'+fa(att.a)+' روز غیبت</b> · '+fa(att.l)+' روز تأخیر · درصد حضور: <b>'+(att.pct===null?'—':fa(att.pct)+'٪')+'</b></p>'
+        +'<table class="grid"><tr><th>شاخص</th><th class="num">تعداد</th></tr>'
+        +'<tr><td>جلسه‌های ثبت‌شده</td><td class="num">'+fa(att.total)+'</td></tr>'
+        +'<tr><td>روزهای حضور</td><td class="num">'+fa(att.p)+'</td></tr>'
+        +'<tr><td>روزهای غیبت</td><td class="num">'+fa(att.a)+'</td></tr>'
+        +'<tr><td>روزهای تأخیر</td><td class="num">'+fa(att.l)+'</td></tr></table>'
+        +(att.absDates.length?'<p style="margin:8px 0 0">تاریخ‌های غیبت: '+att.absDates.map(function(d){ return esc(d); }).join('، ')+'</p>':'')
+        +(att.lateDates.length?'<p style="margin:4px 0 0">تاریخ‌های تأخیر: '+att.lateDates.map(function(d){ return esc(d); }).join('، ')+'</p>':'');
+    } else h+='<p>در این بازه جلسهٔ حضور و غیابی ثبت نشده است.</p>';
+  }
+  if(cfg.blocks.quiz){
+    h+='<h3 class="rep-h">❓ پرسش‌ها و میانگین'+mTag+'</h3>'
+      +'<p style="margin:0 0 6px">در <b>'+fa(qz.taken)+'</b> پرسش از مجموع <b>'+fa(qz.total)+'</b> پرسش برگزارشده شرکت کرده است · میانگین نمرات پرسش‌ها: <b>'+faLevel(qz.avg)+'</b></p>';
+    if(qz.takenList.length){
+      var rows=qz.takenList, more=false;
+      if(perfCompact(cfg)&&rows.length>6){ rows=rows.slice(0,6); more=true; }
+      h+='<table class="grid"><tr><th>پرسش</th><th>درس</th><th>تاریخ</th><th class="num">سطح</th></tr>'
+        +rows.map(function(x){ return '<tr><td>'+esc(x.quiz.title)+'</td><td>'+esc(x.quiz.subject)+'</td><td>'+esc(x.quiz.date||'—')+'</td><td class="num"><b>'+scoreLabel(x.score)+'</b></td></tr>'; }).join('')+'</table>'
+        +(more?'<p style="margin:4px 0 0">…</p>':'');
+    }
+  }
+  if(cfg.blocks.act){
+    h+='<h3 class="rep-h">🌻 فعالیت‌ها'+mTag+'</h3>';
+    var parts=[];
+    if(cfg.actKind==='all'||cfg.actKind==='special'){
+      var sa=studentActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); });
+      if(sa.length) parts.push('<p style="margin:0 0 4px"><b>فعالیت‌ها و کارهای ویژه:</b></p>'+perfCapLines(sa.map(function(a){ return '<p style="margin:0 0 3px">⭐ '+esc(a.date||'')+' — '+esc(a.title)+(a.note?' · '+esc(a.note):'')+'</p>'; }),cfg,4));
+    }
+    if(cfg.actKind==='all'||cfg.actKind==='group'){
+      var ga=studentGroupActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); });
+      if(ga.length) parts.push('<p style="margin:6px 0 4px"><b>فعالیت‌های گروهی:</b></p>'+perfCapLines(ga.map(function(a){ return '<p style="margin:0 0 3px">👥 '+esc(a.group)+' — '+esc(a.title)+(a.date?' · '+esc(a.date):'')+(a.score!==null?' · سطح: '+lvlLabel(a.score):'')+'</p>'; }),cfg,4));
+    }
+    if(cfg.actKind==='all'||cfg.actKind==='wall'){
+      var wn=wallForStudent(s.id).filter(function(w){ return inMonths(w.date,cfg.months); });
+      if(wn.length) parts.push('<p style="margin:6px 0 4px"><b>روزنامه دیواری:</b></p>'+perfCapLines(wn.map(function(w){ return '<p style="margin:0 0 3px">📰 روزنامه دیواری — '+esc(w.issueTitle)+': '+esc(w.head)+'</p>'; }),cfg,4));
+    }
+    h+=parts.length?parts.join(''):'<p>در این بازه فعالیتی ثبت نشده است.</p>';
+  }
+  if(cfg.blocks.beh){
+    var pb=perfBehavior(s.id,cfg.months);
+    h+='<h3 class="rep-h">🚦 انضباط و رفتار'+mTag+'</h3>'
+      +'<p style="margin:0 0 6px">تعداد موارد انضباطی در بازه: <b>'+fa(pb.disc.length)+'</b> — و موارد مثبت: <b>'+fa(pb.pos.length)+'</b></p>';
+    if(pb.disc.length){
+      var dlines=pb.disc.map(function(b){ return '<p style="margin:0 0 3px">⚠️ '+esc(b.date||'')+' — '+esc(b.tag)+(b.note?' · '+esc(b.note):'')+'</p>'; });
+      h+=perfCapLines(dlines,cfg,4);
+    } else h+='<p>مورد انضباطی در این بازه ثبت نشده است. 👏</p>';
+  }
+  if(cfg.blocks.kar){
+    h+=descrepTableHtml(s,cfg.term);
+  }
+  h+='<div class="rep-foot">با آرزوی موفقیت و سربلندی برای '+esc(s.name)+' عزیز 🌻</div>';
+  h+='</div>';
+  return h;
+}
+function perfSheet(id){
+  var s=studentById(id); if(!s) return;
+  var cfg=perfCfg();
+  openDlg(dlgHead('📊 عملکرد — '+esc(s.name)+' '+esc(s.family))
+    +'<div class="repPrev">'+perfSheetHtml(s,cfg)+'</div>'
+    +'<div class="btnrow"><button class="btn" onclick="printPerf(\''+s.id+'\')">🖨 چاپ عملکرد</button><button class="btn soft" onclick="closeDlg()">بستن</button></div>'
+    +'<p class="hint">بازه: '+perfPeriodLabel(cfg)+' · کارنامه: نوبت '+(cfg.term===1?'اول':'دوم')+' · چیدمان و بخش‌های گزارش از بخش «عملکرد» صفحهٔ آزمون‌ها تنظیم می‌شود.</p>');
+}
+function perfPageWrap(s,cfg){
+  return '<div class="perf-page'+(perfCompact(cfg)?' compact':'')+'">'+perfSheetHtml(s,cfg)+'</div>';
+}
+function printPerf(id){
+  var s=studentById(id); if(!s) return;
+  var cfg=perfCfg();
+  printDoc('برگ عملکرد — '+s.name+' '+s.family, perfPageWrap(s,cfg));
+}
+function printAllPerf(){
+  if(!db.students.length){ toast('هنوز دانش‌آموزی ثبت نشده است',true); return; }
+  var cfg=perfCfg();
+  var inner=db.students.map(function(s){ return perfPageWrap(s,cfg); }).join('');
+  printDoc('برگ عملکرد همهٔ دانش‌آموزان — '+perfPeriodLabel(cfg), inner);
+}
+
+/* ===== ZIP ساده (STORE، بدون فشرده‌سازی) + کارت PNG عملکرد برای فایل ZIP ===== */
+var __crcTable=null;
+function crc32(bytes){
+  if(!__crcTable){ __crcTable=[]; for(var n=0;n<256;n++){ var c=n; for(var k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); __crcTable[n]=c>>>0; } }
+  var crc=0xFFFFFFFF;
+  for(var i=0;i<bytes.length;i++) crc=__crcTable[(crc^bytes[i])&0xFF]^(crc>>>8);
+  return (crc^0xFFFFFFFF)>>>0;
+}
+function zipStore(files){
+  var enc=new TextEncoder(), chunks=[], central=[], offset=0;
+  function u16(v){ return [v&0xFF,(v>>>8)&0xFF]; }
+  function u32(v){ return [v&0xFF,(v>>>8)&0xFF,(v>>>16)&0xFF,(v>>>24)&0xFF]; }
+  files.forEach(function(f){
+    var nameB=enc.encode(f.name), crc=crc32(f.data), size=f.data.length;
+    var local=[].concat(u32(0x04034b50),u16(20),u16(0x0800),u16(0),u16(0),u16(0),u32(crc),u32(size),u32(size),u16(nameB.length),u16(0));
+    chunks.push(new Uint8Array(local), nameB, f.data);
+    central.push({nameB:nameB, crc:crc, size:size, offset:offset});
+    offset+=local.length+nameB.length+size;
+  });
+  var cdStart=offset;
+  central.forEach(function(c){
+    var rec=[].concat(u32(0x02014b50),u16(20),u16(20),u16(0x0800),u16(0),u16(0),u16(0),u32(c.crc),u32(c.size),u32(c.size),u16(c.nameB.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(c.offset));
+    chunks.push(new Uint8Array(rec), c.nameB);
+    offset+=rec.length+c.nameB.length;
+  });
+  var end=[].concat(u32(0x06054b50),u16(0),u16(0),u16(central.length),u16(central.length),u32(offset-cdStart),u32(cdStart),u16(0));
+  chunks.push(new Uint8Array(end));
+  return new Blob(chunks,{type:'application/zip'});
+}
+function perfFileName(s){
+  var base=((s.family||'').trim()+'-'+(s.name||'').trim()).replace(/[\/\\:*?"<>|]/g,'').replace(/\s+/g,' ');
+  return (base||'student')+'.png';
+}
+var LV_PILL={4:'#3FA34D',3:'#F5B301',2:'#F08A3C',1:'#C0392B'};
+function perfPngBlob(s,cfg){
+  return new Promise(async function(resolve){
+    try{
+      var att=perfAtt(s.id,cfg.months), qz=perfQuizzes(s.id,cfg.months);
+      var W=1080,H=1350, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+      var g=cv.getContext('2d');
+      g.fillStyle='#FFFDF5'; g.fillRect(0,0,W,H);
+      var gr=g.createLinearGradient(0,0,W,0); gr.addColorStop(0,'#F5A623'); gr.addColorStop(1,'#D98E04');
+      g.fillStyle=gr; g.fillRect(0,0,W,214);
+      g.fillStyle='rgba(255,255,255,0.20)';
+      [[64,52,27],[150,168,15],[W-70,58,20],[W-150,172,13],[W/2-330,44,11]].forEach(function(c){ g.beginPath(); g.arc(c[0],c[1],c[2],0,7); g.fill(); });
+      g.fillStyle='#4A3205'; g.textAlign='center';
+      g.font='800 47px Tahoma'; g.fillText('دبستان دخترانه حافظ', W/2, 80);
+      g.font='33px Tahoma'; g.fillText('کلاس ۶/۴ · سال تحصیلی ۱۴۰۵ تا ۱۴۰۶', W/2, 136);
+      g.font='29px Tahoma'; g.fillText('برگ عملکرد دانش‌آموز · '+perfPeriodLabel(cfg)+' · نوبت '+(cfg.term===1?'اول':'دوم'), W/2, 184);
+      var cx=W-168, cy=342, r=92;
+      g.beginPath(); g.arc(cx,cy,r,0,7); g.fillStyle='#FFF3C4'; g.fill();
+      if(s.photo){
+        await new Promise(function(res){
+          var img=new Image();
+          img.onload=function(){ g.save(); g.beginPath(); g.arc(cx,cy,r,0,7); g.clip(); var sc=Math.max(2*r/img.width,2*r/img.height); g.drawImage(img,cx-img.width*sc/2,cy-img.height*sc/2,img.width*sc,img.height*sc); g.restore(); res(); };
+          img.onerror=function(){ res(); };
+          img.src=s.photo;
+        });
+      }else{
+        g.fillStyle='#9C6603'; g.font='800 74px Tahoma'; g.textAlign='center'; g.fillText((s.name||'؟').charAt(0),cx,cy+26);
+      }
+      g.beginPath(); g.arc(cx,cy,r,0,7); g.strokeStyle='#F5A623'; g.lineWidth=5; g.stroke();
+      g.textAlign='right'; g.fillStyle='#3D2C22';
+      g.font='800 56px Tahoma'; g.fillText(s.name+' '+s.family, W-300, 322);
+      g.font='30px Tahoma'; g.fillStyle='#9A7B68';
+      g.fillText('نام پدر: '+(s.father||'—'), W-300, 372);
+      g.fillText('کد دانش‌آموزی: '+(s.code?fa(s.code):'—'), W-300, 418);
+      var y=486;
+      var stats=[];
+      if(cfg.blocks.att){ stats.push({v:fa(att.a), l:'روز غیبت'}); stats.push({v:att.pct===null?'—':fa(att.pct)+'٪', l:'درصد حضور'}); }
+      if(cfg.blocks.quiz){ stats.push({v:fa(qz.taken)+' از '+fa(qz.total), l:'پرسش شرکت‌کرده'}); stats.push({v:lvlLabel(qz.avg), l:'میانگین پرسش‌ها'}); }
+      if(stats.length){
+        var bw=(W-120-(stats.length-1)*20)/stats.length, bh=124;
+        stats.forEach(function(st,i){
+          var x=60+i*(bw+20);
+          g.fillStyle='#FFFFFF'; g.strokeStyle='#F7EBC8'; g.lineWidth=2;
+          g.beginPath(); g.roundRect(x,y,bw,bh,18); g.fill(); g.stroke();
+          g.fillStyle='#9C6603'; g.font='800 44px Tahoma'; g.textAlign='center'; g.fillText(st.v, x+bw/2, y+62);
+          g.fillStyle='#9A7B68'; g.font='26px Tahoma'; g.fillText(st.l, x+bw/2, y+100);
+        });
+        y+=bh+40;
+      }
+      if(cfg.blocks.act){
+        var sa=studentActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); }).length;
+        var ga=studentGroupActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); }).length;
+        var wn=wallForStudent(s.id).filter(function(w){ return inMonths(w.date,cfg.months); }).length;
+        var aparts=[];
+        if(cfg.actKind==='all'||cfg.actKind==='special') aparts.push('فعالیت ویژه: '+fa(sa));
+        if(cfg.actKind==='all'||cfg.actKind==='group') aparts.push('فعالیت گروهی: '+fa(ga));
+        if(cfg.actKind==='all'||cfg.actKind==='wall') aparts.push('روزنامه دیواری: '+fa(wn));
+        g.textAlign='right'; g.fillStyle='#3D2C22'; g.font='800 33px Tahoma'; g.fillText('🌻 فعالیت‌ها', W-60, y+10);
+        g.font='28px Tahoma'; g.fillStyle='#9A7B68'; g.fillText(aparts.join(' · '), W-60, y+56);
+        y+=96;
+      }
+      if(cfg.blocks.beh){
+        var pb=perfBehavior(s.id,cfg.months);
+        g.textAlign='right'; g.fillStyle='#3D2C22'; g.font='800 33px Tahoma'; g.fillText('🚦 انضباط و رفتار', W-60, y+10);
+        g.font='28px Tahoma'; g.fillStyle='#9A7B68'; g.fillText('موارد انضباطی: '+fa(pb.disc.length)+' · موارد مثبت: '+fa(pb.pos.length), W-60, y+56);
+        y+=96;
+      }
+      if(cfg.blocks.kar){
+        var rec=descrepOf(cfg.term,s.id), subs=descrepSubjects(cfg.term);
+        g.textAlign='right'; g.fillStyle='#3D2C22'; g.font='800 33px Tahoma'; g.fillText('📋 کارنامهٔ توصیفی — نوبت '+(cfg.term===1?'اول':'دوم'), W-60, y+10);
+        y+=30;
+        var rowH=Math.min(56, Math.floor((H-130-y)/Math.max(1,subs.length)));
+        subs.forEach(function(sub){
+          var lv=rec[sub];
+          g.fillStyle='#3D2C22'; g.font='bold 28px Tahoma'; g.textAlign='right'; g.fillText(sub, W-60, y+rowH/2+10);
+          var pw=300, px=60, ph=rowH-14, py=y+(rowH-ph)/2;
+          g.fillStyle=(lv===null||lv===undefined)?'#EFE9DC':LV_PILL[lv];
+          g.beginPath(); g.roundRect(px,py,pw,ph,ph/2); g.fill();
+          g.fillStyle=(lv===null||lv===undefined)?'#9A7B68':(lv===3?'#4A3205':'#FFFFFF');
+          g.font='800 26px Tahoma'; g.textAlign='center'; g.fillText(lvlLabel(lv), px+pw/2, py+ph/2+9);
+          y+=rowH;
+        });
+      }
+      g.fillStyle='#9A7B68'; g.textAlign='center'; g.font='26px Tahoma';
+      g.fillText('آموزگار کلاس: مریم خانمحمدی · دبستان دخترانه حافظ', W/2, H-44);
+      cv.toBlob(function(b){ resolve(b); },'image/png');
+    }catch(e){ resolve(null); }
+  });
+}
+async function downloadPerfZip(){
+  if(!db.students.length){ toast('هنوز دانش‌آموزی ثبت نشده است',true); return; }
+  var cfg=perfCfg();
+  toast('در حال ساخت عکس عملکردها…');
+  try{
+    var files=[], used={};
+    for(var i=0;i<db.students.length;i++){
+      var s=db.students[i];
+      var b=await perfPngBlob(s,cfg);
+      if(!b) throw new Error('png');
+      var buf=new Uint8Array(await b.arrayBuffer());
+      var nm=perfFileName(s);
+      if(used[nm]){ var k=2; while(used[nm.replace('.png','-'+k+'.png')]) k++; nm=nm.replace('.png','-'+k+'.png'); }
+      used[nm]=1;
+      files.push({name:nm, data:buf});
+    }
+    var blob=zipStore(files);
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='amalkard-nobat'+cfg.term+'.zip'; document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
+    toast('فایل ZIP عملکردها دانلود شد 🗂');
+  }catch(e){ toast('ساخت فایل ZIP انجام نشد',true); }
+}
+function performanceSectionHtml(){
+  var cfg=perfCfg();
+  var h='<h2 class="sec">📊 عملکرد</h2>';
+  h+='<div class="panel"><h3>📋 گزارش عملکرد (ماهیانه)</h3>'
+    +'<p class="hint">مثل گزارش ماهانهٔ عملکرد: ماه، نوبت کارنامه، بخش‌های گزارش و چیدمان چاپ را انتخاب کنید؛ بعد روی نام هر دانش‌آموز بزنید تا برگ عملکردش باز شود، یا عملکرد همه را یکجا چاپ و دانلود کنید. عملکرد و گزارش فعالیت هر دانش‌آموز در داشبورد خودش هم هست. <b>کارنامه فقط نوبت‌ها</b> صادر می‌شود و چند بار در سال بیشتر نیست، پس تیکش پیش‌فرض خاموش است و در گزارش ماهانه نمی‌آید؛ موقع نوبت روشنش کنید. چیدمان «یک صفحهٔ A4» هم فقط وقتی کارنامه روشن است اعمال می‌شود؛ وگرنه برگ عملکرد همهٔ صفحه را می‌گیرد.</p>'
+    +'<div class="kv"><span>نوبت کارنامه</span><span class="chips"><button class="chip'+(cfg.term===1?' on':'')+'" onclick="perfSetTerm(1)">نوبت اول</button><button class="chip'+(cfg.term===2?' on':'')+'" onclick="perfSetTerm(2)">نوبت دوم</button></span></div>'
+    +'<div class="f" style="margin-bottom:2px">ماه‌های گزارش — هر ترکیبی از ماه‌ها را تیک بزنید</div><div class="perfChecks" id="perfMonths">'
+    +PERF_MONTHS.map(function(x){ return '<label><input type="checkbox" style="width:auto" id="perfMo_'+x.m+'" '+(cfg.months.indexOf(x.m)>=0?'checked':'')+' onchange="perfSetMonthTick('+x.m+',this.checked)"> '+x.n+'</label>'; }).join('')
+    +'</div>'
+    +'<div class="btnrow" style="margin:2px 0 4px"><button class="btn soft small" onclick="perfMonthsPreset(\'all\')">همه</button><button class="btn soft small" onclick="perfMonthsPreset(\'q1\')">سه‌ماههٔ اول</button><button class="btn soft small" onclick="perfMonthsPreset(\'q2\')">سه‌ماههٔ دوم</button><button class="btn soft small" onclick="perfMonthsPreset(\'q3\')">سه‌ماههٔ سوم</button><button class="btn soft small" onclick="perfMonthsPreset(\'none\')">هیچکدام</button></div>'
+    +'<label class="f" for="perfLayout">چیدمان چاپ</label><select id="perfLayout" onchange="perfSetLayout(this.value)">'
+    +'<option value="full"'+(cfg.layout==='full'?' selected':'')+'>کامل</option>'
+    +'<option value="compact"'+(cfg.layout==='compact'?' selected':'')+'>یک صفحهٔ A4 (نصف گزارش + نصف کارنامه)</option></select>'
+    +'<label class="f" for="perfActKind">نوع فعالیت‌ها در گزارش</label><select id="perfActKind" onchange="perfSetActKind(this.value)">'
+    +'<option value="all"'+(cfg.actKind==='all'?' selected':'')+'>همهٔ فعالیت‌ها</option>'
+    +'<option value="special"'+(cfg.actKind==='special'?' selected':'')+'>فقط ویژه</option>'
+    +'<option value="group"'+(cfg.actKind==='group'?' selected':'')+'>فقط گروهی</option>'
+    +'<option value="wall"'+(cfg.actKind==='wall'?' selected':'')+'>فقط روزنامه دیواری</option></select>'
+    +'<div class="f" style="margin-bottom:2px">بخش‌های گزارش</div><div class="perfChecks">'
+    +'<label><input type="checkbox" style="width:auto" id="perfBlk_id" '+(cfg.blocks.id?'checked':'')+' onchange="perfSetBlock(\'id\',this.checked)"> مشخصات</label>'
+    +'<label><input type="checkbox" style="width:auto" id="perfBlk_att" '+(cfg.blocks.att?'checked':'')+' onchange="perfSetBlock(\'att\',this.checked)"> غیبت و حضور</label>'
+    +'<label><input type="checkbox" style="width:auto" id="perfBlk_quiz" '+(cfg.blocks.quiz?'checked':'')+' onchange="perfSetBlock(\'quiz\',this.checked)"> پرسش‌ها و میانگین</label>'
+    +'<label><input type="checkbox" style="width:auto" id="perfBlk_act" '+(cfg.blocks.act?'checked':'')+' onchange="perfSetBlock(\'act\',this.checked)"> فعالیت‌ها</label>'
+    +'<label><input type="checkbox" style="width:auto" id="perfBlk_beh" '+(cfg.blocks.beh?'checked':'')+' onchange="perfSetBlock(\'beh\',this.checked)"> انضباط</label>'
+    +'<label><input type="checkbox" style="width:auto" id="perfBlk_kar" '+(cfg.blocks.kar?'checked':'')+' onchange="perfSetBlock(\'kar\',this.checked)"> کارنامه</label>'
+    +'</div>'
+    +'<div class="btnrow"><button class="btn" onclick="printAllPerf()">🖨 چاپ عملکرد همه</button><button class="btn soft" onclick="downloadPerfZip()">🗂 دانلود ZIP عملکردها</button></div>'
+    +'<div class="btnrow"><button class="btn soft" onclick="go(\'dash\')">🏠 داشبورد کلاس</button></div>'
+    +'</div>';
+  if(!db.students.length) h+='<div class="empty"><span class="big">👧</span>هنوز دانش‌آموزی ثبت نشده است.</div>';
+  else h+=db.students.map(function(s){
+    var att=perfAtt(s.id,cfg.months), qz=perfQuizzes(s.id,cfg.months);
+    return '<div class="rowitem" onclick="perfSheet(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">غیبت: '+fa(att.a)+' روز · میانگین پرسش‌ها: '+faLevel(qz.avg)+'</div></div><span class="accArrow">›</span></div>';
+  }).join('');
+  return h;
 }
 
 /* ===== پیام آماده برای والدین ===== */
