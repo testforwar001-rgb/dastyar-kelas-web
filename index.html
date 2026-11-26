@@ -61,7 +61,10 @@ svg.chart{width:100%;height:auto;display:block}
 input,select,textarea{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink)}
 input:focus,select,textarea:focus{outline:2px solid #FFD94D;border-color:var(--pri)}
 label.f{display:block;font-size:13px;color:var(--muted);margin:8px 0 3px}
-.searchbar{margin-bottom:9px}
+.searchbar{position:sticky;top:94px;z-index:15;background:var(--bg);padding:8px 0 6px;margin:0 0 6px}
+.searchbar input{border:2px solid var(--pri);border-radius:14px;padding:12px 14px;font-size:16px;box-shadow:0 3px 12px rgba(214,164,32,.22);background:#fff}
+.stuAcc{background:var(--card);border:1.5px solid var(--pri);border-radius:16px;padding:12px 14px;margin:-2px 0 10px;box-shadow:var(--shadow)}
+.accArrow{color:var(--pri-d);font-size:13px;flex:none;padding:0 2px}
 nav#tabbar{position:fixed;bottom:0;right:0;left:0;z-index:30;background:#fff;border-top:1px solid var(--line);display:flex;box-shadow:0 -2px 10px rgba(214,164,32,.08);padding-bottom:env(safe-area-inset-bottom)}
 nav#tabbar button{flex:1;border:none;background:none;padding:9px 2px 8px;font-family:inherit;font-size:13px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:66px}
 nav#tabbar button .ic{font-size:26px;line-height:1.15}
@@ -82,6 +85,23 @@ nav#tabbar button.on{color:var(--pri-d);font-weight:800}
 .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #FAF0D2;font-size:14px}
 .kv:last-child{border-bottom:none}
 .kv b{color:var(--pri-d)}
+/* ===== تقویم شمسی (انتخاب تاریخ با لمس) ===== */
+#calWrap{position:fixed;inset:0;height:100vh;height:100dvh;z-index:70;display:none}
+#calWrap.open{display:block}
+#calWrap .scrim{position:absolute;inset:0;background:rgba(61,44,34,.45)}
+.calSheet{position:absolute;right:0;left:0;bottom:0;margin:0 auto;width:min(96vw,480px);max-height:92vh;max-height:92dvh;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:#fff;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -4px 24px rgba(0,0,0,.2)}
+.calSheet h3{margin:0 0 6px;font-size:17px}
+.calSheet .x{position:absolute;top:12px;left:12px}
+.calNav{display:flex;align-items:center;gap:8px;margin:6px 0 10px}
+.calNav .ttl{flex:1;text-align:center;font-weight:800;color:var(--pri-d);font-size:16px}
+.calGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calGrid .wd{text-align:center;font-size:12px;color:var(--muted);padding:4px 0;font-weight:700}
+.calDay{border:1.5px solid var(--line);background:#fff;border-radius:10px;min-height:44px;font-family:inherit;font-size:15px;cursor:pointer;color:var(--ink);display:flex;align-items:center;justify-content:center}
+.calDay:active{background:var(--chip)}
+.calDay.today{border-color:var(--pri);background:var(--chip);font-weight:800;color:var(--pri-d)}
+.calDay.sel{background:var(--pri);border-color:var(--pri);color:#3D2C22;font-weight:800}
+.calDay.empty{border:none;background:none;cursor:default;min-height:44px}
+input.calField{cursor:pointer;background:#FFFDF5}
 #toast{position:fixed;bottom:106px;right:50%;transform:translateX(50%) translateY(20px);background:#3D2C22;color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:99;max-width:92vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(50%) translateY(0)}
 #toast.err{background:var(--warn)}
@@ -102,6 +122,8 @@ a{color:var(--pri-d)}
 .heroStu{position:relative;overflow:hidden;display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#FFF9E3,#FFEDB0);border:1px solid var(--line);border-radius:20px;padding:12px;box-shadow:var(--shadow);margin:9px 0}
 .heroStu::before{content:'';position:absolute;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(255,217,77,.55),rgba(255,217,77,0) 70%);top:-70px;left:-50px;pointer-events:none}
 .bigava{width:84px;height:84px;border-radius:50%;background:var(--chip);color:var(--pri-d);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:34px;flex:none;overflow:hidden;border:3px solid #fff;box-shadow:0 2px 10px rgba(214,164,32,.3)}
+.avaWrap{position:relative;flex:none;cursor:pointer}
+.cambadge{position:absolute;bottom:0;left:0;width:27px;height:27px;border-radius:50%;background:var(--pri);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 1px 5px rgba(0,0,0,.25);z-index:2}
 .bigava img,.avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .avatar{overflow:hidden;padding:0}
 .heroStu .nm2{font-size:19px;font-weight:800;line-height:1.5}
@@ -157,7 +179,7 @@ table.grid td.num,table.grid th.num{text-align:center}
 .voiceBtn.listening{background:#F08A3C!important;color:#fff!important}
 @page{margin:12mm}
 @media print{
-  header,main,nav#tabbar,#modalWrap,#toast,#syncBanner{display:none!important}
+  header,main,nav#tabbar,#modalWrap,#calWrap,#toast,#syncBanner{display:none!important}
   body{padding:0;background:#fff;position:static!important;top:auto!important;left:auto!important;right:auto!important;width:auto!important;overflow:visible!important}
   #printArea{display:block!important;color:#000;font-size:13px}
   #printArea .phead{text-align:center;border:1.5px solid #444;border-radius:8px;padding:8px 10px;margin-bottom:10px}
@@ -184,24 +206,27 @@ table.grid td.num,table.grid th.num{text-align:center}
   <button data-tab="students"><span class="ic">👧</span>دانش‌آموزان</button>
   <button data-tab="exams"><span class="ic">📝</span>آزمون‌ها</button>
   <button data-tab="attendance"><span class="ic">🗓</span>حضور و غیاب</button>
+  <button data-tab="groups"><span class="ic">👥</span>گروه‌ها</button>
   <button data-tab="plan"><span class="ic">📚</span>برنامهٔ درسی</button>
   <button data-tab="settings"><span class="ic">⚙️</span>تنظیمات</button>
 </nav>
 <div id="modalWrap"><div class="scrim" onclick="closeDlg()"></div><div class="sheet" id="sheet"></div></div>
+<div id="calWrap"><div class="scrim" onclick="closeCal()"></div><div class="calSheet" id="calSheet"></div></div>
 <div id="toast"></div>
 <div id="printArea"></div>
 <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+<input type="file" id="heroPhotoFile" accept="image/*" style="display:none" onchange="onHeroPhoto(this)">
 <script>
 'use strict';
 /* ===== داده و ذخیره‌سازی ===== */
 var LS_DB='dk_db_v1', LS_CFG='dk_sync_cfg';
 var SUBJECTS=['ریاضی','فارسی','علوم','مطالعات اجتماعی','هدیه‌های آسمان','قرآن','هنر','ورزش','تفکر و پژوهش'];
 var MONTHS=['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت','خرداد'];
-function emptyDb(){return {students:[],exams:[],scores:{},plan:[],attendance:[],_rev:0};}
+function emptyDb(){return {students:[],exams:[],scores:{},plan:[],attendance:[],groups:[],gacts:[],quizzes:[],qscores:{},acts:[],wallnews:[],_rev:0};}
 function loadDb(){
   try{var raw=localStorage.getItem(LS_DB); if(!raw) return emptyDb();
     var d=JSON.parse(raw); if(!d||typeof d!=='object') return emptyDb();
-    d.students=d.students||[]; d.exams=d.exams||[]; d.scores=d.scores||{}; d.plan=d.plan||[]; d.attendance=d.attendance||[]; d._rev=d._rev||0; return d;
+    d.students=d.students||[]; d.exams=d.exams||[]; d.scores=d.scores||{}; d.plan=d.plan||[]; d.attendance=d.attendance||[]; d.groups=d.groups||[]; d.gacts=d.gacts||[]; d.acts=d.acts||[]; d.wallnews=d.wallnews||[]; d.quizzes=d.quizzes||[]; d.qscores=d.qscores||{}; d._rev=d._rev||0; return d;
   }catch(e){return emptyDb();}
 }
 var db=loadDb();
@@ -328,22 +353,24 @@ function sparkSvg(sid){
 }
 
 /* ===== ناوبری و رندر ===== */
-var curTab='dash', chartSubject='همه', stuSubject='همه', studentQuery='', detailStudent=null;
+var curTab='dash', chartSubject='همه', stuSubject='همه', studentQuery='', detailStudent=null, detailGroup=null, detailWall=null;
 var attDate='', attMarks=null, formPhoto='';
 var app=document.getElementById('app');
 document.querySelectorAll('#tabbar button').forEach(function(b){ b.addEventListener('click',function(){ go(b.getAttribute('data-tab')); }); });
-function go(tab){ curTab=tab; detailStudent=null; render(); window.scrollTo(0,0); }
+function go(tab){ curTab=tab; detailStudent=null; detailGroup=null; detailWall=null; if(typeof openStuAcc!=='undefined') openStuAcc=null; render(); window.scrollTo(0,0); }
 function render(){
   document.querySelectorAll('#tabbar button').forEach(function(b){ b.classList.toggle('on',b.getAttribute('data-tab')===curTab); });
   if(curTab==='dash') app.innerHTML=viewDash();
   else if(curTab==='students') app.innerHTML=detailStudent?viewStudentDetail(detailStudent):viewStudents();
   else if(curTab==='exams') app.innerHTML=viewExams();
   else if(curTab==='attendance') app.innerHTML=viewAttendance();
+  else if(curTab==='groups') app.innerHTML=detailGroup?viewGroupDetail(detailGroup):(detailWall?viewWallDetail(detailWall):viewGroups());
   else if(curTab==='plan') app.innerHTML=viewPlan();
   else if(curTab==='settings') app.innerHTML=viewSettings();
   bindView();
 }
 function bindView(){
+  var sb=document.querySelector('.searchbar'); if(sb){ var hd=document.querySelector('header'); if(hd) sb.style.top=Math.max(0,hd.offsetHeight-2)+'px'; }
   var q=document.getElementById('stuSearch'); if(q){ q.addEventListener('input',function(){ studentQuery=q.value; var pos=q.selectionStart; render(); var nq=document.getElementById('stuSearch'); if(nq){ nq.focus(); try{nq.setSelectionRange(pos,pos);}catch(e){} } }); }
   document.querySelectorAll('[data-subject-chip]').forEach(function(c){ c.addEventListener('click',function(){ chartSubject=c.getAttribute('data-subject-chip'); render(); }); });
   document.querySelectorAll('[data-stuchip]').forEach(function(c){ c.addEventListener('click',function(){ stuSubject=c.getAttribute('data-stuchip'); render(); }); });
@@ -393,7 +420,7 @@ function viewDash(){
   h+=chartSvg();
   h+='<div class="panel"><h3>💗 نیازمند توجه ('+fa(na.length)+')</h3>';
   if(!na.length) h+='<p class="hint">در حال حاضر دانش‌آموزی با افت نمره یا میانگین پایین‌تر از کلاس دیده نمی‌شود. آفرین! 🎉</p>';
-  else h+=na.map(function(x){ return '<div class="kv" style="cursor:pointer" onclick="openStudent(\''+x.student.id+'\')"><span>'+esc(x.student.name)+' '+esc(x.student.family)+'</span><span class="badge red">'+esc(x.reasons.join('، '))+'</span></div>'; }).join('');
+  else h+=na.map(function(x){ return '<div class="kv" style="cursor:pointer" onclick="studentPopup(\''+x.student.id+'\')"><span>'+esc(x.student.name)+' '+esc(x.student.family)+'</span><span class="badge red">'+esc(x.reasons.join('، '))+'</span></div>'; }).join('');
   h+='</div>';
   var caD=classAtt();
   h+='<div class="panel"><h3>🗓 حضور کلاس</h3>';
@@ -417,8 +444,9 @@ function viewDash(){
     if(tr!==null&&tr>0) arrow='<span class="trend up">▲ '+faNum(tr,1)+'</span>';
     else if(tr!==null&&tr<0) arrow='<span class="trend dn">▼ '+faNum(Math.abs(tr),1)+'</span>';
     else if(tr===0) arrow='<span class="trend flat">● ثابت</span>';
-    return '<div class="rowitem" onclick="openStudent(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">میانگین: '+faNum(av,1)+'</div></div>'+arrow+'</div>';
+    return '<div class="rowitem" onclick="studentPopup(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">میانگین: '+faNum(av,1)+'</div></div>'+arrow+'</div>';
   }).join('');
+  h+=readyCmdsHtml();
   return h;
 }
 
@@ -468,7 +496,7 @@ function field(id,label,val,ph,type){ return '<label class="f" for="'+id+'">'+la
 
 /* ===== دانش‌آموزان ===== */
 function viewStudents(){
-  var h='<p class="guide">💡 راهنما: نام دانش‌آموزان کلاس را اینجا ثبت کنید. روی نام هر دانش‌آموز بزنید تا نمره‌ها و روند تحصیلی‌اش را ببینید.</p>';
+  var h='<p class="guide">💡 راهنما: نام دانش‌آموزان کلاس را اینجا ثبت کنید. روی نام هر دانش‌آموز بزنید تا وضعیتش همان‌جا باز شود؛ از کادر جستجو هم می‌توانید سریع پیدایش کنید.</p>';
   h+='<div class="searchbar"><input id="stuSearch" type="search" placeholder="🔍 جستجوی نام دانش‌آموز…" value="'+esc(studentQuery)+'"></div>';
   h+='<button class="btn block fab" onclick="studentForm()">➕ افزودن دانش‌آموز</button>';
   h+='<div class="btnrow" style="margin:0 0 12px"><button class="btn soft" onclick="printStudents()">🖨 چاپ فهرست</button><button class="btn soft" onclick="exportExcel()">📊 خروجی اکسل</button></div>';
@@ -476,8 +504,10 @@ function viewStudents(){
   if(!db.students.length) h+='<div class="empty"><span class="big">👧</span>هنوز دانش‌آموزی ثبت نشده است.<br>با دکمهٔ بالا، اولین دانش‌آموز را اضافه کنید.</div>';
   else if(!list.length) h+='<div class="empty">دانش‌آموزی با این نام پیدا نشد.</div>';
   else h+=list.map(function(s){
-    var av=studentAvg(s.id);
-    return '<div class="rowitem" onclick="openStudent(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">'+(s.father?'نام پدر: '+esc(s.father)+' · ':'')+'میانگین: '+faNum(av,1)+'</div></div><button class="iconbtn" title="ویرایش" onclick="event.stopPropagation();studentForm(\''+s.id+'\')">✏️</button></div>';
+    var av=studentAvg(s.id), open=openStuAcc===s.id;
+    var row='<div class="rowitem" onclick="toggleStuAcc(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">'+(s.father?'نام پدر: '+esc(s.father)+' · ':'')+'میانگین: '+faNum(av,1)+'</div></div><button class="iconbtn" title="ویرایش" onclick="event.stopPropagation();studentForm(\''+s.id+'\')">✏️</button><span class="accArrow">'+(open?'▲':'▼')+'</span></div>';
+    if(open) row+='<div class="stuAcc">'+studentStatusInner(s.id,false)+'</div>';
+    return row;
   }).join('');
   return h;
 }
@@ -509,10 +539,11 @@ function viewStudentDetail(id){
   var na=needsAttention().filter(function(x){ return x.student.id===id; })[0];
   var diff=(av!==null&&ca!==null)?Math.round((av-ca)*100)/100:null;
   var h='<button class="btn soft small" onclick="detailStudent=null;render()">← بازگشت به فهرست</button>';
-  h+='<div class="heroStu"><div class="bigava">'+avatarHtml(s)+'</div>'
+  h+='<div class="heroStu">'+heroAvaHtml(s)
     +'<div style="flex:1;min-width:0"><div class="nm2">'+esc(s.name)+' '+esc(s.family)+'</div>'
     +'<div class="meta2">نام پدر: '+esc(s.father||'—')+' · کد دانش‌آموزی: '+esc(s.code||'—')+'</div>'
     +'<div class="meta2">تلفن ولی: '+esc(s.phone||'—')+(s.note?' · 📌 '+esc(s.note):'')+'</div>'
+    +(function(){ var mg=groupsOfStudent(id); return mg.length?'<div class="meta2">👥 گروه‌ها: '+mg.map(function(g){ return esc(g.name); }).join('، ')+'</div>':''; })()
     +(na?'<div style="margin-top:6px"><span class="badge red">💗 نیازمند توجه: '+esc(na.reasons.join('، '))+'</span></div>':'<div style="margin-top:6px"><span class="badge green">وضعیت کلی خوب است 🌻</span></div>')
     +'</div></div>';
   h+='<div class="btnrow" style="margin:0 0 8px"><button class="btn" onclick="activityReport(\''+s.id+'\')">🖨 گزارش فعالیت</button><button class="btn soft" onclick="parentReport(\''+s.id+'\')">📄 گزارش والدین</button></div>';
@@ -539,6 +570,15 @@ function viewStudentDetail(id){
       +es.map(function(x){ return '<tr><td>'+esc(x.exam.title)+'</td><td>'+esc(x.exam.subject)+'</td><td>'+esc(x.exam.date||'')+'</td><td class="num"><b>'+faScore(x.score)+'</b></td><td class="num">'+faNum(examAvg(x.exam.id),1)+'</td></tr>'; }).join('')+'</table>';
   }
   h+='</div>';
+  var qes2=studentQuizEntries(id), qav2=studentQuizAvg(id);
+  h+='<div class="panel"><h3>❓ آزمونک‌ها و سوالات کلاسی</h3>';
+  if(!qes2.length) h+='<p class="hint">هنوز در آزمونکی شرکت نکرده است.</p>';
+  else{
+    h+='<table class="grid"><tr><th>آزمونک</th><th>درس</th><th>تاریخ</th><th class="num">نمره</th></tr>'
+      +qes2.map(function(x){ return '<tr><td>'+esc(x.quiz.title)+'</td><td>'+esc(x.quiz.subject)+'</td><td>'+esc(x.quiz.date||'')+'</td><td class="num"><b>'+faScore(x.score)+'</b></td></tr>'; }).join('')+'</table>'
+      +'<div class="kv" style="margin-top:6px"><span>میانگین آزمونک‌ها (جدا از میانگین آزمون‌های رسمی)</span><b>'+faNum(qav2,1)+'</b></div>';
+  }
+  h+='</div>';
   h+='<div class="panel"><h3>🗓 حضور و غیاب</h3>';
   if(!att.total) h+='<p class="hint">هنوز جلسهٔ حضور و غیابی ثبت نشده است.</p>';
   else{
@@ -551,6 +591,14 @@ function viewStudentDetail(id){
     if(att.absDates.length) h+='<div style="margin-top:8px"><span class="hint">تاریخ‌های غیبت: </span>'+att.absDates.map(function(d){ return '<span class="badge red">'+esc(d)+'</span>'; }).join(' ')+'</div>';
     if(att.lateDates.length) h+='<div style="margin-top:6px"><span class="hint">تاریخ‌های تأخیر: </span>'+att.lateDates.map(function(d){ return '<span class="badge">'+esc(d)+'</span>'; }).join(' ')+'</div>';
   }
+  h+='</div>';
+  h+='<div class="panel"><h3>⭐ فعالیت‌ها و کارهای ویژه</h3>'
+    +'<button class="btn small" style="margin-bottom:8px" onclick="studentActForm(\''+id+'\')">➕ ثبت فعالیت</button>';
+  var myActs=studentActs(id);
+  if(!myActs.length) h+='<p class="hint">هنوز فعالیتی ثبت نشده است؛ کارهای ویژهٔ خارج از روال کلاس (کار اضافی، مراسم، موفقیت‌ها…) را اینجا ثبت کنید.</p>';
+  else h+=myActs.map(function(a){ return actRowHtml(a); }).join('');
+  var wn2=wallForStudent(id);
+  if(wn2.length) h+='<div class="monthttl">📰 روزنامه دیواری</div>'+wn2.map(function(w){ return '<div class="rowitem"><div class="grow"><div class="nm">'+esc(w.head)+'</div><div class="meta">روزنامه دیواری — '+esc(w.issueTitle)+(w.date?' · '+esc(w.date):'')+(w.note?' · '+esc(w.note):'')+'</div></div></div>'; }).join('');
   h+='</div>';
   return h;
 }
@@ -569,6 +617,25 @@ function processPhoto(dataUrl){
     img.onerror=function(){ rej(new Error('bad image')); };
     img.src=dataUrl;
   });
+}
+var heroPhotoFor=null;
+function pickStudentPhoto(id){ heroPhotoFor=id; var f=document.getElementById('heroPhotoFile'); if(f){ f.value=''; f.click(); } }
+function onHeroPhoto(input){
+  var f=input.files&&input.files[0]; if(!f||!heroPhotoFor) return;
+  var sid=heroPhotoFor;
+  var rd=new FileReader();
+  rd.onload=function(){
+    processPhoto(rd.result).then(function(d){
+      var s=studentById(sid); if(!s) return;
+      s.photo=d; saveDb(); render(); toast('عکس پروفایل ثبت شد ✅');
+    }).catch(function(){ toast('این فایل، عکس معتبری نیست',true); });
+  };
+  rd.readAsDataURL(f);
+}
+function heroAvaHtml(s){
+  return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex:none">'
+    +'<div class="avaWrap" onclick="pickStudentPhoto(\''+s.id+'\')" title="افزودن یا تغییر عکس"><div class="bigava">'+avatarHtml(s)+'</div><span class="cambadge">📷</span></div>'
+    +'<button class="btn soft small" onclick="pickStudentPhoto(\''+s.id+'\')">'+(s.photo?'📷 تغییر عکس':'📷 افزودن عکس')+'</button></div>';
 }
 function onPhotoPick(input){
   var f=input.files&&input.files[0]; if(!f) return;
@@ -616,7 +683,12 @@ function delStudent(id){
   if(!confirm('«'+s.name+' '+s.family+'» و همهٔ نمره‌هایش حذف شود؟')) return;
   db.students=db.students.filter(function(x){return x.id!==id;});
   Object.keys(db.scores).forEach(function(eid){ if(db.scores[eid]) delete db.scores[eid][id]; });
+  Object.keys(db.qscores||{}).forEach(function(qid){ if(db.qscores[qid]) delete db.qscores[qid][id]; });
   (db.attendance||[]).forEach(function(sn){ if(sn.marks) delete sn.marks[id]; });
+  (db.groups||[]).forEach(function(g){ if(g.memberIds) g.memberIds=g.memberIds.filter(function(m){ return m!==id; }); });
+  db.acts=(db.acts||[]).filter(function(x){ return x.studentId!==id; });
+  if(typeof openStuAcc!=='undefined'&&openStuAcc===id) openStuAcc=null;
+  (db.wallnews||[]).forEach(function(w){ (w.items||[]).forEach(function(it){ if(it.studentIds) it.studentIds=it.studentIds.filter(function(m){ return m!==id; }); }); });
   detailStudent=null; saveDb(); render(); toast('حذف شد');
 }
 
@@ -634,6 +706,7 @@ function viewExams(){
       +'<button class="iconbtn" title="ویرایش" onclick="examForm(\''+e.id+'\')">✏️</button>'
       +'<button class="iconbtn red" title="حذف" onclick="delExam(\''+e.id+'\')">🗑</button></div>';
   }).join('');
+  h+=quizzesSectionHtml();
   return h;
 }
 function subjectOptions(sel){
@@ -647,7 +720,7 @@ function examForm(id){
     +field('e_title','عنوان آزمون *',e?e.title:'','مثلاً: آزمون ماهانهٔ آبان')
     +'<label class="f" for="e_subject">درس</label><select id="e_subject">'+subjectOptions(e?e.subject:'ریاضی')+'</select>'
     +field('e_subfree','یا نام درس دلخواه',e&&(SUBJECTS.indexOf(e.subject)<0)?e.subject:'','اگر در فهرست نیست، اینجا بنویسید')
-    +field('e_date','تاریخ',e?e.date:'','مثلاً: ۱۴۰۵/۰۸/۱۵')
+    +dateField('e_date','تاریخ',e?e.date:'')
     +'<div class="btnrow"><button class="btn" onclick="saveExam('+(e?'\''+e.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
 }
 function saveExam(id){
@@ -737,10 +810,10 @@ function delPlan(id){ if(!confirm('این مبحث حذف شود؟')) return; db
 
 /* ===== حضور و غیاب ===== */
 function viewAttendance(){
-  var h='<p class="guide">💡 راهنما: تاریخ جلسه را بنویسید و «نمایش فهرست کلاس» را بزنید؛ برای هر دانش‌آموز وضعیت حاضر، غایب یا تأخیر را مشخص کنید و در پایان «ثبت حضور و غیاب» را بزنید. پیش‌فرض همه حاضرند.</p>';
+  var h='<p class="guide">💡 راهنما: روی کادر تاریخ بزنید و روز را از تقویم شمسی انتخاب کنید تا فهرست کلاس برای همان روز بیاید؛ برای هر دانش‌آموز وضعیت حاضر، غایب یا تأخیر را مشخص کنید و در پایان «ثبت حضور و غیاب» را بزنید. پیش‌فرض همه حاضرند.</p>';
   h+=voiceBtnHtml();
   h+='<div class="panel"><h3>🗓 جلسهٔ حضور و غیاب</h3>'
-    +'<label class="f" for="att_date">تاریخ جلسه</label><input id="att_date" value="'+esc(attDate)+'" placeholder="مثلاً: ۱۴۰۵/۰۹/۰۱">'
+    +'<label class="f" for="att_date">تاریخ جلسه</label><input id="att_date" class="calField" readonly value="'+esc(attDate)+'" placeholder="📅 برای انتخاب تاریخ بزنید" onclick="openCal(\'att_date\',\'loadAttDay\')">'
     +'<div class="btnrow"><button class="btn" onclick="loadAttDay()">نمایش فهرست کلاس</button></div>';
   if(attMarks){
     if(!db.students.length) h+='<p class="hint" style="margin-top:10px">هنوز دانش‌آموزی ثبت نشده است.</p>';
@@ -798,6 +871,408 @@ function delAttSession(id){
   saveDb(); render(); toast('حذف شد');
 }
 
+/* ===== تقویم شمسی (تبدیل و انتخاب تاریخ) ===== */
+var JMONTHS=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+function g2j(gy,gm,gd){
+  var gdm=[0,31,59,90,120,151,181,212,243,273,304,334];
+  var jy=(gy<=1600)?0:979;
+  gy-=(gy<=1600)?621:1600;
+  var gy2=(gm>2)?(gy+1):gy;
+  var days=(365*gy)+Math.floor((gy2+3)/4)-Math.floor((gy2+99)/100)+Math.floor((gy2+399)/400)-80+gd+gdm[gm-1];
+  jy+=33*Math.floor(days/12053); days%=12053;
+  jy+=4*Math.floor(days/1461); days%=1461;
+  jy+=Math.floor((days-1)/365);
+  if(days>365) days=(days-1)%365;
+  var jm=(days<186)?1+Math.floor(days/31):7+Math.floor((days-186)/30);
+  var jd=1+((days<186)?(days%31):((days-186)%30));
+  return {y:jy,m:jm,d:jd};
+}
+function j2g(jy,jm,jd){
+  var gy=(jy<=979)?621:1600;
+  jy-=(jy<=979)?0:979;
+  var days=(365*jy)+Math.floor(jy/33)*8+Math.floor((jy%33+3)/4)+78+jd+((jm<7)?((jm-1)*31):(((jm-7)*30)+186));
+  gy+=400*Math.floor(days/146097); days%=146097;
+  if(days>36524){ gy+=100*Math.floor(--days/36524); days%=36524; if(days>=365) days++; }
+  gy+=4*Math.floor(days/1461); days%=1461;
+  if(days>365){ gy+=Math.floor((days-1)/365); days=(days-1)%365; }
+  var gd=days+1, sal=[0,31,((gy%4===0&&gy%100!==0)||gy%400===0)?29:28,31,30,31,30,31,31,30,31,30,31], gm=0;
+  for(gm=0;gm<13&&gd>sal[gm];gm++) gd-=sal[gm];
+  return {y:gy,m:gm,d:gd};
+}
+function jIsLeap(y){ var a=j2g(y,1,1), b=j2g(y+1,1,1); return (Date.UTC(b.y,b.m-1,b.d)-Date.UTC(a.y,a.m-1,a.d))/86400000===366; }
+function jMonthLen(y,m){ if(m<=6) return 31; if(m<=11) return 30; return jIsLeap(y)?30:29; }
+function jWeekday(y,m,d){ var g=j2g(y,m,d); return new Date(g.y,g.m-1,g.d).getDay(); }
+function pad2(n){ return (n<10?'0':'')+n; }
+function jFmt(y,m,d){ return fa(y+'/'+pad2(m)+'/'+pad2(d)); }
+function jParse(s){ var t=enDigits(s||'').split('/'); if(t.length!==3) return null; var y=+t[0],m=+t[1],d=+t[2]; if(!y||!(m>=1&&m<=12)||!(d>=1&&d<=31)) return null; return {y:y,m:m,d:d}; }
+function jToday(){ var n=new Date(); return g2j(n.getFullYear(),n.getMonth()+1,n.getDate()); }
+function dateField(id,label,val){ return '<label class="f" for="'+id+'">'+label+'</label><input id="'+id+'" class="calField" readonly value="'+esc(val||'')+'" placeholder="📅 برای انتخاب تاریخ بزنید" onclick="openCal(\''+id+'\')">'; }
+var calTarget=null, calCb=null, calY=1405, calM=1, calSel=null;
+function openCal(inputId,cb){
+  var inp=document.getElementById(inputId); if(!inp) return;
+  calTarget=inputId; calCb=(typeof cb==='function')?cb:(cb?window[cb]:null);
+  var cur=jParse(inp.value), base=cur||jToday();
+  calY=base.y; calM=base.m; calSel=cur;
+  renderCal();
+  document.getElementById('calWrap').classList.add('open');
+}
+function closeCal(){ var w=document.getElementById('calWrap'); if(w) w.classList.remove('open'); calTarget=null; calCb=null; }
+function calNav(dm){ calM+=dm; if(calM<1){ calM=12; calY--; } if(calM>12){ calM=1; calY++; } renderCal(); }
+function renderCal(){
+  var t=jToday(), len=jMonthLen(calY,calM), firstCol=(jWeekday(calY,calM,1)+1)%7, cells='';
+  ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'].forEach(function(w){ cells+='<div class="wd">'+w+'</div>'; });
+  for(var i=0;i<firstCol;i++) cells+='<div class="calDay empty"></div>';
+  for(var d=1;d<=len;d++){
+    var cls='calDay';
+    if(calY===t.y&&calM===t.m&&d===t.d) cls+=' today';
+    if(calSel&&calSel.y===calY&&calSel.m===calM&&calSel.d===d) cls+=' sel';
+    cells+='<button class="'+cls+'" onclick="pickCal('+d+')">'+fa(d)+'</button>';
+  }
+  document.getElementById('calSheet').innerHTML='<div class="sheetwrap"><button class="btn soft small x" onclick="closeCal()">✕</button><h3>📅 انتخاب تاریخ</h3>'
+    +'<div class="calNav"><button class="btn soft small" onclick="calNav(-1)">ماه قبل</button><div class="ttl">'+JMONTHS[calM-1]+' '+fa(calY)+'</div><button class="btn soft small" onclick="calNav(1)">ماه بعد</button></div>'
+    +'<div class="calGrid">'+cells+'</div>'
+    +'<div class="btnrow"><button class="btn soft" onclick="closeCal()">انصراف</button></div></div>';
+}
+function pickCal(d){
+  var inp=document.getElementById(calTarget), cb=calCb;
+  if(inp) inp.value=jFmt(calY,calM,d);
+  closeCal();
+  if(cb) cb();
+}
+
+/* ===== گروه‌ها و فعالیت‌های گروهی ===== */
+function groupById(id){ var gs=db.groups||[]; for(var i=0;i<gs.length;i++) if(gs[i].id===id) return gs[i]; return null; }
+function groupActs(gid){ return (db.gacts||[]).filter(function(a){ return a.groupId===gid; }).slice().sort(function(a,b){ var ka=dateKey(a.date),kb=dateKey(b.date); if(ka<kb) return -1; if(ka>kb) return 1; return 0; }); }
+function groupAvg(gid){ var sc=groupActs(gid).filter(function(a){ return a.score!==null&&a.score!==undefined&&a.score!==''; }); if(!sc.length) return null; var t=0; sc.forEach(function(a){ t+=Number(a.score); }); return Math.round(t/sc.length*100)/100; }
+function groupsOfStudent(sid){ return (db.groups||[]).filter(function(g){ return (g.memberIds||[]).indexOf(sid)>=0; }); }
+function openGroup(id){ detailGroup=id; render(); window.scrollTo(0,0); }
+function viewGroups(){
+  var h='<p class="guide">💡 راهنما: برای کارهای گروهی اول گروه بسازید و اعضای هر گروه را انتخاب کنید؛ بعد برای هر گروه فعالیت ثبت کنید و در صورت نیاز نمره بدهید. روزنامهٔ دیواری کلاس هم در همین صفحه است.</p>';
+  h+='<h2 class="sec">👥 گروه‌ها</h2>';
+  h+='<button class="btn block fab" onclick="groupForm()">➕ گروه جدید</button>';
+  var gs=db.groups||[];
+  if(!gs.length) h+='<div class="empty"><span class="big">👥</span>هنوز گروهی ساخته نشده است.</div>';
+  else h+=gs.map(function(g){
+    var acts=groupActs(g.id), last=acts.length?acts[acts.length-1]:null, av=groupAvg(g.id);
+    return '<div class="rowitem" onclick="openGroup(\''+g.id+'\')"><div class="grow"><div class="nm">👥 '+esc(g.name)+'</div><div class="meta">'+fa((g.memberIds||[]).length)+' عضو · '+fa(acts.length)+' فعالیت'+(av!==null?' · میانگین فعالیت‌ها: '+faNum(av,1):'')+(last?' · آخرین فعالیت: '+esc(last.title)+' ('+esc(last.date||'')+')':'')+'</div></div>'
+      +'<button class="iconbtn" title="ویرایش" onclick="event.stopPropagation();groupForm(\''+g.id+'\')">✏️</button>'
+      +'<button class="iconbtn red" title="حذف" onclick="event.stopPropagation();delGroup(\''+g.id+'\')">🗑</button></div>';
+  }).join('');
+  h+=wallSectionHtml();
+  return h;
+}
+function viewGroupDetail(id){
+  var g=groupById(id); if(!g) return '<div class="empty">گروه پیدا نشد.</div>';
+  var acts=groupActs(id), av=groupAvg(id);
+  var h='<button class="btn soft small" onclick="detailGroup=null;render()">← بازگشت به فهرست گروه‌ها</button>';
+  h+='<div class="heroStu"><div class="bigava">👥</div><div style="flex:1;min-width:0"><div class="nm2">'+esc(g.name)+'</div>'
+    +'<div class="meta2">'+fa((g.memberIds||[]).length)+' عضو · '+fa(acts.length)+' فعالیت ثبت‌شده</div>'
+    +(g.note?'<div class="meta2">📌 '+esc(g.note)+'</div>':'')
+    +'</div></div>';
+  h+='<div class="btnrow" style="margin:0 0 12px"><button class="btn" onclick="gactForm(\''+g.id+'\')">➕ ثبت فعالیت گروه</button><button class="btn ghost" onclick="groupForm(\''+g.id+'\')">✏️ ویرایش گروه</button><button class="btn danger" onclick="delGroup(\''+g.id+'\')">🗑 حذف گروه</button></div>';
+  h+='<div class="stats">'
+    +'<div class="stat"><div class="v">'+faNum(av,1)+'</div><div class="l">میانگین نمرهٔ فعالیت‌ها</div></div>'
+    +'<div class="stat"><div class="v">'+fa(acts.length)+'</div><div class="l">تعداد فعالیت</div></div>'
+    +'<div class="stat"><div class="v">'+fa((g.memberIds||[]).length)+'</div><div class="l">تعداد اعضا</div></div>'
+    +'</div>';
+  h+='<div class="panel"><h3>👧 اعضای گروه</h3>';
+  var mem=(g.memberIds||[]).map(function(mid){ return studentById(mid); }).filter(Boolean);
+  if(!mem.length) h+='<p class="hint">هنوز عضوی انتخاب نشده است؛ از «ویرایش گروه» اعضا را اضافه کنید.</p>';
+  else h+=mem.map(function(s){ return '<div class="rowitem" onclick="studentPopup(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">نام پدر: '+esc(s.father||'—')+' · میانگین: '+faNum(studentAvg(s.id),1)+'</div></div></div>'; }).join('');
+  h+='</div>';
+  h+='<div class="panel"><h3>⭐ فعالیت‌های گروه</h3>';
+  if(!acts.length) h+='<p class="hint">هنوز فعالیتی برای این گروه ثبت نشده است.</p>';
+  else h+=acts.slice().reverse().map(function(a){
+    return '<div class="rowitem"><div class="grow"><div class="nm">'+esc(a.title)+'</div><div class="meta">'+esc(a.date||'')+((a.score!==null&&a.score!==undefined&&a.score!=='')?' · نمره: '+faScore(a.score):' · بدون نمره')+(a.note?' · '+esc(a.note):'')+'</div></div>'
+      +'<button class="iconbtn" title="ویرایش" onclick="gactForm(\''+g.id+'\',\''+a.id+'\')">✏️</button>'
+      +'<button class="iconbtn red" title="حذف" onclick="delGact(\''+a.id+'\')">🗑</button></div>';
+  }).join('');
+  h+='</div>';
+  return h;
+}
+function groupForm(id){
+  var g=id?groupById(id):null;
+  var mem=g?(g.memberIds||[]):[];
+  openDlg(dlgHead(g?'✏️ ویرایش گروه':'➕ گروه جدید')
+    +field('g_name','نام گروه *',g?g.name:'','مثلاً: گروه خورشید')
+    +'<label class="f" for="g_note">یادداشت</label><textarea id="g_note" rows="2" placeholder="توضیحی دربارهٔ گروه…">'+esc(g?g.note||'':'')+'</textarea>'
+    +'<label class="f">اعضای گروه (هر دانش‌آموز می‌تواند در چند گروه باشد)</label>'
+    +(db.students.length?'<div class="scoregrid">'+db.students.map(function(s){ return '<div class="srow"><span class="sname">'+esc(s.name)+' '+esc(s.family)+'</span><input type="checkbox" class="gmem" value="'+s.id+'" style="width:auto;flex:none" '+(mem.indexOf(s.id)>=0?'checked':'')+'></div>'; }).join('')+'</div>':'<p class="hint">هنوز دانش‌آموزی ثبت نشده است.</p>')
+    +'<div class="btnrow"><button class="btn" onclick="saveGroup('+(g?'\''+g.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+}
+function saveGroup(id){
+  var name=document.getElementById('g_name').value.trim();
+  if(!name){ toast('نام گروه لازم است',true); return; }
+  var mem=[]; document.querySelectorAll('.gmem').forEach(function(c){ if(c.checked) mem.push(c.value); });
+  var note=document.getElementById('g_note').value.trim();
+  if(!Array.isArray(db.groups)) db.groups=[];
+  if(id){ var g=groupById(id); if(!g) return; g.name=name; g.note=note; g.memberIds=mem; }
+  else{ db.groups.push({id:uid(),name:name,memberIds:mem,note:note}); }
+  saveDb(); closeDlg(); render(); toast('ذخیره شد ✅');
+}
+function delGroup(id){
+  var g=groupById(id); if(!g) return;
+  if(!confirm('گروه «'+g.name+'» و همهٔ فعالیت‌هایش حذف شود؟')) return;
+  db.groups=(db.groups||[]).filter(function(x){ return x.id!==id; });
+  db.gacts=(db.gacts||[]).filter(function(x){ return x.groupId!==id; });
+  if(detailGroup===id) detailGroup=null;
+  saveDb(); render(); toast('حذف شد');
+}
+function gactForm(gid,aid){
+  var a=aid?(db.gacts||[]).filter(function(x){ return x.id===aid; })[0]:null;
+  openDlg(dlgHead(a?'✏️ ویرایش فعالیت گروه':'➕ ثبت فعالیت گروه')
+    +field('ga_title','عنوان فعالیت *',a?a.title:'','مثلاً: ارائهٔ گروهی درس علوم')
+    +dateField('ga_date','تاریخ',a?a.date:'')
+    +field('ga_score','نمره (اختیاری، از ۲۰)',a&&(a.score!==null&&a.score!==undefined)?String(a.score):'','خالی = بدون نمره')
+    +'<label class="f" for="ga_note">یادداشت</label><textarea id="ga_note" rows="2" placeholder="توضیح فعالیت…">'+esc(a?a.note||'':'')+'</textarea>'
+    +'<div class="btnrow"><button class="btn" onclick="saveGact(\''+gid+'\','+(a?'\''+a.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+}
+function saveGact(gid,aid){
+  var title=document.getElementById('ga_title').value.trim();
+  if(!title){ toast('عنوان فعالیت لازم است',true); return; }
+  var raw=document.getElementById('ga_score').value.trim(), score=null;
+  if(raw!==''){ score=parseScore(raw); if(score===undefined){ toast('نمره باید عددی بین ۰ تا ۲۰ باشد',true); return; } }
+  var data={groupId:gid,date:document.getElementById('ga_date').value.trim(),title:title,score:score,note:document.getElementById('ga_note').value.trim()};
+  if(!Array.isArray(db.gacts)) db.gacts=[];
+  if(aid){ var a=(db.gacts||[]).filter(function(x){ return x.id===aid; })[0]; if(!a) return; Object.keys(data).forEach(function(k){ a[k]=data[k]; }); }
+  else{ data.id=uid(); db.gacts.push(data); }
+  saveDb(); closeDlg(); render(); toast('ذخیره شد ✅');
+}
+function delGact(id){ if(!confirm('این فعالیت حذف شود؟')) return; db.gacts=(db.gacts||[]).filter(function(x){ return x.id!==id; }); saveDb(); render(); toast('حذف شد'); }
+
+/* ===== روزنامهٔ دیواری کلاس ===== */
+function wallById(id){ var ws=db.wallnews||[]; for(var i=0;i<ws.length;i++) if(ws[i].id===id) return ws[i]; return null; }
+function wallSorted(){ return (db.wallnews||[]).slice().sort(function(a,b){ var ka=dateKey(a.date),kb=dateKey(b.date); if(ka<kb) return -1; if(ka>kb) return 1; return 0; }); }
+function wallForStudent(sid){
+  var out=[];
+  (db.wallnews||[]).forEach(function(w){ (w.items||[]).forEach(function(it){ if((it.studentIds||[]).indexOf(sid)>=0) out.push({issueTitle:w.title,date:w.date,head:it.head,note:it.note||''}); }); });
+  return out;
+}
+function wallSectionHtml(){
+  var h='<h2 class="sec">📰 روزنامه دیواری</h2>';
+  h+='<button class="btn block fab" onclick="wallForm()">➕ شمارهٔ جدید</button>';
+  var ws=wallSorted();
+  if(!ws.length) h+='<div class="empty"><span class="big">📰</span>هنوز شماره‌ای از روزنامه دیواری ساخته نشده است.</div>';
+  else h+=ws.slice().reverse().map(function(w){
+    return '<div class="rowitem" onclick="openWall(\''+w.id+'\')"><div class="grow"><div class="nm">📰 '+esc(w.title)+'</div><div class="meta">'+esc(w.date||'')+' · '+fa((w.items||[]).length)+' بخش · '+(w.status==='done'?'<span class="badge green">منتشر شد</span>':'<span class="badge">در حال آماده‌سازی</span>')+'</div></div>'
+      +'<button class="iconbtn" title="ویرایش" onclick="event.stopPropagation();wallForm(\''+w.id+'\')">✏️</button>'
+      +'<button class="iconbtn red" title="حذف" onclick="event.stopPropagation();delWall(\''+w.id+'\')">🗑</button></div>';
+  }).join('');
+  return h;
+}
+function openWall(id){ detailWall=id; render(); window.scrollTo(0,0); }
+function viewWallDetail(id){
+  var w=wallById(id); if(!w) return '<div class="empty">این شماره پیدا نشد.</div>';
+  var h='<button class="btn soft small" onclick="detailWall=null;render()">← بازگشت به گروه‌ها و روزنامه دیواری</button>';
+  h+='<div class="heroStu"><div class="bigava">📰</div><div style="flex:1;min-width:0"><div class="nm2">'+esc(w.title)+'</div>'
+    +'<div class="meta2">'+esc(w.date||'')+' · '+fa((w.items||[]).length)+' بخش · '+(w.status==='done'?'منتشر شد ✅':'در حال آماده‌سازی')+'</div></div></div>';
+  h+='<div class="btnrow" style="margin:0 0 12px"><button class="btn" onclick="wallItemForm(\''+w.id+'\')">➕ افزودن بخش</button>'
+    +(w.status==='done'?'<button class="btn ghost" onclick="toggleWallStatus(\''+w.id+'\')">↩ برگردان به آماده‌سازی</button>':'<button class="btn ghost" onclick="toggleWallStatus(\''+w.id+'\')">✅ منتشر شد</button>')
+    +'<button class="btn danger" onclick="delWall(\''+w.id+'\')">🗑 حذف شماره</button></div>';
+  h+='<div class="panel"><h3>🧩 بخش‌های این شماره</h3>';
+  if(!(w.items||[]).length) h+='<p class="hint">هنوز بخشی اضافه نشده است؛ با «افزودن بخش» عنوان هر قسمت و نام مشارکت‌کننده‌ها را بنویسید.</p>';
+  else h+=(w.items||[]).map(function(it){
+    var names=(it.studentIds||[]).map(function(sid){ var s=studentById(sid); return s?esc(s.name+' '+s.family):''; }).filter(Boolean);
+    var whoLine=[it.who?esc(it.who):''].concat(names).filter(Boolean).join('، ');
+    return '<div class="rowitem"><div class="grow"><div class="nm">'+esc(it.head)+'</div><div class="meta">'+(whoLine?'مشارکت: '+whoLine:'')+(it.note?' · '+esc(it.note):'')+'</div></div>'
+      +'<button class="iconbtn" title="ویرایش" onclick="wallItemForm(\''+w.id+'\',\''+it.id+'\')">✏️</button>'
+      +'<button class="iconbtn red" title="حذف" onclick="delWallItem(\''+w.id+'\',\''+it.id+'\')">🗑</button></div>';
+  }).join('');
+  h+='</div>';
+  return h;
+}
+function wallForm(id){
+  var w=id?wallById(id):null;
+  openDlg(dlgHead(w?'✏️ ویرایش شماره':'➕ شمارهٔ جدید روزنامه دیواری')
+    +field('w_title','عنوان / موضوع شماره *',w?w.title:'','مثلاً: شمارهٔ ۳ — هفتهٔ کتاب')
+    +dateField('w_date','تاریخ',w?w.date:'')
+    +'<div class="btnrow"><button class="btn" onclick="saveWall('+(w?'\''+w.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+}
+function saveWall(id){
+  var title=document.getElementById('w_title').value.trim();
+  if(!title){ toast('عنوان شماره لازم است',true); return; }
+  var date=document.getElementById('w_date').value.trim();
+  if(!Array.isArray(db.wallnews)) db.wallnews=[];
+  if(id){ var w=wallById(id); if(!w) return; w.title=title; w.date=date; }
+  else{ var nw={id:uid(),date:date,title:title,items:[],status:'prep'}; db.wallnews.push(nw); detailWall=nw.id; }
+  saveDb(); closeDlg(); render(); toast('ذخیره شد ✅');
+}
+function delWall(id){
+  var w=wallById(id); if(!w) return;
+  if(!confirm('شمارهٔ «'+w.title+'» روزنامه دیواری حذف شود؟')) return;
+  db.wallnews=(db.wallnews||[]).filter(function(x){ return x.id!==id; });
+  if(detailWall===id) detailWall=null;
+  saveDb(); render(); toast('حذف شد');
+}
+function toggleWallStatus(id){ var w=wallById(id); if(!w) return; w.status=(w.status==='done')?'prep':'done'; saveDb(); render(); toast(w.status==='done'?'منتشر شد ✅':'به آماده‌سازی برگشت'); }
+function wallItemForm(wid,iid){
+  var w=wallById(wid); if(!w) return;
+  var it=iid?(w.items||[]).filter(function(x){ return x.id===iid; })[0]:null;
+  var sel=it?(it.studentIds||[]):[];
+  openDlg(dlgHead(it?'✏️ ویرایش بخش':'➕ بخش جدید — '+esc(w.title))
+    +field('wi_head','عنوان بخش *',it?it.head:'','مثلاً: شعر و ادبیات')
+    +field('wi_who','نام مشارکت‌کننده (متن آزاد)',it?it.who:'','مثلاً: گروه خورشید')
+    +'<label class="f">دانش‌آموزان مشارکت‌کننده</label>'
+    +(db.students.length?'<div class="scoregrid">'+db.students.map(function(s){ return '<div class="srow"><span class="sname">'+esc(s.name)+' '+esc(s.family)+'</span><input type="checkbox" class="wimem" value="'+s.id+'" style="width:auto;flex:none" '+(sel.indexOf(s.id)>=0?'checked':'')+'></div>'; }).join('')+'</div>':'<p class="hint">هنوز دانش‌آموزی ثبت نشده است.</p>')
+    +'<label class="f" for="wi_note">یادداشت</label><textarea id="wi_note" rows="2" placeholder="توضیح بخش…">'+esc(it?it.note||'':'')+'</textarea>'
+    +'<div class="btnrow"><button class="btn" onclick="saveWallItem(\''+wid+'\','+(it?'\''+it.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+}
+function saveWallItem(wid,iid){
+  var w=wallById(wid); if(!w) return;
+  var head=document.getElementById('wi_head').value.trim();
+  if(!head){ toast('عنوان بخش لازم است',true); return; }
+  var mem=[]; document.querySelectorAll('.wimem').forEach(function(c){ if(c.checked) mem.push(c.value); });
+  var data={head:head,who:document.getElementById('wi_who').value.trim(),studentIds:mem,note:document.getElementById('wi_note').value.trim()};
+  if(!Array.isArray(w.items)) w.items=[];
+  if(iid){ var it=w.items.filter(function(x){ return x.id===iid; })[0]; if(!it) return; Object.keys(data).forEach(function(k){ it[k]=data[k]; }); }
+  else{ data.id=uid(); w.items.push(data); }
+  saveDb(); closeDlg(); render(); toast('ذخیره شد ✅');
+}
+function delWallItem(wid,iid){ if(!confirm('این بخش حذف شود؟')) return; var w=wallById(wid); if(!w) return; w.items=(w.items||[]).filter(function(x){ return x.id!==iid; }); saveDb(); render(); toast('حذف شد'); }
+
+/* ===== آزمونک و سؤال کلاسی ===== */
+function quizById(id){ var qs=db.quizzes||[]; for(var i=0;i<qs.length;i++) if(qs[i].id===id) return qs[i]; return null; }
+function quizzesSorted(){ return (db.quizzes||[]).slice().sort(function(a,b){ var ka=dateKey(a.date),kb=dateKey(b.date); if(ka<kb) return -1; if(ka>kb) return 1; return 0; }); }
+function qScoreOf(qid,sid){ var m=(db.qscores||{})[qid]; if(!m) return null; var v=m[sid]; return (v===null||v===undefined||v==='')?null:Number(v); }
+function quizScores(qid){ var out=[]; db.students.forEach(function(s){ var v=qScoreOf(qid,s.id); if(v!==null) out.push(v); }); return out; }
+function quizAvg(qid){ return avgOf(quizScores(qid)); }
+function studentQuizEntries(sid){ var out=[]; quizzesSorted().forEach(function(q){ var v=qScoreOf(q.id,sid); if(v!==null) out.push({quiz:q,score:v}); }); return out; }
+function studentQuizAvg(sid){ return avgOf(studentQuizEntries(sid).map(function(x){ return x.score; })); }
+function quizzesSectionHtml(){
+  var h='<h2 class="sec">آزمونک و سؤال کلاسی</h2>';
+  h+='<p class="guide">💡 آزمونک‌ها و سؤال‌های کلاسی اینجاست؛ با «ثبت نتایج» همهٔ کلاس در یک صفحه نمره می‌گیرند و نتیجه خودکار در کارتابل هر دانش‌آموز می‌نشیند. این نمره‌ها در میانگین آزمون‌های رسمی حساب نمی‌شوند.</p>';
+  h+='<button class="btn block fab" onclick="quizForm()">➕ آزمونک جدید</button>';
+  var qs=quizzesSorted();
+  if(!qs.length) h+='<div class="empty"><span class="big">❓</span>هنوز آزمونکی ثبت نشده است.</div>';
+  else h+=qs.map(function(q){
+    var n=quizScores(q.id).length, av=quizAvg(q.id);
+    return '<div class="rowitem"><div class="grow"><div class="nm">'+esc(q.title)+'</div><div class="meta"><span class="badge">'+esc(q.subject)+'</span> '+esc(q.date||'')+' · '+fa(n)+' نفر شرکت کرده · میانگین: '+faNum(av,1)+'</div></div>'
+      +'<button class="btn small" onclick="quizGrid(\''+q.id+'\')">ثبت نتایج</button>'
+      +'<button class="iconbtn" title="ویرایش" onclick="quizForm(\''+q.id+'\')">✏️</button>'
+      +'<button class="iconbtn red" title="حذف" onclick="delQuiz(\''+q.id+'\')">🗑</button></div>';
+  }).join('');
+  return h;
+}
+function quizForm(id){
+  var q=id?quizById(id):null;
+  openDlg(dlgHead(q?'✏️ ویرایش آزمونک':'➕ آزمونک جدید')
+    +field('q_title','عنوان آزمونک *',q?q.title:'','مثلاً: آزمونک ضرب فصل ۳')
+    +'<label class="f" for="q_subject">درس</label><select id="q_subject">'+subjectOptions(q?q.subject:'ریاضی')+'</select>'
+    +field('q_subfree','یا نام درس دلخواه',q&&(SUBJECTS.indexOf(q.subject)<0)?q.subject:'','اگر در فهرست نیست، اینجا بنویسید')
+    +dateField('q_date','تاریخ',q?q.date:'')
+    +'<div class="btnrow"><button class="btn" onclick="saveQuiz('+(q?'\''+q.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+}
+function saveQuiz(id){
+  var title=document.getElementById('q_title').value.trim();
+  if(!title){ toast('عنوان آزمونک لازم است',true); return; }
+  var free=document.getElementById('q_subfree').value.trim();
+  var data={title:title,subject:free||document.getElementById('q_subject').value,date:document.getElementById('q_date').value.trim()};
+  if(!Array.isArray(db.quizzes)) db.quizzes=[];
+  if(!db.qscores) db.qscores={};
+  if(id){ var q=quizById(id); if(!q) return; Object.keys(data).forEach(function(k){ q[k]=data[k]; }); }
+  else{ data.id=uid(); db.quizzes.push(data); if(!db.qscores[data.id]) db.qscores[data.id]={}; }
+  saveDb(); closeDlg(); render(); toast('ذخیره شد ✅');
+}
+function delQuiz(id){
+  var q=quizById(id); if(!q) return;
+  if(!confirm('آزمونک «'+q.title+'» و نتایجش حذف شود؟')) return;
+  db.quizzes=(db.quizzes||[]).filter(function(x){ return x.id!==id; });
+  if(db.qscores) delete db.qscores[id];
+  saveDb(); render(); toast('حذف شد');
+}
+function quizGrid(qid){
+  var q=quizById(qid); if(!q) return;
+  if(!db.students.length){ toast('اول دانش‌آموزان را ثبت کنید',true); return; }
+  var rows=db.students.map(function(s){
+    var v=qScoreOf(qid,s.id);
+    return '<div class="srow"><span class="sname">'+esc(s.name)+' '+esc(s.family)+'</span><input type="text" inputmode="decimal" data-qscore-for="'+s.id+'" value="'+(v===null?'':faScore(v))+'" placeholder="—"></div>';
+  }).join('');
+  openDlg(dlgHead('❓ ثبت نتایج — '+esc(q.title))
+    +'<p class="hint">'+esc(q.subject)+' · '+esc(q.date||'')+' · نمره از ۰ تا ۲۰؛ خانهٔ خالی = شرکت نکرده</p>'
+    +'<div class="scoregrid">'+rows+'</div>'
+    +'<div class="btnrow"><button class="btn" onclick="saveQuizScores(\''+qid+'\')">💾 ذخیرهٔ نتایج همه</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+}
+function saveQuizScores(qid){
+  var inputs=sheet.querySelectorAll('[data-qscore-for]'), bad=null;
+  if(!db.qscores) db.qscores={};
+  var m=db.qscores[qid]||(db.qscores[qid]={});
+  inputs.forEach(function(inp){
+    var v=parseScore(inp.value);
+    if(v===undefined){ bad=inp; return; }
+    var sid=inp.getAttribute('data-qscore-for');
+    if(v===null) delete m[sid]; else m[sid]=v;
+  });
+  if(bad){ toast('یک نمره درست نیست؛ باید بین ۰ تا ۲۰ باشد',true); bad.focus(); return; }
+  saveDb(); closeDlg(); render(); toast('نتایج آزمونک ذخیره شد ✅');
+}
+
+/* ===== فعالیت‌های ویژهٔ دانش‌آموز (خارج از روال کلاس) ===== */
+function studentActs(sid){ return (db.acts||[]).filter(function(a){ return a.studentId===sid; }).slice().sort(function(a,b){ var ka=dateKey(a.date),kb=dateKey(b.date); if(ka<kb) return 1; if(ka>kb) return -1; return 0; }); }
+function actRowHtml(a){
+  return '<div class="rowitem"><div class="grow"><div class="nm">'+esc(a.title)+'</div><div class="meta">'+esc(a.date||'')+(a.note?' · '+esc(a.note):'')+'</div></div>'
+    +'<button class="iconbtn" title="ویرایش" onclick="studentActForm(\''+a.studentId+'\',\''+a.id+'\')">✏️</button>'
+    +'<button class="iconbtn red" title="حذف" onclick="delStudentAct(\''+a.id+'\')">🗑</button></div>';
+}
+function studentActForm(sid,aid){
+  var s=studentById(sid); if(!s) return;
+  var a=aid?(db.acts||[]).filter(function(x){ return x.id===aid; })[0]:null;
+  openDlg(dlgHead((a?'✏️ ویرایش فعالیت':'➕ ثبت فعالیت')+' — '+esc(s.name)+' '+esc(s.family))
+    +field('sa_title','عنوان فعالیت *',a?a.title:'','مثلاً: کمک در برگزاری مراسم صبحگاه')
+    +dateField('sa_date','تاریخ',a?a.date:'')
+    +'<label class="f" for="sa_note">توضیحات</label><textarea id="sa_note" rows="3" placeholder="چه کاری انجام داد…">'+esc(a?a.note||'':'')+'</textarea>'
+    +'<div class="btnrow"><button class="btn" onclick="saveStudentAct(\''+sid+'\','+(a?'\''+a.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+}
+function saveStudentAct(sid,aid){
+  var title=document.getElementById('sa_title').value.trim();
+  if(!title){ toast('عنوان فعالیت لازم است',true); return; }
+  var data={studentId:sid,date:document.getElementById('sa_date').value.trim(),title:title,note:document.getElementById('sa_note').value.trim()};
+  if(!Array.isArray(db.acts)) db.acts=[];
+  if(aid){ var a=(db.acts||[]).filter(function(x){ return x.id===aid; })[0]; if(!a) return; Object.keys(data).forEach(function(k){ a[k]=data[k]; }); }
+  else{ data.id=uid(); db.acts.push(data); }
+  saveDb(); closeDlg(); render(); toast('ذخیره شد ✅');
+}
+function delStudentAct(id){ if(!confirm('این فعالیت حذف شود؟')) return; db.acts=(db.acts||[]).filter(function(x){ return x.id!==id; }); saveDb(); render(); toast('حذف شد'); }
+
+/* ===== وضعیت دانش‌آموز: محتوای مشترک پاپ‌آپ و کرکرهٔ فهرست ===== */
+function studentStatusInner(id,withHero){
+  var s=studentById(id); if(!s) return '';
+  var av=studentAvg(id), att=attStats(id), es=studentEntries(id);
+  var na=needsAttention().filter(function(x){ return x.student.id===id; })[0];
+  var mg=groupsOfStudent(id);
+  var recent=es.slice(-3).reverse();
+  var qes=studentQuizEntries(id), lastQ=qes.length?qes[qes.length-1]:null;
+  var myA=studentActs(id), lastA=myA.length?myA[0]:null;
+  var badge=(na?'<span class="badge red">💗 نیازمند توجه: '+esc(na.reasons.join('، '))+'</span>':'<span class="badge green">وضعیت کلی خوب است 🌻</span>');
+  var h='';
+  if(withHero){
+    h+='<div class="heroStu" style="margin:0 0 10px">'+heroAvaHtml(s)
+      +'<div style="flex:1;min-width:0"><div class="nm2">'+esc(s.name)+' '+esc(s.family)+'</div>'
+      +'<div class="meta2">نام پدر: '+esc(s.father||'—')+' · کد دانش‌آموزی: '+esc(s.code||'—')+'</div>'
+      +'<div style="margin-top:6px">'+badge+'</div>'
+      +'</div></div>';
+  } else {
+    h+='<div style="margin-bottom:6px">'+badge+'</div>';
+  }
+  h+='<div class="kv"><span>میانگین کل</span><b>'+faNum(av,1)+'</b></div>'
+    +'<div class="kv"><span>درصد حضور</span><b>'+(att.pct===null?'—':fa(att.pct)+'٪')+'</b></div>'
+    +'<div class="kv"><span>غیبت / تأخیر</span><b>'+fa(att.a)+' / '+fa(att.l)+'</b></div>'
+    +'<div class="kv"><span>آزمون شرکت‌کرده</span><b>'+fa(es.length)+'</b></div>';
+  if(recent.length) h+='<div class="monthttl">📝 آخرین نمره‌ها</div>'+recent.map(function(x){ return '<div class="kv"><span>'+esc(x.exam.title)+' ('+esc(x.exam.subject)+')</span><b>'+faScore(x.score)+'</b></div>'; }).join('');
+  if(lastQ) h+='<div class="kv"><span>❓ آخرین آزمونک: '+esc(lastQ.quiz.title)+'</span><b>'+faScore(lastQ.score)+'</b></div>';
+  if(mg.length) h+='<div class="kv"><span>👥 گروه‌ها</span><b>'+mg.map(function(g){ return esc(g.name); }).join('، ')+'</b></div>';
+  if(lastA) h+='<div class="kv"><span>⭐ آخرین فعالیت: '+esc(lastA.title)+'</span><b>'+esc(lastA.date||'')+'</b></div>';
+  h+='<div class="btnrow"><button class="btn" onclick="'+(withHero?'closeDlg();':'')+'openStudent(\''+s.id+'\')">📊 داشبورد کامل</button></div>'
+    +'<div class="btnrow"><button class="btn soft" onclick="activityReport(\''+s.id+'\')">🖨 گزارش فعالیت</button><button class="btn ghost" onclick="studentForm(\''+s.id+'\')">✏️ ویرایش</button></div>';
+  return h;
+}
+function studentPopup(id){
+  var s=studentById(id); if(!s) return;
+  openDlg(dlgHead('👧 وضعیت دانش‌آموز')+studentStatusInner(id,true));
+}
+/* ===== کرکرهٔ فهرست دانش‌آموزان: فقط یک ردیف هم‌زمان باز است ===== */
+var openStuAcc=null;
+function toggleStuAcc(id){ openStuAcc=(openStuAcc===id)?null:id; render(); }
+
 /* ===== گزارش والدین ===== */
 function reportHtml(s){
   var av=studentAvg(s.id), att=attStats(s.id), es=studentEntries(s.id), rows=subjectAvgs(s.id);
@@ -842,6 +1317,7 @@ function printParentReport(id){
 /* ===== گزارش فعالیت دانش‌آموز (کامل و چاپی) ===== */
 function activityReportHtml(s){
   var av=studentAvg(s.id), att=attStats(s.id), es=studentEntries(s.id), rows=subjectAvgs(s.id);
+  var qes=studentQuizEntries(s.id), qav=studentQuizAvg(s.id), sacts=studentActs(s.id), swn=wallForStudent(s.id);
   var today=''; try{ today=new Date().toLocaleDateString('fa-IR'); }catch(e){}
   function subCount(sub){ var n=0; db.exams.forEach(function(e){ if(e.subject===sub&&scoreOf(e.id,s.id)!==null) n++; }); return n; }
   var h='<div class="rep">'
@@ -873,8 +1349,16 @@ function activityReportHtml(s){
       +(att.absDates.length?'<p style="margin:8px 0 0">تاریخ‌های غیبت: '+att.absDates.map(function(d){ return esc(d); }).join('، ')+'</p>':'')
       +(att.lateDates.length?'<p style="margin:4px 0 0">تاریخ‌های تأخیر: '+att.lateDates.map(function(d){ return esc(d); }).join('، ')+'</p>':'')
       :'<p>هنوز جلسهٔ حضور و غیابی ثبت نشده است.</p>')
+    +'<h3 class="rep-h">❓ آزمونک‌ها و سوالات کلاسی</h3>'
+    +(qes.length?'<table class="grid"><tr><th>آزمونک</th><th>درس</th><th>تاریخ</th><th class="num">نمره</th><th class="num">میانگین کلاس</th></tr>'
+      +qes.map(function(x){ return '<tr><td>'+esc(x.quiz.title)+'</td><td>'+esc(x.quiz.subject)+'</td><td>'+esc(x.quiz.date||'—')+'</td><td class="num"><b>'+faScore(x.score)+'</b></td><td class="num">'+faNum(quizAvg(x.quiz.id),1)+'</td></tr>'; }).join('')+'</table>'
+      +'<p style="margin:6px 0 0">میانگین آزمونک‌ها: <b>'+faNum(qav,1)+'</b> (این میانگین جدا از میانگین آزمون‌های رسمی است.)</p>'
+      :'<p>هنوز در آزمونکی شرکت نکرده است.</p>')
     +'<h3 class="rep-h">🌻 فعالیت‌ها و یادداشت‌ها</h3>'
     +'<p style="margin:0 0 6px">در '+fa(es.length)+' آزمون از مجموع '+fa(db.exams.length)+' آزمون برگزارشدهٔ کلاس شرکت کرده است.</p>'
+    +(sacts.length?'<table class="grid"><tr><th>تاریخ</th><th>فعالیت‌ها و کارهای ویژه</th><th>توضیح</th></tr>'
+      +sacts.map(function(a){ return '<tr><td>'+esc(a.date||'—')+'</td><td>'+esc(a.title)+'</td><td>'+esc(a.note||'')+'</td></tr>'; }).join('')+'</table>':'')
+    +(swn.length?swn.map(function(w){ return '<p style="margin:0 0 4px">📰 روزنامه دیواری — '+esc(w.issueTitle)+': '+esc(w.head)+'</p>'; }).join(''):'')
     +(s.note?'<div class="rep-note"><b>📌 یادداشت:</b> '+esc(s.note)+'</div>':'')
     +(s.parentNote?'<div class="rep-note"><b>✉️ پیام معلم:</b> '+esc(s.parentNote)+'</div>':'')
     +'<div class="rep-foot">با آرزوی موفقیت و سربلندی برای '+esc(s.name)+' عزیز 🌻 · تاریخ گزارش: '+esc(today)+'</div>'
@@ -1054,7 +1538,7 @@ async function syncPullCore(silent){
     var j=await ghGetFile(cfg);
     if(!j){ if(!silent) syncMsg('هنوز فایلی روی گیت‌هاب نیست؛ ابتدا «ذخیره در گیت‌هاب» را بزنید.',false); return false; }
     var data=parseState(j);
-    var nd=data.db; nd.students=nd.students||[]; nd.exams=nd.exams||[]; nd.scores=nd.scores||{}; nd.plan=nd.plan||[]; nd.attendance=nd.attendance||[]; nd._rev=data.rev||0;
+    var nd=data.db; nd.students=nd.students||[]; nd.exams=nd.exams||[]; nd.scores=nd.scores||{}; nd.plan=nd.plan||[]; nd.attendance=nd.attendance||[]; nd.groups=nd.groups||[]; nd.gacts=nd.gacts||[]; nd.acts=nd.acts||[]; nd.wallnews=nd.wallnews||[]; nd.quizzes=nd.quizzes||[]; nd.qscores=nd.qscores||{}; nd._rev=data.rev||0;
     db=nd; saveDb(); markSynced();
     if(curTab==='settings'){ render(); syncMsg('اطلاعات از گیت‌هاب دریافت و جایگزین شد ✅ (نسخهٔ '+fa(db._rev)+')',true); }
     else { render(); toast('همگام‌سازی انجام شد ✅'); }
@@ -1080,7 +1564,7 @@ async function syncPushCore(){
       sha=j.sha;
     }
     var newRev=(db._rev||0)+1;
-    var payload={db:{students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[]},rev:newRev,updatedAt:new Date().toISOString()};
+    var payload={db:{students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{}},rev:newRev,updatedAt:new Date().toISOString()};
     var body={message:'dastyar-kelas sync rev '+newRev,content:b64enc(JSON.stringify(payload))};
     if(sha) body.sha=sha;
     var r=await fetch(cfg.url,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders(cfg)),body:JSON.stringify(body)});
@@ -1114,7 +1598,7 @@ async function autoPush(){
       sha=j.sha;
     }
     var newRev=(db._rev||0)+1;
-    var payload={db:{students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[]},rev:newRev,updatedAt:new Date().toISOString()};
+    var payload={db:{students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{}},rev:newRev,updatedAt:new Date().toISOString()};
     var body={message:'dastyar-kelas sync rev '+newRev,content:b64enc(JSON.stringify(payload))};
     if(sha) body.sha=sha;
     var r=await fetch(cfg.url,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders(cfg)),body:JSON.stringify(body)});
@@ -1220,7 +1704,7 @@ function printExamScores(examId){
   printDoc('لیست نمرات — '+e.title+' ('+e.subject+(e.date?' · '+e.date:'')+')',inner);
 }
 function exportJson(){
-  var payload={db:{students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[]},rev:db._rev||0,updatedAt:new Date().toISOString()};
+  var payload={db:{students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{}},rev:db._rev||0,updatedAt:new Date().toISOString()};
   var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dastyar-kelas-backup.json'; document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
@@ -1234,7 +1718,7 @@ document.getElementById('importFile').addEventListener('change',function(ev){
       var data=JSON.parse(rd.result);
       var nd=data.db||data;
       if(!nd||!Array.isArray(nd.students)) throw new Error('bad');
-      nd.exams=nd.exams||[]; nd.scores=nd.scores||{}; nd.plan=nd.plan||[]; nd.attendance=nd.attendance||[]; nd._rev=data.rev||nd._rev||0;
+      nd.exams=nd.exams||[]; nd.scores=nd.scores||{}; nd.plan=nd.plan||[]; nd.attendance=nd.attendance||[]; nd.groups=nd.groups||[]; nd.gacts=nd.gacts||[]; nd.acts=nd.acts||[]; nd.wallnews=nd.wallnews||[]; nd.quizzes=nd.quizzes||[]; nd.qscores=nd.qscores||{}; nd._rev=data.rev||nd._rev||0;
       if(!confirm('اطلاعات فعلی با فایل پشتیبان جایگزین شود؟')) return;
       db=nd; saveDb(); render(); toast('بازیابی انجام شد ✅');
     }catch(e){ toast('این فایل، پشتیبان معتبری نیست',true); }
@@ -1296,15 +1780,43 @@ function todayJalali(){
     return fa(enDigits(y)+'/'+pad(m)+'/'+pad(d));
   }catch(e){ try{ return new Date().toLocaleDateString('fa-IR'); }catch(e2){ return ''; } }
 }
+function faFold(s){ return String(s||'').replace(/آ/g,'ا'); }
+function matchSubject(t){
+  var found=[];
+  SUBJECTS.forEach(function(s){ var ns=normFa(s); if(ns&&t.indexOf(ns)>=0) found.push(s); });
+  if(found.length===1) return found[0];
+  if(found.length>1){
+    found.sort(function(a,b){ return normFa(b).length-normFa(a).length; });
+    if(normFa(found[0]).length>normFa(found[1]).length) return found[0];
+  }
+  return null;
+}
+function matchQuiz(t){
+  var tf=faFold(t), best=null, bm=0;
+  (db.quizzes||[]).forEach(function(q){ var tt=faFold(normFa(q.title)); if(tt&&tf.indexOf(tt)>=0&&tt.length>bm){ best=q; bm=tt.length; } });
+  if(best) return best;
+  var byId={};
+  (db.quizzes||[]).forEach(function(q){ var sb=faFold(normFa(q.subject)); if(sb&&tf.indexOf(sb)>=0) byId[q.id]=q; });
+  var arr=Object.keys(byId).map(function(k){ return byId[k]; });
+  if(arr.length===1) return arr[0];
+  if(arr.length>1){ var sorted=quizzesSorted().filter(function(q){ return byId[q.id]; }); return sorted[sorted.length-1]; }
+  return null;
+}
 function parseVoice(raw){
   var heard=String(raw||'').trim();
   var t=normFa(heard);
   if(!t) return {ok:false,reason:'empty',heard:heard};
   var hasScoreWord=t.indexOf('نمره')>=0;
-  var isAbsent=t.indexOf('غایب')>=0;
-  var isLate=t.indexOf('تاخیر')>=0;
+  function hasAny(list){ for(var i=0;i<list.length;i++) if(t.indexOf(list[i])>=0) return true; return false; }
+  var isAbsent=hasAny(['غایب','غیبت','نیومده','نیامده','امروز نیست','نیست امروز']);
+  var isLate=!isAbsent&&hasAny(['تاخیر','دیر اومده','دیراومده','دیر آمده','دیر کرده']);
   var isPresent=!isAbsent&&!isLate&&t.indexOf('حاضر')>=0;
-  var isDash=t.indexOf('داشبورد')>=0||t.indexOf('نشون')>=0||t.indexOf('نشان')>=0;
+  var isQuiz=t.indexOf('ازمونک')>=0||t.indexOf('آزمونک')>=0;
+  var isDash=t.indexOf('داشبورد')>=0||t.indexOf('نشون')>=0||t.indexOf('نشان')>=0||t.indexOf('کارتابل')>=0||t.indexOf('وضعیت')>=0;
+  /* همهٔ کلاس حاضرند */
+  if(!hasScoreWord&&(t.indexOf('همه حاضر')>=0||t.indexOf('همه اومدن')>=0||t.indexOf('همه آمدن')>=0||t.indexOf('همه هستند')>=0)){
+    return {ok:true,heard:heard,action:{type:'attall'}};
+  }
   if((isAbsent||isLate||isPresent)&&!hasScoreWord){
     var ms=matchStudents(t), mark=isAbsent?'a':(isLate?'l':'p');
     if(!ms.length) return {ok:false,reason:'nostudent',heard:heard};
@@ -1316,6 +1828,27 @@ function parseVoice(raw){
     if(!md.length) return {ok:false,reason:'nostudent',heard:heard};
     if(md.length>1) return {ok:false,reason:'ambstudent',heard:heard,candidates:md,pending:{type:'dash'}};
     return {ok:true,heard:heard,action:{type:'dash',studentId:md[0].id}};
+  }
+  if(isQuiz&&!matchStudents(t).length&&!findVoiceNumber(t)){
+    /* «آزمونک ریاضی» — ساخت آزمونک تازه برای امروز */
+    var subjV=matchSubject(t);
+    if(!subjV) return {ok:false,reason:'nosubject',heard:heard};
+    return {ok:true,heard:heard,action:{type:'newquiz',subject:subjV}};
+  }
+  if(isQuiz&&(hasScoreWord||findVoiceNumber(t))){
+    if(!(db.quizzes||[]).length) return {ok:false,reason:'noquiz',heard:heard};
+    var mq=matchStudents(t);
+    if(!mq.length) return {ok:false,reason:'nostudent',heard:heard};
+    var qz=matchQuiz(t);
+    if(!qz){ var qsl=quizzesSorted(); qz=qsl.length?qsl[qsl.length-1]:null; }
+    if(!qz) return {ok:false,reason:'noquiz',heard:heard};
+    var tq=t.split('ازمونک').join(' ').split('آزمونک').join(' ')
+      .split(normFa(qz.title)).join(' ').split(faFold(normFa(qz.title))).join(' ')
+      .split(normFa(mq[0].name+' '+mq[0].family)).join(' ').split(normFa(mq[0].family)).join(' ').split(normFa(mq[0].name)).join(' ');
+    var nq=findVoiceNumber(tq);
+    if(!nq) return {ok:false,reason:'nonum',heard:heard};
+    if(mq.length>1) return {ok:false,reason:'ambstudent',heard:heard,candidates:mq,pending:{type:'qscore',quizId:qz.id,value:nq.value}};
+    return {ok:true,heard:heard,action:{type:'qscore',studentId:mq[0].id,quizId:qz.id,value:nq.value}};
   }
   if(hasScoreWord||findVoiceNumber(t)){
     var mn=matchStudents(t);
@@ -1333,7 +1866,29 @@ function parseVoice(raw){
   }
   return {ok:false,reason:'unknown',heard:heard};
 }
-var voicePending=null, voiceAmbPending=null;
+var voicePending=null, voiceAmbPending=null, voiceExList=[], voiceSubjList=[];
+function voicePickSubjectIdx(i){
+  var s=voiceSubjList[i]; if(!s) return;
+  var a={type:'newquiz',subject:s};
+  voicePending=a;
+  showVoiceConfirm({heard:'',action:a});
+}
+function voiceGuideHtml(){
+  return '<div class="guide" style="margin-top:10px"><b>🎤 چی می‌تونم بگم؟</b><br>'
+    +'• «نمرهٔ سارا محمدی ریاضی هجده و نیم»<br>'
+    +'• «نمرهٔ آزمونک سارا محمدی ۱۸»<br>'
+    +'• «آزمونک ریاضی» (ساخت آزمونک تازه)<br>'
+    +'• «فاطمه رضایی غایبه» یا «سارا دیر اومده»<br>'
+    +'• «همه حاضرن»<br>'
+    +'• «کارتابل سارا محمدی» یا «وضعیت سارا»</div>';
+}
+function voiceExamples(){
+  var s=db.students[0];
+  if(!s) return ['نمرهٔ سارا محمدی ریاضی ۱۸','فاطمه رضایی غایبه','کارتابل سارا محمدی'];
+  var full=s.name+' '+s.family;
+  return ['نمرهٔ '+full+' ۱۸', full+' غایبه', 'کارتابل '+full];
+}
+function voiceExampleIdx(i){ var t=voiceExList[i]; if(t) handleVoiceText(t); }
 function handleVoiceText(text){
   var r=parseVoice(text);
   if(r.ok){ voicePending=r.action; voiceAmbPending=null; showVoiceConfirm(r); return r; }
@@ -1343,12 +1898,27 @@ function handleVoiceText(text){
     openDlg(dlgHead('🎤 فرمان صوتی')
       +'<p class="hint">گفتید: «'+esc(r.heard)+'»</p><p>کدام دانش‌آموز منظورتان بود؟</p>'
       +r.candidates.map(function(s){ return '<button class="btn soft block" style="margin:0 0 8px" onclick="voicePickStudent(\''+s.id+'\')">'+esc(s.name)+' '+esc(s.family)+'</button>'; }).join('')
+      +voiceGuideHtml()
+      +readyCmdsHtml()
       +'<div class="btnrow"><button class="btn soft" onclick="cancelVoice()">لغو</button></div>');
     return r;
   }
+  if(r.reason==='nosubject'){
+    voiceSubjList=SUBJECTS.slice();
+    openDlg(dlgHead('🎤 آزمونک جدید')
+      +'<p class="hint">گفتید: «'+esc(r.heard||'')+'»</p><p>درس آزمونک را پیدا نکردم — کدام درس؟</p>'
+      +'<div class="chips">'+voiceSubjList.map(function(x,i){ return '<button class="chip" onclick="voicePickSubjectIdx('+i+')">'+esc(x)+'</button>'; }).join('')+'</div>'
+      +voiceGuideHtml()
+      +'<div class="btnrow"><button class="btn soft" onclick="cancelVoice()">لغو</button></div>');
+    return r;
+  }
+  voiceExList=voiceExamples();
   openDlg(dlgHead('🎤 فرمان صوتی')
     +'<p>گفتید: «'+esc(r.heard||'')+'»</p>'
-    +'<p class="hint">متوجه نشدم 🤔 — مثلاً بگویید: «نمرهٔ سارا محمدی ریاضی هجده و نیم»، «فاطمه رضایی غایبه» یا «داشبورد سارا محمدی».</p>'
+    +'<p class="hint">متوجه نشدم 🤔 — یکی از این نمونه‌ها را بزنید تا همان اجرا شود، یا دوباره بگویید:</p>'
+    +'<div class="chips">'+voiceExList.map(function(x,i){ return '<button class="chip" onclick="voiceExampleIdx('+i+')">'+esc(x)+'</button>'; }).join('')+'</div>'
+    +voiceGuideHtml()
+    +readyCmdsHtml()
     +'<div class="btnrow"><button class="btn" onclick="closeDlg();startVoice()">🎤 دوباره تلاش کن</button><button class="btn soft" onclick="closeDlg()">بستن</button></div>');
   return r;
 }
@@ -1359,10 +1929,26 @@ function voicePickStudent(id){
   showVoiceConfirm({heard:'',action:a});
 }
 function showVoiceConfirm(r){
-  var a=r.action, s=studentById(a.studentId);
-  if(!s){ toast('دانش‌آموز پیدا نشد',true); return; }
+  var a=r.action, s=a.studentId?studentById(a.studentId):null;
+  if(a.type!=='attall'&&a.type!=='newquiz'&&!s){ toast('دانش‌آموز پیدا نشد',true); return; }
   var lines='';
-  if(a.type==='score'){
+  if(a.type==='newquiz'){
+    lines='<div class="kv"><span>کار</span><b>ساخت آزمونک جدید</b></div>'
+      +'<div class="kv"><span>درس</span><b>'+esc(a.subject)+'</b></div>'
+      +'<div class="kv"><span>عنوان</span><b>'+esc('آزمونک '+a.subject)+'</b></div>'
+      +'<div class="kv"><span>تاریخ</span><b>'+esc(todayJalali())+' (امروز)</b></div>'
+      +'<p class="hint">بعد از تأیید، جدول ثبت نتایج کل کلاس باز می‌شود.</p>';
+  }else if(a.type==='attall'){
+    lines='<div class="kv"><span>کار</span><b>حضور و غیاب امروز</b></div>'
+      +'<div class="kv"><span>وضعیت</span><b>همهٔ '+fa(db.students.length)+' دانش‌آموز حاضر</b></div>'
+      +'<div class="kv"><span>تاریخ جلسه</span><b>'+esc(todayJalali())+'</b></div>';
+  }else if(a.type==='qscore'){
+    var q=quizById(a.quizId);
+    lines='<div class="kv"><span>کار</span><b>ثبت نمرهٔ آزمونک</b></div>'
+      +'<div class="kv"><span>دانش‌آموز</span><b>'+esc(s.name)+' '+esc(s.family)+'</b></div>'
+      +'<div class="kv"><span>آزمونک</span><b>'+esc(q?q.title:'')+' ('+esc(q?q.subject:'')+')</b></div>'
+      +'<div class="kv"><span>نمره</span><b>'+faScore(a.value)+'</b></div>';
+  }else if(a.type==='score'){
     var e=examById(a.examId);
     lines='<div class="kv"><span>کار</span><b>ثبت نمره</b></div>'
       +'<div class="kv"><span>دانش‌آموز</span><b>'+esc(s.name)+' '+esc(s.family)+'</b></div>'
@@ -1390,6 +1976,25 @@ function confirmVoice(){
     if(!db.scores[a.examId]) db.scores[a.examId]={};
     db.scores[a.examId][a.studentId]=a.value;
     saveDb(); closeDlg(); render(); toast('نمره ثبت شد ✅');
+  }else if(a.type==='newquiz'){
+    if(!Array.isArray(db.quizzes)) db.quizzes=[];
+    var nq2={id:uid(),title:'آزمونک '+a.subject,subject:a.subject,date:todayJalali()};
+    db.quizzes.push(nq2);
+    saveDb(); closeDlg(); go('exams'); quizGrid(nq2.id); toast('آزمونک ساخته شد ✅');
+  }else if(a.type==='qscore'){
+    if(!db.qscores) db.qscores={};
+    if(!db.qscores[a.quizId]) db.qscores[a.quizId]={};
+    db.qscores[a.quizId][a.studentId]=a.value;
+    saveDb(); closeDlg(); render(); toast('نمرهٔ آزمونک ثبت شد ✅');
+  }else if(a.type==='attall'){
+    var da=todayJalali();
+    if(!Array.isArray(db.attendance)) db.attendance=[];
+    var sna=null;
+    db.attendance.forEach(function(x){ if(x.date===da) sna=x; });
+    if(!sna){ sna={id:uid(),date:da,marks:{}}; db.attendance.push(sna); }
+    if(!sna.marks) sna.marks={};
+    db.students.forEach(function(st){ sna.marks[st.id]='p'; });
+    saveDb(); closeDlg(); render(); toast('همه حاضر ثبت شدند ✅');
   }else if(a.type==='att'){
     var d=todayJalali();
     if(!Array.isArray(db.attendance)) db.attendance=[];
@@ -1402,6 +2007,38 @@ function confirmVoice(){
   }else if(a.type==='dash'){
     closeDlg(); openStudent(a.studentId);
   }
+}
+/* ===== فرمان‌های آماده: لمس = اجرا (بدون کارت تأیید؛ تأیید فقط برای صداست) ===== */
+function readyCmdsHtml(){
+  var chips='<button class="chip" onclick="cmdAllPresent()">✅ همه امروز حاضرن</button>'
+    +'<button class="chip" onclick="cmdTodayAttendance()">🗓 حضور و غیاب امروز</button>'
+    +SUBJECTS.map(function(s){ return '<button class="chip" onclick="cmdNewQuiz(\''+esc(s)+'\')">📝 آزمونک '+esc(s)+'</button>'; }).join('');
+  return '<div class="panel" style="margin-top:12px"><h3 style="margin-top:0">⚡ فرمان‌های آماده</h3>'
+    +'<p class="hint">با یک لمس و بدون میکروفون، همان کار فوری انجام می‌شود:</p><div class="chips">'+chips+'</div></div>';
+}
+function cmdAllPresent(){
+  closeDlg();
+  var d=todayJalali();
+  if(!Array.isArray(db.attendance)) db.attendance=[];
+  var sn=null;
+  db.attendance.forEach(function(x){ if(x.date===d) sn=x; });
+  if(!sn){ sn={id:uid(),date:d,marks:{}}; db.attendance.push(sn); }
+  if(!sn.marks) sn.marks={};
+  db.students.forEach(function(st){ sn.marks[st.id]='p'; });
+  saveDb(); render(); toast('✅ همهٔ کلاس امروز حاضر ثبت شدند');
+}
+function cmdTodayAttendance(){
+  closeDlg();
+  attDate=todayJalali();
+  go('attendance');
+  loadAttDay();
+}
+function cmdNewQuiz(subject){
+  closeDlg();
+  if(!Array.isArray(db.quizzes)) db.quizzes=[];
+  var q={id:uid(),title:'آزمونک '+subject,subject:subject,date:todayJalali()};
+  db.quizzes.push(q);
+  saveDb(); go('exams'); quizGrid(q.id); toast('آزمونک «'+q.title+'» ساخته شد ✅');
 }
 var recogObj=null, voiceListening=false;
 function voiceSupported(){ return !!(window.SpeechRecognition||window.webkitSpeechRecognition); }
