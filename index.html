@@ -203,6 +203,7 @@ table.grid td.num,table.grid th.num{text-align:center}
 .rep-hero{background:linear-gradient(135deg,#F5A623,#D98E04);color:#4A3205;border-radius:12px;padding:12px 14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;margin-bottom:10px;text-align:center}
 .rep-hero .l1{font-weight:800;font-size:15.5px}
 .rep-hero .l2{font-size:13px;margin-top:2px;opacity:.95}
+.rep-hero .l3{font-size:11px;margin-top:2px;opacity:.85}
 .rep-id{display:flex;align-items:center;gap:12px;margin:10px 0}
 .rep-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--line)}
 .rep-name{font-size:19px;font-weight:800}
@@ -214,6 +215,29 @@ table.grid td.num,table.grid th.num{text-align:center}
 .rep-h{font-size:14.5px;margin:14px 0 6px;color:var(--pri-d)}
 .rep-note{border:1.5px dashed #F5B301;border-radius:10px;padding:9px 12px;margin-top:12px;background:#FFFDF5;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:13.5px}
 .rep-foot{margin-top:14px;text-align:center;font-size:12.5px;color:var(--muted)}
+/* برگ عملکرد — گرافیک نمونهٔ تأییدشده: کارت‌های آماری رنگی، چیپ فعالیت، جداکنندهٔ کارنامه */
+.perf .rep-h{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--pri-d);margin:13px 0 7px}
+.perf .rep-h::before{content:'';width:5px;height:18px;border-radius:3px;background:linear-gradient(#F5B301,#F08A3C);flex:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.perf .pcards{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.perf .pcards.c3{grid-template-columns:repeat(3,1fr)}
+.perf .pcard{background:#fff;border:1.5px solid #F3D27A;border-top:4px solid #F5B301;border-radius:11px;padding:8px 6px;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.perf .pcard.g{border-top-color:#3FA34D}.perf .pcard.o{border-top-color:#F08A3C}.perf .pcard.r{border-top-color:#D9534F}
+.perf .pcard .n{font-size:20px;font-weight:800;color:#9C6603;line-height:1.3}
+.perf .pcard.g .n{color:#2E7D32}.perf .pcard.o .n{color:#D96F1E}.perf .pcard.r .n{color:#C0392B}
+.perf .pcard .l{font-size:11.5px;color:#7A6A45;margin-top:2px}
+.perf .pdates{font-size:12px;color:#7A6A45;margin-top:6px}
+.perf .psum{font-size:12.5px;color:#7A6A45;margin-top:6px}
+.perf .prow{font-size:12.5px;margin:3px 0}
+.perf .pacts{background:#fff;border:1.5px solid #F3D27A;border-radius:11px;padding:8px 14px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.perf .pact{font-size:13px;margin:4px 0;line-height:1.7}
+.perf .ptag{display:inline-block;background:#FFF3D6;border:1px solid #F3D27A;border-radius:20px;padding:0 8px;font-size:11px;color:#9C6603;margin-left:5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.perf .pdivider{display:flex;align-items:center;gap:10px;margin:14px 0 2px}
+.perf .pdivider::before,.perf .pdivider::after{content:'';flex:1;border-top:2px dashed #E8C96A}
+.perf .pdivider span{font-size:12px;color:#9C6603;font-weight:700;background:#FFF8E1;border:1px solid #F3D27A;border-radius:20px;padding:1px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.perf .psig{display:flex;justify-content:space-between;font-size:12.5px;color:#7A6A45;padding:0 10px;margin-top:4px}
+.perf .psig>div{width:170px;text-align:center}
+.perf .sigline{border-top:1.5px solid #CBB26A;margin:26px 0 5px}
+.lvlTag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .repPrev{border:1px solid var(--line);border-radius:14px;padding:12px;background:#FFFDF9;margin-bottom:6px}
 #printArea{display:none}
 /* ===== همگام‌سازی خودکار: نقطهٔ وضعیت و بنر تعارض ===== */
@@ -249,7 +273,7 @@ table.grid td.num,table.grid th.num{text-align:center}
 .themeBtn{display:flex;align-items:center;gap:9px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;color:var(--ink);min-height:48px}
 .themeBtn .dot{width:26px;height:26px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 2px rgba(255,255,255,.6),0 2px 6px rgba(0,0,0,.18)}
 .themeBtn.on{border-color:var(--pri);background:var(--chip)}
-@page{margin:12mm}
+@page{size:A4;margin:12mm}
 /* ===== نمونهٔ گرافیکی: ارتقای ظاهر (فقط CSS، بدون تغییر رفتار) ===== */
 @media screen{
 :root{
@@ -351,12 +375,45 @@ nav#tabbar button .ic{transition:transform .12s}
   #printArea{display:block!important;color:#000;font-size:13px}
   #printArea .perf-page{page-break-after:always}
   #printArea .perf-page:last-child{page-break-after:auto}
-  #printArea .perf-page.compact{page-break-inside:avoid;font-size:11.5px;line-height:1.5}
-  #printArea .perf-page.compact .rep-h{font-size:12.5px;margin:8px 0 4px}
-  #printArea .perf-page.compact .rep-hero{padding:6px 9px}
-  #printArea .perf-page.compact .rep-photo{width:52px;height:52px}
-  #printArea .perf-page.compact table.grid th,#printArea .perf-page.compact table.grid td{padding:2px 5px;font-size:11.5px}
+  #printArea .perf-page.compact{page-break-inside:avoid;font-size:11px;line-height:1.45}
+  #printArea .perf-page.compact .rep-h{font-size:12px;margin:6px 0 3px}
+  #printArea .perf-page.compact .rep-hero{padding:5px 8px;margin-bottom:6px}
+  #printArea .perf-page.compact .rep-hero .l1{font-size:13px}
+  #printArea .perf-page.compact .rep-hero .l2{font-size:11px}
+  #printArea .perf-page.compact .rep-hero .l3{font-size:10px}
+  #printArea .perf-page.compact .rep-id{margin:4px 0;gap:8px}
+  #printArea .perf-page.compact .rep-name{font-size:15px}
+  #printArea .perf-page.compact .rep-meta{font-size:11px}
+  #printArea .perf-page.compact .rep-photo{width:44px;height:44px}
+  #printArea .perf-page.compact .rep-foot{margin-top:6px;font-size:11px}
+  #printArea .perf-page.compact table.grid th,#printArea .perf-page.compact table.grid td{padding:1.5px 4px;font-size:11px}
+  #printArea .perf-page.compact table.kar2 th,#printArea .perf-page.compact table.kar2 td{padding:1.5px 4px;font-size:11px}
   #printArea .perf-page.compact p{margin:2px 0}
+  /* برگ عملکرد در چاپ: جدول‌ها با حاشیهٔ روشن نمونه و رنگ‌های دقیق */
+  #printArea .perf table th,#printArea .perf table td{border:1px solid #EBD28A}
+  #printArea .perf table th{background:#FFF3D6}
+  #printArea .perf-page.compact .rep-h{font-size:12.5px;margin:6px 0 3px}
+  #printArea .perf-page.compact .rep-h::before{height:14px}
+  #printArea .perf-page.compact .pcards{gap:5px}
+  #printArea .perf-page.compact .pcard{padding:4px 4px;border-radius:8px}
+  #printArea .perf-page.compact .pcard .n{font-size:16px}
+  #printArea .perf-page.compact .pcard .l{font-size:10px}
+  #printArea .perf-page.compact .pdates,#printArea .perf-page.compact .psum{font-size:10.5px;margin-top:3px}
+  #printArea .perf-page.compact .prow{font-size:10.5px;margin:1px 0}
+  #printArea .perf-page.compact .pacts{padding:4px 10px}
+  #printArea .perf-page.compact .pact{font-size:11px;margin:2px 0;line-height:1.5}
+  #printArea .perf-page.compact .pdivider{margin:7px 0 1px}
+  #printArea .perf-page.compact .sigline{margin:14px 0 4px}
+  #printArea .perf-page.compact .psig{font-size:11px;margin-top:2px}
+  #printArea .perf-page.compact .rep-note{margin-top:6px;padding:5px 9px;font-size:11px}
+  /* قانون سخت: برگ عملکرد هر دانش‌آموز تحت هیچ شرایطی بیشتر از یک صفحهٔ A4 نشود */
+  #printArea .perf-page.compact{height:272mm;max-height:272mm;overflow:hidden}
+  #printArea .perf-page.compact.dense{font-size:10px;line-height:1.35}
+  #printArea .perf-page.compact.xdense{font-size:9.5px;line-height:1.3}
+  #printArea .perf-page.compact.dense .pcard .n{font-size:14px}
+  #printArea .perf-page.compact.xdense .pcard .n{font-size:13px}
+  #printArea .perf-page.compact.dense .rep-h{margin:4px 0 2px}
+  #printArea .perf-page.compact.xdense .rep-h{margin:3px 0 2px}
   #printArea .phead{text-align:center;border:1.5px solid #444;border-radius:8px;padding:8px 10px;margin-bottom:10px}
   #printArea .phead .l1{font-weight:800;font-size:14.5px}
   #printArea .phead .l2{font-size:13px;margin-top:2px}
@@ -591,7 +648,7 @@ function render(){
 }
 function bindView(){
   var sb=document.querySelector('.searchbar'); if(sb){ sb.style.top='0px'; }
-  var q=document.getElementById('stuSearch'); if(q){ q.addEventListener('input',function(){ studentQuery=q.value; var pos=q.selectionStart; render(); var nq=document.getElementById('stuSearch'); if(nq){ nq.focus(); try{nq.setSelectionRange(pos,pos);}catch(e){} } }); }
+  var q=document.getElementById('stuSearch'); if(q){ q.addEventListener('input',function(){ studentQuery=q.value; if(typeof openStuAcc!=='undefined') openStuAcc=null; var pos=q.selectionStart; render(); var nq=document.getElementById('stuSearch'); if(nq){ nq.focus(); try{nq.setSelectionRange(pos,pos);}catch(e){} } }); }
   document.querySelectorAll('[data-subject-chip]').forEach(function(c){ c.addEventListener('click',function(){ chartSubject=c.getAttribute('data-subject-chip'); render(); }); });
   document.querySelectorAll('[data-stuchip]').forEach(function(c){ c.addEventListener('click',function(){ stuSubject=c.getAttribute('data-stuchip'); render(); }); });
   document.querySelectorAll('[data-att]').forEach(function(c){ c.addEventListener('click',function(){ var p=c.getAttribute('data-att').split(':'); if(attMarks) attMarks[p[0]]=p[1]; render(); }); });
@@ -743,7 +800,7 @@ function viewStudentDetail(id){
   var es=studentEntries(id), av=studentAvg(id), ca=allScoresAvg(), att=attStats(id);
   var na=needsAttention().filter(function(x){ return x.student.id===id; })[0];
   var diff=(av!==null&&ca!==null)?Math.round((av-ca)*100)/100:null;
-  var h='<button class="btn soft small" onclick="detailStudent=null;render()">← بازگشت به فهرست</button>';
+  var h='<button class="btn soft small" onclick="backToStuList()">← بازگشت به فهرست</button>';
   h+='<div class="heroStu">'+heroAvaHtml(s)
     +'<div style="flex:1;min-width:0"><div class="nm2">'+esc(s.name)+' '+esc(s.family)+'</div>'
     +'<div class="meta2">نام پدر: '+esc(s.father||'—')+' · کد دانش‌آموزی: '+esc(s.code||'—')+'</div>'
@@ -1687,79 +1744,105 @@ function studentGroupActs(sid){
   out.sort(function(x,y){ var ka=dateKey(x.date), kb=dateKey(y.date); if(ka<kb) return 1; if(ka>kb) return -1; return 0; });
   return out;
 }
-function descrepTableHtml(s,term){
+function descrepTableHtml(s,term,compact){
   var rec=descrepOf(term,s.id), subs=descrepSubjects(term);
-  return '<h3 class="rep-h">📋 کارنامهٔ توصیفی — نوبت '+(term===1?'اول':'دوم')+'</h3>'
+  var head='<h3 class="rep-h">📋 کارنامهٔ توصیفی — نوبت '+(term===1?'اول':'دوم')+'</h3>';
+  if(compact){
+    /* چیدمان فشرده: کارنامه دو ستونه (درس|سطح|درس|سطح) تا برگ در یک صفحهٔ A4 جا شود */
+    var half=Math.ceil(subs.length/2), rows='';
+    for(var i=0;i<half;i++){
+      var a=subs[i], b=subs[i+half];
+      rows+='<tr><td>'+esc(a)+'</td><td>'+lvlTag(rec[a])+'</td>'
+        +(b?'<td>'+esc(b)+'</td><td>'+lvlTag(rec[b])+'</td>':'<td></td><td></td>')+'</tr>';
+    }
+    return head+'<table class="grid kar2"><tr><th>درس</th><th>سطح</th><th>درس</th><th>سطح</th></tr>'+rows+'</table>';
+  }
+  return head
     +'<table class="grid"><tr><th>درس</th><th>سطح</th></tr>'
-    +subs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlLabel(rec[sub])+'</td></tr>'; }).join('')+'</table>';
+    +subs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlTag(rec[sub])+'</td></tr>'; }).join('')+'</table>';
 }
 function perfCapLines(lines,cfg,cap){
   if(perfCompact(cfg)&&lines.length>cap) return lines.slice(0,cap).join('')+'<p style="margin:0">…</p>';
   return lines.join('');
 }
+function truncTxt(t,n){ t=String(t||''); return t.length>n?t.slice(0,n)+'…':t; }
 function perfSheetHtml(s,cfg){
   cfg=cfg||perfCfg();
+  var cp=perfCompact(cfg);
   var att=perfAtt(s.id,cfg.months), qz=perfQuizzes(s.id,cfg.months);
   var mTag=perfTag(cfg);
+  var ptoday=''; try{ ptoday=new Date().toLocaleDateString('fa-IR'); }catch(e){}
   var h='<div class="rep perf">'
-    +'<div class="rep-hero"><div class="l1">دبستان دخترانه حافظ — کلاس ۶/۴ — سال تحصیلی ۱۴۰۵ تا ۱۴۰۶</div><div class="l2">برگ عملکرد دانش‌آموز · '+perfPeriodLabel(cfg)+' · آموزگار: مریم خانمحمدی</div></div>';
+    +'<div class="rep-hero"><div class="l1">دبستان دخترانه حافظ — کلاس ۶/۴ — سال تحصیلی ۱۴۰۵ تا ۱۴۰۶</div><div class="l2">برگ عملکرد دانش‌آموز · '+perfPeriodLabel(cfg)+' · آموزگار: مریم خانمحمدی</div>'+(ptoday?'<div class="l3">تاریخ چاپ: '+esc(ptoday)+'</div>':'')+'</div>';
   if(cfg.blocks.id){
-    h+='<div class="rep-id">'+(s.photo?'<img class="rep-photo" src="'+s.photo+'" alt="">':'')
+    h+='<h3 class="rep-h">۱) مشخصات دانش‌آموز</h3>'
+      +'<div class="rep-id">'+(s.photo?'<img class="rep-photo" src="'+s.photo+'" alt="">':'')
       +'<div><div class="rep-name">'+esc(s.name)+' '+esc(s.family)+'</div><div class="rep-meta">نام پدر: '+esc(s.father||'—')+' · کد دانش‌آموزی: '+esc(s.code||'—')+'</div></div></div>';
   }
   if(cfg.blocks.att){
-    h+='<h3 class="rep-h">🗓 غیبت و حضور'+mTag+'</h3>';
+    h+='<h3 class="rep-h">۲) حضور و غیاب'+mTag+'</h3>';
     if(att.total){
-      h+='<p style="margin:0 0 6px;font-size:15px"><b>'+fa(att.a)+' روز غیبت</b> · '+fa(att.l)+' روز تأخیر · درصد حضور: <b>'+(att.pct===null?'—':fa(att.pct)+'٪')+'</b></p>'
-        +'<table class="grid"><tr><th>شاخص</th><th class="num">تعداد</th></tr>'
-        +'<tr><td>جلسه‌های ثبت‌شده</td><td class="num">'+fa(att.total)+'</td></tr>'
-        +'<tr><td>روزهای حضور</td><td class="num">'+fa(att.p)+'</td></tr>'
-        +'<tr><td>روزهای غیبت</td><td class="num">'+fa(att.a)+'</td></tr>'
-        +'<tr><td>روزهای تأخیر</td><td class="num">'+fa(att.l)+'</td></tr></table>'
-        +(att.absDates.length?'<p style="margin:8px 0 0">تاریخ‌های غیبت: '+att.absDates.map(function(d){ return esc(d); }).join('، ')+'</p>':'')
-        +(att.lateDates.length?'<p style="margin:4px 0 0">تاریخ‌های تأخیر: '+att.lateDates.map(function(d){ return esc(d); }).join('، ')+'</p>':'');
+      h+='<div class="pcards">'
+        +'<div class="pcard r"><div class="n">'+fa(att.a)+' </div><div class="l">روز غیبت</div></div>'
+        +'<div class="pcard o"><div class="n">'+fa(att.l)+' </div><div class="l">روز تأخیر</div></div>'
+        +'<div class="pcard g"><div class="n">'+(att.pct===null?'—':fa(att.pct)+'٪')+'</div><div class="l">درصد حضور</div></div>'
+        +'<div class="pcard"><div class="n">'+fa(att.total)+'</div><div class="l">روزهای آموزشی</div></div>'
+        +'</div>'
+        +(att.absDates.length?'<div class="pdates">تاریخ‌های غیبت: '+att.absDates.map(function(d){ return esc(d); }).join('، ')+'</div>':'')
+        +(att.lateDates.length?'<div class="pdates">تاریخ‌های تأخیر: '+att.lateDates.map(function(d){ return esc(d); }).join('، ')+'</div>':'');
     } else h+='<p>در این بازه جلسهٔ حضور و غیابی ثبت نشده است.</p>';
   }
   if(cfg.blocks.quiz){
-    h+='<h3 class="rep-h">❓ پرسش‌ها و میانگین'+mTag+'</h3>'
-      +'<p style="margin:0 0 6px">در <b>'+fa(qz.taken)+'</b> پرسش از مجموع <b>'+fa(qz.total)+'</b> پرسش برگزارشده شرکت کرده است · میانگین نمرات پرسش‌ها: <b>'+faLevel(qz.avg)+'</b></p>';
+    h+='<h3 class="rep-h">۳) پرسش‌ها و میانگین'+mTag+'</h3>'
+      +'<div class="pcards c3">'
+      +'<div class="pcard"><div class="n">'+fa(qz.total)+'</div><div class="l">پرسش و آزمونک برگزارشده</div></div>'
+      +'<div class="pcard g"><div class="n">'+fa(qz.taken)+'</div><div class="l">شرکت‌کرده</div></div>'
+      +'<div class="pcard"><div class="n" style="font-size:16px">'+faLevel(qz.avg)+'</div><div class="l">میانگین سطح پرسش‌ها</div></div>'
+      +'</div>'
+      +'<div class="psum">در <b>'+fa(qz.taken)+'</b> پرسش از مجموع <b>'+fa(qz.total)+'</b> پرسش برگزارشده شرکت کرده است · میانگین نمرات پرسش‌ها: <b>'+faLevel(qz.avg)+'</b></div>';
     if(qz.takenList.length){
       var rows=qz.takenList, more=false;
-      if(perfCompact(cfg)&&rows.length>6){ rows=rows.slice(0,6); more=true; }
-      h+='<table class="grid"><tr><th>پرسش</th><th>درس</th><th>تاریخ</th><th class="num">سطح</th></tr>'
-        +rows.map(function(x){ return '<tr><td>'+esc(x.quiz.title)+'</td><td>'+esc(x.quiz.subject)+'</td><td>'+esc(x.quiz.date||'—')+'</td><td class="num"><b>'+scoreLabel(x.score)+'</b></td></tr>'; }).join('')+'</table>'
-        +(more?'<p style="margin:4px 0 0">…</p>':'');
+      if(cp&&rows.length>4){ rows=rows.slice(0,4); more=true; }
+      h+=rows.map(function(x){ return '<p class="prow">❓ '+esc(cp?truncTxt(x.quiz.title,40):x.quiz.title)+' · '+esc(x.quiz.subject)+' · '+esc(x.quiz.date||'—')+' · '+lvlTag(x.score)+'</p>'; }).join('')
+        +(more?'<p class="prow">…</p>':'');
     }
   }
   if(cfg.blocks.act){
-    h+='<h3 class="rep-h">🌻 فعالیت‌ها'+mTag+'</h3>';
-    var parts=[];
+    h+='<h3 class="rep-h">۴) فعالیت‌ها'+mTag+'</h3>';
+    var entries=[];
     if(cfg.actKind==='all'||cfg.actKind==='special'){
-      var sa=studentActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); });
-      if(sa.length) parts.push('<p style="margin:0 0 4px"><b>فعالیت‌ها و کارهای ویژه:</b></p>'+perfCapLines(sa.map(function(a){ return '<p style="margin:0 0 3px">⭐ '+esc(a.date||'')+' — '+esc(a.title)+(a.note?' · '+esc(a.note):'')+'</p>'; }),cfg,4));
+      studentActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); }).forEach(function(a){ entries.push({d:a.date||'', chip:'ویژه', txt:esc(a.title)+(a.date?' · '+esc(a.date):'')+(a.note?' · '+esc(cp?truncTxt(a.note,60):a.note):'')}); });
     }
     if(cfg.actKind==='all'||cfg.actKind==='group'){
-      var ga=studentGroupActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); });
-      if(ga.length) parts.push('<p style="margin:6px 0 4px"><b>فعالیت‌های گروهی:</b></p>'+perfCapLines(ga.map(function(a){ return '<p style="margin:0 0 3px">👥 '+esc(a.group)+' — '+esc(a.title)+(a.date?' · '+esc(a.date):'')+(a.score!==null?' · سطح: '+lvlLabel(a.score):'')+'</p>'; }),cfg,4));
+      studentGroupActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); }).forEach(function(a){ entries.push({d:a.date||'', chip:'گروهی', txt:esc(a.group)+' — '+esc(a.title)+(a.date?' · '+esc(a.date):'')+(a.score!==null?' · سطح: '+lvlLabel(a.score):'')}); });
     }
     if(cfg.actKind==='all'||cfg.actKind==='wall'){
-      var wn=wallForStudent(s.id).filter(function(w){ return inMonths(w.date,cfg.months); });
-      if(wn.length) parts.push('<p style="margin:6px 0 4px"><b>روزنامه دیواری:</b></p>'+perfCapLines(wn.map(function(w){ return '<p style="margin:0 0 3px">📰 روزنامه دیواری — '+esc(w.issueTitle)+': '+esc(w.head)+'</p>'; }),cfg,4));
+      wallForStudent(s.id).filter(function(w){ return inMonths(w.date,cfg.months); }).forEach(function(w){ entries.push({d:w.date||'', chip:'روزنامه دیواری', txt:'روزنامهٔ «'+esc(w.issueTitle)+'» — '+esc(w.head)}); });
     }
-    h+=parts.length?parts.join(''):'<p>در این بازه فعالیتی ثبت نشده است.</p>';
+    entries.sort(function(x,y){ var ka=dateKey(x.d), kb=dateKey(y.d); if(ka<kb) return 1; if(ka>kb) return -1; return 0; });
+    if(entries.length){
+      var show=entries, emore=false;
+      if(cp&&show.length>5){ show=show.slice(0,5); emore=true; }
+      h+='<div class="pacts">'+show.map(function(e){ return '<div class="pact"><span class="ptag">'+e.chip+'</span>'+e.txt+'</div>'; }).join('')+(emore?'<div class="pact">…</div>':'')+'</div>';
+    } else h+='<p>در این بازه فعالیتی ثبت نشده است.</p>';
   }
   if(cfg.blocks.beh){
     var pb=perfBehavior(s.id,cfg.months);
-    h+='<h3 class="rep-h">🚦 انضباط و رفتار'+mTag+'</h3>'
-      +'<p style="margin:0 0 6px">تعداد موارد انضباطی در بازه: <b>'+fa(pb.disc.length)+'</b> — و موارد مثبت: <b>'+fa(pb.pos.length)+'</b></p>';
+    h+='<h3 class="rep-h">۵) انضباط و رفتار'+mTag+'</h3>'
+      +'<div class="psum">تعداد موارد انضباطی در بازه: <b>'+fa(pb.disc.length)+'</b> — و موارد مثبت: <b>'+fa(pb.pos.length)+'</b></div>';
     if(pb.disc.length){
-      var dlines=pb.disc.map(function(b){ return '<p style="margin:0 0 3px">⚠️ '+esc(b.date||'')+' — '+esc(b.tag)+(b.note?' · '+esc(b.note):'')+'</p>'; });
-      h+=perfCapLines(dlines,cfg,4);
+      var dshow=pb.disc, dmore=false;
+      if(cp&&dshow.length>3){ dshow=dshow.slice(0,3); dmore=true; }
+      h+=dshow.map(function(b){ return '<p class="prow">⚠️ '+esc(b.date||'')+' — '+esc(b.tag)+(b.note?' · '+esc(cp?truncTxt(b.note,60):b.note):'')+'</p>'; }).join('')
+        +(dmore?'<p class="prow">…</p>':'');
     } else h+='<p>مورد انضباطی در این بازه ثبت نشده است. 👏</p>';
   }
   if(cfg.blocks.kar){
-    h+=descrepTableHtml(s,cfg.term);
+    h+='<div class="pdivider"><span>نیمهٔ دوم: کارنامه</span></div>'
+      +descrepTableHtml(s,cfg.term,cp);
   }
+  if(s.parentNote) h+='<div class="rep-note"><b>توضیحات معلم:</b> '+esc(cp?truncTxt(s.parentNote,140):s.parentNote)+'</div>';
+  if(cfg.blocks.kar) h+='<div class="psig"><div><div class="sigline"></div>امضای آموزگار<br>مریم خانمحمدی</div><div><div class="sigline"></div>امضای مدیر</div></div>';
   h+='<div class="rep-foot">با آرزوی موفقیت و سربلندی برای '+esc(s.name)+' عزیز 🌻</div>';
   h+='</div>';
   return h;
@@ -1772,19 +1855,28 @@ function perfSheet(id){
     +'<div class="btnrow"><button class="btn" onclick="printPerf(\''+s.id+'\')">🖨 چاپ عملکرد</button><button class="btn soft" onclick="closeDlg()">بستن</button></div>'
     +'<p class="hint">بازه: '+perfPeriodLabel(cfg)+' · کارنامه: نوبت '+(cfg.term===1?'اول':'دوم')+' · چیدمان و بخش‌های گزارش از بخش «عملکرد» صفحهٔ آزمون‌ها تنظیم می‌شود.</p>');
 }
+function perfLoad(s,cfg){
+  var att=perfAtt(s.id,cfg.months), qz=perfQuizzes(s.id,cfg.months), pb=perfBehavior(s.id,cfg.months);
+  var na=studentActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); }).length
+    +studentGroupActs(s.id).filter(function(a){ return inMonths(a.date,cfg.months); }).length
+    +wallForStudent(s.id).filter(function(w){ return inMonths(w.date,cfg.months); }).length;
+  return att.absDates.length+att.lateDates.length+qz.taken+na+pb.disc.length;
+}
 function perfPageWrap(s,cfg){
-  return '<div class="perf-page'+(perfCompact(cfg)?' compact':'')+'">'+perfSheetHtml(s,cfg)+'</div>';
+  var cls='perf-page';
+  if(perfCompact(cfg)){ cls+=' compact'; var L=perfLoad(s,cfg); if(L>14) cls+=' dense'; if(L>24) cls+=' xdense'; }
+  return '<div class="'+cls+'">'+perfSheetHtml(s,cfg)+'</div>';
 }
 function printPerf(id){
   var s=studentById(id); if(!s) return;
   var cfg=perfCfg();
-  printDoc('برگ عملکرد — '+s.name+' '+s.family, perfPageWrap(s,cfg));
+  printDoc('برگ عملکرد — '+s.name+' '+s.family, perfPageWrap(s,cfg), {noHead:true});
 }
 function printAllPerf(){
   if(!db.students.length){ toast('هنوز دانش‌آموزی ثبت نشده است',true); return; }
   var cfg=perfCfg();
   var inner=db.students.map(function(s){ return perfPageWrap(s,cfg); }).join('');
-  printDoc('برگ عملکرد همهٔ دانش‌آموزان — '+perfPeriodLabel(cfg), inner);
+  printDoc('برگ عملکرد همهٔ دانش‌آموزان — '+perfPeriodLabel(cfg), inner, {noHead:true});
 }
 
 /* ===== ZIP ساده (STORE، بدون فشرده‌سازی) + کارت PNG عملکرد برای فایل ZIP ===== */
@@ -2087,6 +2179,9 @@ function studentPopup(id){
 }
 /* ===== کرکرهٔ فهرست دانش‌آموزان: فقط یک ردیف هم‌زمان باز است ===== */
 var openStuAcc=null;
+/* فهرست دانش‌آموزان همیشه بسته شروع می‌شود: ورود به تب (go)، تایپ در جستجو و بازگشت از داشبورد، کرکره را می‌بندند */
+function backToStuList(){ detailStudent=null; openStuAcc=null; render(); }
+window.addEventListener('pageshow',function(e){ if(e&&e.persisted){ openStuAcc=null; if(curTab==='students'&&!detailStudent) render(); } });
 function toggleStuAcc(id){
   openStuAcc=(openStuAcc===id)?null:id;
   render();
@@ -2514,10 +2609,12 @@ function exportExcel(){
 }
 
 /* ===== چاپ ===== */
-function printDoc(title,inner){
+function printDoc(title,inner,opts){
   var today=''; try{ today=new Date().toLocaleDateString('fa-IR'); }catch(e){}
   var pa=document.getElementById('printArea');
-  pa.innerHTML='<div class="phead"><div class="l1">دبستان دخترانه حافظ — کلاس ۶/۴ — سال تحصیلی ۱۴۰۵ تا ۱۴۰۶</div><div class="l2">'+esc(title)+'</div><div class="l3">تاریخ چاپ: '+esc(today)+'</div></div>'+inner;
+  /* opts.noHead: خودِ برگ سربرگ خودش را دارد (مثل برگ عملکرد با هیروی نارنجی)؛ سربرگ عمومی چاپ نباید رویش بیاید تا دو سربرگ نشود */
+  if(opts&&opts.noHead){ pa.innerHTML=inner; }
+  else pa.innerHTML='<div class="phead"><div class="l1">دبستان دخترانه حافظ — کلاس ۶/۴ — سال تحصیلی ۱۴۰۵ تا ۱۴۰۶</div><div class="l2">'+esc(title)+'</div><div class="l3">تاریخ چاپ: '+esc(today)+'</div></div>'+inner;
   window.print();
 }
 function printStudents(){
