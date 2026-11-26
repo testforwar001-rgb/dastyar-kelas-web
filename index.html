@@ -436,11 +436,11 @@ nav#tabbar button .ic{transition:transform .12s}
 <main id="app"></main>
 <nav id="tabbar">
   <button data-tab="dash"><span class="ic">🏠</span>داشبورد</button>
-  <button data-tab="students"><span class="ic">👧</span>دانش‌آموزان</button>
-  <button data-tab="exams"><span class="ic">📝</span>آزمون‌ها</button>
   <button data-tab="attendance"><span class="ic">🗓</span>حضور و غیاب</button>
   <button data-tab="groups"><span class="ic">👥</span>گروه‌ها</button>
   <button data-tab="plan"><span class="ic">📚</span>برنامهٔ درسی</button>
+  <button data-tab="exams"><span class="ic">📝</span>آزمون‌ها</button>
+  <button data-tab="students"><span class="ic">👧</span>دانش‌آموزان</button>
   <button data-tab="settings"><span class="ic">⚙️</span>تنظیمات</button>
 </nav>
 <div id="modalWrap"><div class="scrim" onclick="closeDlg()"></div><div class="sheet" id="sheet"></div></div>
@@ -492,7 +492,7 @@ var db=loadDb();
 var syncDirty=false, syncConflict=false, syncBusy=false;
 try{ syncDirty=localStorage.getItem('dk_dirty')==='1'; }catch(e){}
 function markDirty(){ syncDirty=true; try{localStorage.setItem('dk_dirty','1');}catch(e){} updateSyncDot(); }
-function saveDb(){ try{localStorage.setItem(LS_DB,JSON.stringify(db)); markDirty();}catch(e){toast('خطا در ذخیره‌سازی',true);} }
+function saveDb(){ dlgCommit=null; try{localStorage.setItem(LS_DB,JSON.stringify(db)); markDirty();}catch(e){toast('خطا در ذخیره‌سازی',true);} }
 function dbPayload(){ return {students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{},behavior:db.behavior||[],meetings:db.meetings||[],descrep:db.descrep||{},costs:db.costs||[],_lv:1}; }
 function syncCfg(){ try{return JSON.parse(localStorage.getItem(LS_CFG)||'{}');}catch(e){return {};} }
 function saveSyncCfg(c){ try{localStorage.setItem(LS_CFG,JSON.stringify(c));}catch(e){} }
@@ -651,7 +651,7 @@ function bindView(){
   var q=document.getElementById('stuSearch'); if(q){ q.addEventListener('input',function(){ studentQuery=q.value; if(typeof openStuAcc!=='undefined') openStuAcc=null; var pos=q.selectionStart; render(); var nq=document.getElementById('stuSearch'); if(nq){ nq.focus(); try{nq.setSelectionRange(pos,pos);}catch(e){} } }); }
   document.querySelectorAll('[data-subject-chip]').forEach(function(c){ c.addEventListener('click',function(){ chartSubject=c.getAttribute('data-subject-chip'); render(); }); });
   document.querySelectorAll('[data-stuchip]').forEach(function(c){ c.addEventListener('click',function(){ stuSubject=c.getAttribute('data-stuchip'); render(); }); });
-  document.querySelectorAll('[data-att]').forEach(function(c){ c.addEventListener('click',function(){ var p=c.getAttribute('data-att').split(':'); if(attMarks) attMarks[p[0]]=p[1]; render(); }); });
+  document.querySelectorAll('[data-att]').forEach(function(c){ c.addEventListener('click',function(){ var p=c.getAttribute('data-att').split(':'); if(attMarks){ attMarks[p[0]]=p[1]; commitAttSilent(); } render(); }); });
 }
 
 /* ===== داشبورد ===== */
@@ -738,14 +738,32 @@ function viewDash(){
 var sheet=document.getElementById('sheet'), modalWrap=document.getElementById('modalWrap');
 /* پوستهٔ فلکس: صفحه اسکرول نمی‌شود (main اسکرول داخلی دارد) و پوشش پاپ‌آپ دقیقاً هم‌اندازهٔ پوسته است؛
    پس برگه همیشه کامل داخل نماست — بدون قفل اسکرول بدنه و بدون visualViewport. */
+/* ذخیرهٔ خودکار هنگام خروج: هر پنجره‌ای که ورودی مرحله‌ای دارد (شبکهٔ نمره، چیپ‌های کارنامه، فرم‌ها)
+   یک dlgCommit ثبت می‌کند؛ بستن پنجره (بستن/✕/لمس بیرون)، بازشدن پنجرهٔ دیگر و رفرش صفحه، اول آن را اجرا می‌کند تا چیزی نپرد.
+   ذخیرهٔ صریح با دکمهٔ «ذخیره» هم dlgCommit را از saveDb پاک می‌کند تا دوباره‌کاری (رکورد تکراری) پیش نیاید. */
+var dlgCommit=null;
+function runDlgCommit(){ var c=dlgCommit; dlgCommit=null; if(c){ try{ c(); }catch(e){} } }
 function openDlg(html){
+  runDlgCommit();
   sheet.innerHTML='<div class="sheetwrap">'+html+'</div>';
   modalWrap.classList.add('open');
   sheet.scrollTop=0;
 }
 function closeDlg(){
+  runDlgCommit();
   modalWrap.classList.remove('open');
   sheet.innerHTML='';
+}
+window.addEventListener('beforeunload',function(){ runDlgCommit(); });
+/* اجرای بی‌صدای تابع ذخیرهٔ یک فرم برای خروج: خطای اعتبارسنجی (فیلد اجباری خالی) یعنی چیزی ذخیره نمی‌شود؛
+   بستن و پیامِ خودِ تابع در این مسیر خفه می‌شوند تا پنجره با منطق closeDlg بسته شود. */
+function silentFormSave(fn){
+  return function(){
+    var oc=closeDlg, ot=toast;
+    closeDlg=function(){}; toast=function(){};
+    try{ fn(); }catch(e){}
+    closeDlg=oc; toast=ot;
+  };
 }
 function dlgHead(t){ return '<button class="btn soft small x" onclick="closeDlg()">✕</button><h3>'+t+'</h3>'; }
 function field(id,label,val,ph,type){ return '<label class="f" for="'+id+'">'+label+'</label><input id="'+id+'" type="'+(type||'text')+'" value="'+esc(val||'')+'" placeholder="'+esc(ph||'')+'">'; }
@@ -808,7 +826,7 @@ function viewStudentDetail(id){
     +(function(){ var mg=groupsOfStudent(id); return mg.length?'<div class="meta2">👥 گروه‌ها: '+mg.map(function(g){ return esc(g.name); }).join('، ')+'</div>':''; })()
     +(na?'<div style="margin-top:6px"><span class="badge red">💗 نیازمند توجه: '+esc(na.reasons.join('، '))+'</span></div>':'<div style="margin-top:6px"><span class="badge green">وضعیت کلی خوب است 🌻</span></div>')
     +'</div></div>';
-  h+='<div class="btnrow" style="margin:0 0 8px"><button class="btn" onclick="activityReport(\''+s.id+'\')">🖨 گزارش فعالیت</button><button class="btn soft" onclick="parentReport(\''+s.id+'\')">📄 گزارش والدین</button></div>';
+  h+='<div class="btnrow" style="margin:0 0 8px"><button class="btn" onclick="activityReport(\''+s.id+'\')">🖨 گزارش فعالیت</button><button class="btn soft" onclick="perfSheet(\''+s.id+'\')">📊 عملکرد</button><button class="btn soft" onclick="parentReport(\''+s.id+'\')">📄 گزارش والدین</button></div>';
   h+='<div class="btnrow" style="margin:0 0 8px"><button class="btn soft" onclick="parentMsg(\''+s.id+'\')">💬 پیام آماده برای والدین</button><button class="btn soft" onclick="descrepForm(\''+s.id+'\',1)">📋 کارنامهٔ توصیفی</button></div>';
   h+='<div class="btnrow" style="margin:0 0 12px"><button class="btn ghost" onclick="studentForm(\''+s.id+'\')">✏️ ویرایش</button><button class="btn danger" onclick="delStudent(\''+s.id+'\')">🗑 حذف</button></div>';
   var diffTxt='—', diffCls='';
@@ -956,6 +974,7 @@ function studentForm(id){
     +'<label class="f">عکس دانش‌آموز</label><div class="photobox"><img id="f_photoPrev" alt="عکس دانش‌آموز" '+(formPhoto?'src="'+formPhoto+'"':'style="display:none"')+'><div><input type="file" id="f_photo" accept="image/*" onchange="onPhotoPick(this)" style="border:none;padding:4px 0"><button type="button" class="btn soft small" id="f_photoRm" style="'+(formPhoto?'':'display:none')+'" onclick="removePhoto()">حذف عکس</button></div></div>'
     +'<label class="f" for="f_note">یادداشت</label><textarea id="f_note" rows="2" placeholder="نکته‌ای دربارهٔ دانش‌آموز…">'+esc(s?s.note||'':'')+'</textarea>'
     +'<div class="btnrow"><button class="btn" onclick="saveStudent('+(s?'\''+s.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveStudent(s?s.id:null); });
   setTimeout(function(){ var i=document.getElementById('f_name'); if(i) i.focus(); },60);
 }
 function saveStudent(id){
@@ -1014,6 +1033,7 @@ function examForm(id){
     +field('e_subfree','یا نام درس دلخواه',e&&(SUBJECTS.indexOf(e.subject)<0)?e.subject:'','اگر در فهرست نیست، اینجا بنویسید')
     +dateField('e_date','تاریخ',e?e.date:'')
     +'<div class="btnrow"><button class="btn" onclick="saveExam('+(e?'\''+e.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveExam(e?e.id:null); });
 }
 function saveExam(id){
   var title=document.getElementById('e_title').value.trim();
@@ -1053,14 +1073,20 @@ function scoreGrid(examId){
     return '<div class="srow"><span class="sname">'+esc(s.name)+' '+esc(s.family)+'</span>'+lvlChipsHtml('score',s.id,gridSel[s.id])+'</div>';
   }).join('');
   openDlg(dlgHead('📝 ثبت سطح‌ها — '+esc(e.title))
-    +'<p class="hint">'+esc(e.subject)+' · '+esc(e.date||'')+' · برای هر دانش‌آموز یک سطح بزنید؛ لمس دوبارهٔ همان سطح = شرکت نکرده</p>'
+    +'<p class="hint">'+esc(e.subject)+' · '+esc(e.date||'')+' · برای هر دانش‌آموز یک سطح بزنید؛ لمس دوبارهٔ همان سطح = شرکت نکرده. با بستن پنجره هم خودکار ذخیره می‌شود.</p>'
     +'<button class="btn soft block voiceBtn" style="margin:0 0 10px" onclick="startVoice()">🎤 فرمان صوتی</button>'
     +'<div class="scoregrid">'+rows+'</div>'
     +'<div class="btnrow"><button class="btn" onclick="saveScores(\''+examId+'\')">💾 ذخیرهٔ نمرات</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  var sel=gridSel;
+  dlgCommit=function(){ writeGridScores(examId,sel); saveDb(); };
+}
+function writeGridScores(examId,sel){
+  if(!sel) return;
+  var m=db.scores[examId]||(db.scores[examId]={});
+  db.students.forEach(function(s){ if(sel[s.id]) m[s.id]=sel[s.id]; else delete m[s.id]; });
 }
 function saveScores(examId){
-  var m=db.scores[examId]||(db.scores[examId]={});
-  db.students.forEach(function(s){ if(gridSel&&gridSel[s.id]) m[s.id]=gridSel[s.id]; else delete m[s.id]; });
+  writeGridScores(examId,gridSel);
   gridSel=null;
   saveDb(); closeDlg(); render(); toast('سطح‌ها ذخیره شد ✅');
 }
@@ -1097,6 +1123,7 @@ function planForm(id){
     +'<label class="f" for="p_subject">درس</label><select id="p_subject">'+subjectOptions(p?p.subject:'ریاضی')+'</select>'
     +field('p_topic','مبحث *',p?p.topic:'','مثلاً: کسرها — جمع و تفریق')
     +'<div class="btnrow"><button class="btn" onclick="savePlan('+(p?'\''+p.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ savePlan(p?p.id:null); });
 }
 function savePlan(id){
   var topic=document.getElementById('p_topic').value.trim();
@@ -1111,7 +1138,7 @@ function delPlan(id){ if(!confirm('این مبحث حذف شود؟')) return; db
 
 /* ===== حضور و غیاب ===== */
 function viewAttendance(){
-  var h='<p class="guide">💡 راهنما: روی کادر تاریخ بزنید و روز را از تقویم شمسی انتخاب کنید تا فهرست کلاس برای همان روز بیاید؛ برای هر دانش‌آموز وضعیت حاضر، غایب یا تأخیر را مشخص کنید و در پایان «ثبت حضور و غیاب» را بزنید. پیش‌فرض همه حاضرند.</p>';
+  var h='<p class="guide">💡 راهنما: روی کادر تاریخ بزنید و روز را از تقویم شمسی انتخاب کنید تا فهرست کلاس برای همان روز بیاید؛ برای هر دانش‌آموز وضعیت حاضر، غایب یا تأخیر را مشخص کنید — هر وضعیت همان لحظه خودکار ذخیره می‌شود. پیش‌فرض همه حاضرند.</p>';
   h+=voiceBtnHtml();
   h+='<div class="panel"><h3>🗓 جلسهٔ حضور و غیاب</h3>'
     +'<label class="f" for="att_date">تاریخ جلسه</label><input id="att_date" class="calField" readonly value="'+esc(attDate)+'" placeholder="📅 برای انتخاب تاریخ بزنید" onclick="openCal(\'att_date\',\'loadAttDay\')">'
@@ -1158,13 +1185,19 @@ function editAttSession(id){
   db.students.forEach(function(s){ attMarks[s.id]=(sn.marks&&sn.marks[s.id])||'p'; });
   render(); scrollMainTop();
 }
-function saveAttDay(){
-  if(!attDate||!attMarks){ toast('اول تاریخ را وارد کنید و فهرست را نمایش دهید',true); return; }
+/* وضعیت‌های حضور و غیاب همان لحظهٔ لمس ذخیره می‌شوند تا با رفتن از صفحه یا رفرش نپرند */
+function commitAttSilent(){
+  if(!attDate||!attMarks) return;
   if(!Array.isArray(db.attendance)) db.attendance=[];
   var ex=db.attendance.filter(function(sn){ return sn.date===attDate; })[0];
   if(ex) ex.marks=Object.assign({},attMarks);
   else db.attendance.push({id:uid(),date:attDate,marks:Object.assign({},attMarks)});
-  saveDb(); render(); toast('حضور و غیاب ثبت شد ✅');
+  saveDb();
+}
+function saveAttDay(){
+  if(!attDate||!attMarks){ toast('اول تاریخ را وارد کنید و فهرست را نمایش دهید',true); return; }
+  commitAttSilent();
+  render(); toast('حضور و غیاب ثبت شد ✅');
 }
 function delAttSession(id){
   if(!confirm('این جلسهٔ حضور و غیاب حذف شود؟')) return;
@@ -1300,6 +1333,7 @@ function groupForm(id){
     +'<label class="f">اعضای گروه (هر دانش‌آموز می‌تواند در چند گروه باشد)</label>'
     +(db.students.length?'<div class="scoregrid">'+db.students.map(function(s){ return '<div class="srow"><span class="sname">'+esc(s.name)+' '+esc(s.family)+'</span><input type="checkbox" class="gmem" value="'+s.id+'" style="width:auto;flex:none" '+(mem.indexOf(s.id)>=0?'checked':'')+'></div>'; }).join('')+'</div>':'<p class="hint">هنوز دانش‌آموزی ثبت نشده است.</p>')
     +'<div class="btnrow"><button class="btn" onclick="saveGroup('+(g?'\''+g.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveGroup(g?g.id:null); });
 }
 function saveGroup(id){
   var name=document.getElementById('g_name').value.trim();
@@ -1327,6 +1361,7 @@ function gactForm(gid,aid){
     +'<label class="f" for="ga_score">سطح فعالیت (اختیاری)</label><select id="ga_score"><option value="">بدون نمره</option>'+LEVEL_LIST.map(function(lv){ return '<option value="'+lv+'"'+(a&&a.score===lv?' selected':'')+'>'+LEVELS[lv]+'</option>'; }).join('')+'</select>'
     +'<label class="f" for="ga_note">یادداشت</label><textarea id="ga_note" rows="2" placeholder="توضیح فعالیت…">'+esc(a?a.note||'':'')+'</textarea>'
     +'<div class="btnrow"><button class="btn" onclick="saveGact(\''+gid+'\','+(a?'\''+a.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveGact(gid,a?a.id:null); });
 }
 function saveGact(gid,aid){
   var title=document.getElementById('ga_title').value.trim();
@@ -1387,6 +1422,7 @@ function wallForm(id){
     +field('w_title','عنوان / موضوع شماره *',w?w.title:'','مثلاً: شمارهٔ ۳ — هفتهٔ کتاب')
     +dateField('w_date','تاریخ',w?w.date:'')
     +'<div class="btnrow"><button class="btn" onclick="saveWall('+(w?'\''+w.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveWall(w?w.id:null); });
 }
 function saveWall(id){
   var title=document.getElementById('w_title').value.trim();
@@ -1416,6 +1452,7 @@ function wallItemForm(wid,iid){
     +(db.students.length?'<div class="scoregrid">'+db.students.map(function(s){ return '<div class="srow"><span class="sname">'+esc(s.name)+' '+esc(s.family)+'</span><input type="checkbox" class="wimem" value="'+s.id+'" style="width:auto;flex:none" '+(sel.indexOf(s.id)>=0?'checked':'')+'></div>'; }).join('')+'</div>':'<p class="hint">هنوز دانش‌آموزی ثبت نشده است.</p>')
     +'<label class="f" for="wi_note">یادداشت</label><textarea id="wi_note" rows="2" placeholder="توضیح بخش…">'+esc(it?it.note||'':'')+'</textarea>'
     +'<div class="btnrow"><button class="btn" onclick="saveWallItem(\''+wid+'\','+(it?'\''+it.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveWallItem(wid,it?it.id:null); });
 }
 function saveWallItem(wid,iid){
   var w=wallById(wid); if(!w) return;
@@ -1461,6 +1498,7 @@ function quizForm(id){
     +field('q_subfree','یا نام درس دلخواه',q&&(SUBJECTS.indexOf(q.subject)<0)?q.subject:'','اگر در فهرست نیست، اینجا بنویسید')
     +dateField('q_date','تاریخ',q?q.date:'')
     +'<div class="btnrow"><button class="btn" onclick="saveQuiz('+(q?'\''+q.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveQuiz(q?q.id:null); });
 }
 function saveQuiz(id){
   var title=document.getElementById('q_title').value.trim();
@@ -1489,14 +1527,20 @@ function quizGrid(qid){
     return '<div class="srow"><span class="sname">'+esc(s.name)+' '+esc(s.family)+'</span>'+lvlChipsHtml('qscore',s.id,gridSel[s.id])+'</div>';
   }).join('');
   openDlg(dlgHead('❓ ثبت نتایج — '+esc(q.title))
-    +'<p class="hint">'+esc(q.subject)+' · '+esc(q.date||'')+' · برای هر دانش‌آموز یک سطح بزنید؛ لمس دوبارهٔ همان سطح = شرکت نکرده</p>'
+    +'<p class="hint">'+esc(q.subject)+' · '+esc(q.date||'')+' · برای هر دانش‌آموز یک سطح بزنید؛ لمس دوبارهٔ همان سطح = شرکت نکرده. با بستن پنجره هم خودکار ذخیره می‌شود.</p>'
     +'<div class="scoregrid">'+rows+'</div>'
     +'<div class="btnrow"><button class="btn" onclick="saveQuizScores(\''+qid+'\')">💾 ذخیرهٔ نتایج همه</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  var sel=gridSel;
+  dlgCommit=function(){ writeQuizScores(qid,sel); saveDb(); };
 }
-function saveQuizScores(qid){
+function writeQuizScores(qid,sel){
+  if(!sel) return;
   if(!db.qscores) db.qscores={};
   var m=db.qscores[qid]||(db.qscores[qid]={});
-  db.students.forEach(function(s){ if(gridSel&&gridSel[s.id]) m[s.id]=gridSel[s.id]; else delete m[s.id]; });
+  db.students.forEach(function(s){ if(sel[s.id]) m[s.id]=sel[s.id]; else delete m[s.id]; });
+}
+function saveQuizScores(qid){
+  writeQuizScores(qid,gridSel);
   gridSel=null;
   saveDb(); closeDlg(); render(); toast('نتایج آزمونک ذخیره شد ✅');
 }
@@ -1516,6 +1560,7 @@ function studentActForm(sid,aid){
     +dateField('sa_date','تاریخ',a?a.date:'')
     +'<label class="f" for="sa_note">توضیحات</label><textarea id="sa_note" rows="3" placeholder="چه کاری انجام داد…">'+esc(a?a.note||'':'')+'</textarea>'
     +'<div class="btnrow"><button class="btn" onclick="saveStudentAct(\''+sid+'\','+(a?'\''+a.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveStudentAct(sid,a?a.id:null); });
 }
 function saveStudentAct(sid,aid){
   var title=document.getElementById('sa_title').value.trim();
@@ -1551,6 +1596,7 @@ function behaviorForm(sid,bid){
     +dateField('beh_date','تاریخ',b?b.date:'')
     +'<label class="f" for="beh_note">توضیحات</label><textarea id="beh_note" rows="2" placeholder="چه اتفاقی افتاد…">'+esc(b?b.note||'':'')+'</textarea>'
     +'<div class="btnrow"><button class="btn" onclick="saveBehavior(\''+sid+'\','+(b?'\''+b.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveBehavior(sid,b?b.id:null); });
 }
 function saveBehavior(sid,bid){
   var free=document.getElementById('beh_tagfree').value.trim();
@@ -1577,6 +1623,7 @@ function meetingForm(sid,mid){
     +field('mt_topic','موضوع دیدار *',m?m.topic:'','مثلاً: بررسی پیشرفت درسی')
     +'<label class="f" for="mt_result">نتیجه و جمع‌بندی</label><textarea id="mt_result" rows="3" placeholder="چه قرار شد و چه نتیجه‌ای داشت…">'+esc(m?m.result||'':'')+'</textarea>'
     +'<div class="btnrow"><button class="btn" onclick="saveMeeting(\''+sid+'\','+(m?'\''+m.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveMeeting(sid,m?m.id:null); });
 }
 function saveMeeting(sid,mid){
   var topic=document.getElementById('mt_topic').value.trim();
@@ -1613,10 +1660,18 @@ function descrepForm(sid,term){
     }).join('')+'</span></div>';
   }).join('');
   openDlg(dlgHead('📋 کارنامهٔ توصیفی — نوبت '+(term===1?'اول':'دوم'))
-    +'<p class="hint">'+esc(s.name)+' '+esc(s.family)+' · برای هر درس یک سطح بزنید؛ لمس دوباره = پاک شدن</p>'
+    +'<p class="hint">'+esc(s.name)+' '+esc(s.family)+' · برای هر درس یک سطح بزنید؛ لمس دوباره = پاک شدن. با بستن پنجره هم خودکار ذخیره می‌شود.</p>'
     +'<div class="scoregrid">'+rows+'</div>'
     +'<div class="btnrow"><button class="btn" onclick="saveDescrep()">💾 ذخیرهٔ کارنامه</button><button class="btn soft" onclick="printDescrep()">🖨 چاپ کارنامه</button></div>'
     +'<div class="btnrow"><button class="btn soft" onclick="closeDlg()">بستن</button></div>');
+  var ctx=descrepCtx, sel=descrepSel;
+  dlgCommit=function(){
+    if(!db.descrep) db.descrep={};
+    var t=String(ctx.term);
+    if(!db.descrep[t]) db.descrep[t]={};
+    db.descrep[t][ctx.sid]=Object.assign({},sel||{});
+    saveDb();
+  };
 }
 function descrepChip(btn){
   var sub=btn.getAttribute('data-descrep-for'), lv=parseInt(btn.getAttribute('data-lvl'),10);
@@ -1661,6 +1716,78 @@ function printDescrep(){
   persistDescrep(); saveDb();
   var s=studentById(descrepCtx.sid); if(!s) return;
   printDoc('کارنامهٔ توصیفی — '+s.name+' '+s.family, descrepDocInner(s, descrepCtx.term, null));
+}
+
+/* ===== ورود گروهی کارنامهٔ توصیفی: همهٔ کلاس، درس‌به‌درس =====
+   انتخاب‌های هر درس در حافظه (dscGrpStage) می‌ماند؛ عوض‌کردن درس/نوبت چیزی را پاک نمی‌کند،
+   «ذخیره» همه را یکجا در db.descrep می‌نویسد و بستن پنجره هم خودکار ذخیره می‌کند (dlgCommit). */
+var dscGrpCtx=null, dscGrpStage=null;
+function dscGrpStageFor(term,sub){
+  var k=term+'|'+sub;
+  if(!dscGrpStage[k]){
+    var st={};
+    db.students.forEach(function(s){ var v=descrepOf(term,s.id)[sub]; if(v!==null&&v!==undefined&&v!=='') st[s.id]=Number(v); });
+    dscGrpStage[k]=st;
+  }
+  return dscGrpStage[k];
+}
+function writeDescrepGroupStage(){
+  if(!dscGrpStage) return;
+  if(!db.descrep) db.descrep={};
+  Object.keys(dscGrpStage).forEach(function(k){
+    var i=k.indexOf('|'), t=k.slice(0,i), sub=k.slice(i+1), st=dscGrpStage[k];
+    if(!db.descrep[t]) db.descrep[t]={};
+    db.students.forEach(function(s){
+      var rec=db.descrep[t][s.id]||(db.descrep[t][s.id]={});
+      if(st[s.id]) rec[sub]=st[s.id]; else delete rec[sub];
+    });
+  });
+}
+function descrepGroupForm(term){
+  if(!db.students.length){ toast('اول دانش‌آموزان را ثبت کنید',true); return; }
+  dscGrpStage={};
+  var t=(term===2)?2:1, subs=descrepSubjects(t);
+  dscGrpCtx={term:t, subject:subs[0]};
+  descrepGroupShow();
+}
+function descrepGroupShow(){
+  var term=dscGrpCtx.term, subs=descrepSubjects(term);
+  if(subs.indexOf(dscGrpCtx.subject)<0) dscGrpCtx.subject=subs[0];
+  var sub=dscGrpCtx.subject, st=dscGrpStageFor(term,sub);
+  var rows=db.students.map(function(s){
+    return '<div class="srow"><span class="avatar" style="width:32px;height:32px;font-size:13px">'+avatarHtml(s)+'</span><span class="sname">'+esc(s.name)+' '+esc(s.family)+'</span><span class="lvlchips">'+LEVEL_LIST.map(function(lv){
+      return '<button type="button" class="lvlchip lv'+lv+(st[s.id]===lv?' on':'')+'" data-dscgrp-for="'+s.id+'" data-lvl="'+lv+'" onclick="dscGrpChip(this)">'+LEVELS[lv]+'</button>';
+    }).join('')+'</span></div>';
+  }).join('');
+  openDlg(dlgHead('📋 ورود گروهی کارنامه — نوبت '+(term===1?'اول':'دوم'))
+    +'<div class="kv"><span>نوبت</span><span class="chips"><button type="button" class="chip'+(term===1?' on':'')+'" onclick="dscGrpTerm(1)">نوبت اول</button><button type="button" class="chip'+(term===2?' on':'')+'" onclick="dscGrpTerm(2)">نوبت دوم</button></span></div>'
+    +'<label class="f" for="dscGrpSubject">درس</label><select id="dscGrpSubject" onchange="dscGrpSubject(this.value)">'+subs.map(function(x){ return '<option value="'+esc(x)+'"'+(x===sub?' selected':'')+'>'+esc(x)+'</option>'; }).join('')+'</select>'
+    +'<p class="hint">برای هر دانش‌آموز یک سطح بزنید؛ لمس دوباره = پاک شدن. عوض‌کردن درس یا نوبت، انتخاب‌ها را نگه می‌دارد و با بستن پنجره هم خودکار ذخیره می‌شود.</p>'
+    +'<p class="hint" id="dscGrpProg">ثبت‌شده: '+fa(Object.keys(st).length)+' از '+fa(db.students.length)+'</p>'
+    +'<div class="scoregrid">'+rows+'</div>'
+    +'<div class="btnrow"><button class="btn" onclick="saveDescrepGroup()">💾 ذخیرهٔ کارنامه</button><button class="btn soft" onclick="closeDlg()">بستن</button></div>');
+  dlgCommit=function(){ writeDescrepGroupStage(); saveDb(); };
+}
+function dscGrpTerm(t){
+  if(!dscGrpCtx) return;
+  dscGrpCtx.term=t;
+  var subs=descrepSubjects(t);
+  if(subs.indexOf(dscGrpCtx.subject)<0) dscGrpCtx.subject=subs[0];
+  descrepGroupShow();
+}
+function dscGrpSubject(v){ if(!dscGrpCtx) return; dscGrpCtx.subject=v; descrepGroupShow(); }
+function dscGrpChip(btn){
+  var sid=btn.getAttribute('data-dscgrp-for'), lv=parseInt(btn.getAttribute('data-lvl'),10);
+  var st=dscGrpStageFor(dscGrpCtx.term,dscGrpCtx.subject);
+  if(st[sid]===lv) delete st[sid]; else st[sid]=lv;
+  btn.parentNode.querySelectorAll('.lvlchip').forEach(function(c){ c.classList.toggle('on', st[sid]!==undefined&&parseInt(c.getAttribute('data-lvl'),10)===st[sid]); });
+  var p=document.getElementById('dscGrpProg');
+  if(p) p.textContent='ثبت‌شده: '+fa(Object.keys(st).length)+' از '+fa(db.students.length);
+}
+function saveDescrepGroup(){
+  writeDescrepGroupStage();
+  dscGrpStage=null; dscGrpCtx=null;
+  saveDb(); closeDlg(); render(); toast('کارنامهٔ گروهی ذخیره شد ✅');
 }
 
 /* ===== 📊 عملکرد (گزارش ماهانهٔ عملکرد دانش‌آموز) =====
@@ -1872,11 +1999,27 @@ function printPerf(id){
   var cfg=perfCfg();
   printDoc('برگ عملکرد — '+s.name+' '+s.family, perfPageWrap(s,cfg), {noHead:true});
 }
+/* مخاطب گزارش گروهی عملکرد: پیش‌فرض همهٔ دانش‌آموزان؛ در حالت «انتخاب دانش‌آموزان» فقط تیک‌خورده‌ها.
+   انتخاب فقط در همین نشست می‌ماند (با رفرش پاک می‌شود). */
+var perfPickOn=false, perfPickSet={};
+function perfPickCount(){ return db.students.filter(function(s){ return perfPickSet[s.id]; }).length; }
+function perfPickCountTxt(){ return fa(perfPickCount())+' نفر انتخاب شده'; }
+function perfPickMode(on){ perfPickOn=!!on; render(); }
+function perfPickAll(on){ db.students.forEach(function(s){ if(on) perfPickSet[s.id]=1; else delete perfPickSet[s.id]; }); render(); }
+function perfPickToggle(sid,on){
+  if(on) perfPickSet[sid]=1; else delete perfPickSet[s.id];
+  var el=document.getElementById('perfPickCount'); if(el) el.textContent=perfPickCountTxt();
+}
+function perfBatchStudents(){
+  if(!perfPickOn) return db.students.slice();
+  return db.students.filter(function(s){ return perfPickSet[s.id]; });
+}
 function printAllPerf(){
-  if(!db.students.length){ toast('هنوز دانش‌آموزی ثبت نشده است',true); return; }
+  var list=perfBatchStudents();
+  if(!list.length){ toast(perfPickOn?'دانش‌آموزی انتخاب نشده است':'هنوز دانش‌آموزی ثبت نشده است',true); return; }
   var cfg=perfCfg();
-  var inner=db.students.map(function(s){ return perfPageWrap(s,cfg); }).join('');
-  printDoc('برگ عملکرد همهٔ دانش‌آموزان — '+perfPeriodLabel(cfg), inner, {noHead:true});
+  var inner=list.map(function(s){ return perfPageWrap(s,cfg); }).join('');
+  printDoc('برگ عملکرد دانش‌آموزان — '+perfPeriodLabel(cfg), inner, {noHead:true});
 }
 
 /* ===== ZIP ساده (STORE، بدون فشرده‌سازی) + کارت PNG عملکرد برای فایل ZIP ===== */
@@ -2002,13 +2145,14 @@ function perfPngBlob(s,cfg){
   });
 }
 async function downloadPerfZip(){
-  if(!db.students.length){ toast('هنوز دانش‌آموزی ثبت نشده است',true); return; }
+  var list=perfBatchStudents();
+  if(!list.length){ toast(perfPickOn?'دانش‌آموزی انتخاب نشده است':'هنوز دانش‌آموزی ثبت نشده است',true); return; }
   var cfg=perfCfg();
   toast('در حال ساخت عکس عملکردها…');
   try{
     var files=[], used={};
-    for(var i=0;i<db.students.length;i++){
-      var s=db.students[i];
+    for(var i=0;i<list.length;i++){
+      var s=list[i];
       var b=await perfPngBlob(s,cfg);
       if(!b) throw new Error('png');
       var buf=new Uint8Array(await b.arrayBuffer());
@@ -2027,7 +2171,7 @@ function performanceSectionHtml(){
   var cfg=perfCfg();
   var h='<h2 class="sec">📊 عملکرد</h2>';
   h+='<div class="panel"><h3>📋 گزارش عملکرد (ماهیانه)</h3>'
-    +'<p class="hint">مثل گزارش ماهانهٔ عملکرد: ماه، نوبت کارنامه، بخش‌های گزارش و چیدمان چاپ را انتخاب کنید؛ بعد روی نام هر دانش‌آموز بزنید تا برگ عملکردش باز شود، یا عملکرد همه را یکجا چاپ و دانلود کنید. عملکرد و گزارش فعالیت هر دانش‌آموز در داشبورد خودش هم هست. <b>کارنامه فقط نوبت‌ها</b> صادر می‌شود و چند بار در سال بیشتر نیست، پس تیکش پیش‌فرض خاموش است و در گزارش ماهانه نمی‌آید؛ موقع نوبت روشنش کنید. چیدمان «یک صفحهٔ A4» هم فقط وقتی کارنامه روشن است اعمال می‌شود؛ وگرنه برگ عملکرد همهٔ صفحه را می‌گیرد.</p>'
+    +'<p class="hint">مثل گزارش ماهانهٔ عملکرد: ماه، نوبت کارنامه، بخش‌های گزارش و چیدمان چاپ را انتخاب کنید؛ برگ عملکرد هر دانش‌آموز از کارت او در تب دانش‌آموزان یا از داشبورد خودش باز می‌شود و عملکرد همه را هم می‌توانید یکجا چاپ و دانلود کنید. <b>کارنامه فقط نوبت‌ها</b> صادر می‌شود و چند بار در سال بیشتر نیست، پس تیکش پیش‌فرض خاموش است و در گزارش ماهانه نمی‌آید؛ موقع نوبت روشنش کنید. چیدمان «یک صفحهٔ A4» هم فقط وقتی کارنامه روشن است اعمال می‌شود؛ وگرنه برگ عملکرد همهٔ صفحه را می‌گیرد.</p>'
     +'<div class="kv"><span>نوبت کارنامه</span><span class="chips"><button class="chip'+(cfg.term===1?' on':'')+'" onclick="perfSetTerm(1)">نوبت اول</button><button class="chip'+(cfg.term===2?' on':'')+'" onclick="perfSetTerm(2)">نوبت دوم</button></span></div>'
     +'<div class="f" style="margin-bottom:2px">ماه‌های گزارش — هر ترکیبی از ماه‌ها را تیک بزنید</div><div class="perfChecks" id="perfMonths">'
     +PERF_MONTHS.map(function(x){ return '<label><input type="checkbox" style="width:auto" id="perfMo_'+x.m+'" '+(cfg.months.indexOf(x.m)>=0?'checked':'')+' onchange="perfSetMonthTick('+x.m+',this.checked)"> '+x.n+'</label>'; }).join('')
@@ -2049,14 +2193,19 @@ function performanceSectionHtml(){
     +'<label><input type="checkbox" style="width:auto" id="perfBlk_beh" '+(cfg.blocks.beh?'checked':'')+' onchange="perfSetBlock(\'beh\',this.checked)"> انضباط</label>'
     +'<label><input type="checkbox" style="width:auto" id="perfBlk_kar" '+(cfg.blocks.kar?'checked':'')+' onchange="perfSetBlock(\'kar\',this.checked)"> کارنامه</label>'
     +'</div>'
-    +'<div class="btnrow"><button class="btn" onclick="printAllPerf()">🖨 چاپ عملکرد همه</button><button class="btn soft" onclick="downloadPerfZip()">🗂 دانلود ZIP عملکردها</button></div>'
+    +'<div class="btnrow"><button class="btn soft" onclick="descrepGroupForm(perfCfg().term)">📋 ورود گروهی کارنامه</button></div>'
+    +'<div class="kv"><span>مخاطب چاپ و ZIP</span><span class="chips"><button type="button" class="chip'+(!perfPickOn?' on':'')+'" onclick="perfPickMode(false)">همهٔ دانش‌آموزان</button><button type="button" class="chip'+(perfPickOn?' on':'')+'" onclick="perfPickMode(true)">انتخاب دانش‌آموزان</button></span></div>'
+    +(perfPickOn
+      ?(db.students.length
+        ?'<div class="btnrow" style="margin:2px 0 4px"><button class="btn soft small" onclick="perfPickAll(true)">انتخاب همه</button><button class="btn soft small" onclick="perfPickAll(false)">هیچکدام</button><span class="hint" id="perfPickCount">'+perfPickCountTxt()+'</span></div>'
+          +'<div class="perfChecks">'
+          +db.students.map(function(s){ return '<label><input type="checkbox" style="width:auto" '+(perfPickSet[s.id]?'checked':'')+' onchange="perfPickToggle(\''+s.id+'\',this.checked)"> '+esc(s.name)+' '+esc(s.family)+'</label>'; }).join('')
+          +'</div>'
+        :'<p class="hint">هنوز دانش‌آموزی ثبت نشده است.</p>')
+      :'')
+    +'<div class="btnrow"><button class="btn" onclick="printAllPerf()">🖨 چاپ عملکرد</button><button class="btn soft" onclick="downloadPerfZip()">🗂 دانلود ZIP عملکردها</button></div>'
     +'<div class="btnrow"><button class="btn soft" onclick="go(\'dash\')">🏠 داشبورد کلاس</button></div>'
     +'</div>';
-  if(!db.students.length) h+='<div class="empty"><span class="big">👧</span>هنوز دانش‌آموزی ثبت نشده است.</div>';
-  else h+=db.students.map(function(s){
-    var att=perfAtt(s.id,cfg.months), qz=perfQuizzes(s.id,cfg.months);
-    return '<div class="rowitem" onclick="perfSheet(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">غیبت: '+fa(att.a)+' روز · میانگین پرسش‌ها: '+faLevel(qz.avg)+'</div></div><span class="accArrow">›</span></div>';
-  }).join('');
   return h;
 }
 
@@ -2122,6 +2271,7 @@ function costForm(id){
     +dateField('c_date','تاریخ',c?c.date:'')
     +field('c_amount','مبلغ *',c?String(c.amount):'','فقط عدد بنویسید')
     +'<div class="btnrow"><button class="btn" onclick="saveCost('+(c?'\''+c.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
+  dlgCommit=silentFormSave(function(){ saveCost(c?c.id:null); });
 }
 function saveCost(id){
   var title=document.getElementById('c_title').value.trim();
@@ -2137,6 +2287,15 @@ function saveCost(id){
 function delCost(id){ if(!confirm('این هزینه حذف شود؟')) return; db.costs=(db.costs||[]).filter(function(x){ return x.id!==id; }); saveDb(); render(); toast('حذف شد'); }
 
 /* ===== وضعیت دانش‌آموز: محتوای مشترک پاپ‌آپ و کرکرهٔ فهرست ===== */
+/* کامل بودن پروفایل: عکس، نام پدر، کد دانش‌آموزی و تلفن ولی باید باشند (یادداشت جزو آن نیست) */
+function profileGaps(s){
+  var gaps=[];
+  if(!s.photo) gaps.push('عکس ندارد');
+  if(!s.father) gaps.push('نام پدر ثبت نشده');
+  if(!s.code) gaps.push('کد دانش‌آموزی ثبت نشده');
+  if(!s.phone) gaps.push('تلفن ولی ثبت نشده');
+  return gaps;
+}
 function studentStatusInner(id,withHero){
   var s=studentById(id); if(!s) return '';
   var av=studentAvg(id), att=attStats(id), es=studentEntries(id);
@@ -2156,6 +2315,8 @@ function studentStatusInner(id,withHero){
   } else {
     h+='<div style="margin-bottom:6px">'+badge+'</div>';
   }
+  var gaps=profileGaps(s);
+  h+='<div class="kv"><span>کامل بودن پروفایل</span>'+(gaps.length?'<span>'+gaps.map(function(g){ return '<span class="badge red">⚠️ '+esc(g)+'</span>'; }).join(' ')+'</span>':'<b>✅ پروفایل کامل است</b>')+'</div>';
   h+='<div class="kv"><span>میانگین کل</span><b>'+faLevel(av)+'</b></div>'
     +'<div class="kv"><span>درصد حضور</span><b>'+(att.pct===null?'—':fa(att.pct)+'٪')+'</b></div>'
     +'<div class="kv"><span>غیبت / تأخیر</span><b>'+fa(att.a)+' / '+fa(att.l)+'</b></div>'
@@ -2169,7 +2330,7 @@ function studentStatusInner(id,withHero){
   var mtgs=studentMeetings(id);
   if(mtgs.length) h+='<div class="kv"><span>🤝 دیدار با اولیاء</span><b>'+fa(mtgs.length)+' دیدار</b></div>';
   h+='<div class="btnrow"><button class="btn" onclick="'+(withHero?'closeDlg();':'')+'openStudent(\''+s.id+'\')">📊 داشبورد کامل</button></div>'
-    +'<div class="btnrow"><button class="btn soft" onclick="activityReport(\''+s.id+'\')">🖨 گزارش فعالیت</button><button class="btn ghost" onclick="studentForm(\''+s.id+'\')">✏️ ویرایش</button></div>'
+    +'<div class="btnrow"><button class="btn soft" onclick="activityReport(\''+s.id+'\')">🖨 گزارش فعالیت</button><button class="btn soft" onclick="perfSheet(\''+s.id+'\')">📊 عملکرد</button><button class="btn ghost" onclick="studentForm(\''+s.id+'\')">✏️ '+(gaps.length?'تکمیل/ویرایش پروفایل':'ویرایش')+'</button></div>'
     +'<div class="btnrow"><button class="btn soft" onclick="parentMsg(\''+s.id+'\')">💬 پیام آماده برای والدین</button></div>';
   return h;
 }
