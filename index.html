@@ -1130,7 +1130,7 @@ function viewTimetable(){
   h+='<div class="panel"><h3>📚 درس‌های هر روز</h3>';
   (tt.days||[]).forEach(function(day){
     h+='<div class="panel" style="padding:9px;margin:8px 0"><label class="checkline"><input type="checkbox" id="tt_enabled_'+day.key+'" '+(day.enabled!==false?'checked':'')+'> <b>'+esc(day.name)+'</b> — فعال بودن روز</label>';
-    for(var i=0;i<8;i++)h+='<div class="formgrid" style="align-items:end"><div><label class="f" for="tt_'+day.key+'_'+i+'">زنگ '+fa(i+1)+'</label><input id="tt_'+day.key+'_'+i+'" value="'+esc((day.lessons||[])[i]||'')+'" placeholder="نام درس یا فعالیت" '+''></div></div>';
+    for(var i=0;i<8;i++)h+='<div class="formgrid" style="align-items:end"><div><label class="f" for="tt_'+day.key+'_'+i+'">زنگ '+fa(i+1)+'</label><input id="tt_'+day.key+'_'+i+'" value="'+esc((day.lessons||[])[i]||'')+'" placeholder="نام درس یا فعالیت"></div></div>';
     h+='</div>';
   });
   h+='<div class="btnrow"><button class="btn" onclick="saveTimetable()">💾 ذخیره برنامه هفتگی</button><button class="btn soft" onclick="printTimetable()">🖨 چاپ برنامه</button></div></div>';return h;
