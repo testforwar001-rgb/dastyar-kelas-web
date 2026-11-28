@@ -368,13 +368,47 @@ nav#tabbar button .ic{transition:transform .12s}
 .attchip{box-shadow:var(--shadow-sm)}
 }
 
+
+/* آیکون‌های برداری ناوبری و رنگ‌های ملایم هر بخش */
+nav#tabbar button .ic{width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:0;transition:transform .18s ease,background .18s ease}
+nav#tabbar button .ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav#tabbar button:nth-child(1) .ic{background:#FFF2D8;color:#C88713}
+nav#tabbar button:nth-child(2) .ic{background:#E8F3FF;color:#3979C6}
+nav#tabbar button:nth-child(3) .ic{background:#F2EAFE;color:#8459B8}
+nav#tabbar button:nth-child(4) .ic{background:#E6F6EF;color:#278A62}
+nav#tabbar button:nth-child(5) .ic{background:#E7F5F7;color:#288B99}
+nav#tabbar button:nth-child(6) .ic{background:#FFF0E8;color:#D9783D}
+nav#tabbar button:nth-child(7) .ic{background:#E9F2FF;color:#426FC0}
+nav#tabbar button:nth-child(8) .ic{background:#FCEAF0;color:#C45E83}
+nav#tabbar button:nth-child(9) .ic{background:#F0EFF3;color:#746B82}
+nav#tabbar button.on .ic{box-shadow:inset 0 0 0 1.5px currentColor,0 2px 6px rgba(50,60,80,.10);transform:translateY(-2px)}
+nav#tabbar button:active .ic{transform:scale(.94)}
+
 @media print{
+  @page{size:A4 portrait;margin:8mm}
   #appShell{display:none!important}
   html,body{height:auto!important;overflow:visible!important}
   body{padding:0;background:#fff;position:static!important;top:auto!important;left:auto!important;right:auto!important;width:auto!important;overflow:visible!important}
   #printArea{display:block!important;color:#000;font-size:13px}
-  #printArea .perf-page{page-break-after:always}
-  #printArea .perf-page:last-child{page-break-after:auto}
+  #printArea .perf-page,#printArea .print-page{page-break-after:always;break-after:page}
+  #printArea .perf-page:last-child,#printArea .print-page:last-child{page-break-after:auto;break-after:auto}
+  #printArea .print-page.compact{page-break-inside:avoid;break-inside:avoid;font-size:10.8px;line-height:1.3}
+  #printArea .print-page.compact .rep-hero{padding:5px 8px;margin-bottom:5px}
+  #printArea .print-page.compact .rep-hero .l1{font-size:13px}
+  #printArea .print-page.compact .rep-hero .l2{font-size:10.8px}
+  #printArea .print-page.compact .rep-hero .l3{font-size:9.8px}
+  #printArea .print-page.compact .rep-id{margin:4px 0;gap:7px}
+  #printArea .print-page.compact .rep-photo{width:42px;height:42px}
+  #printArea .print-page.compact .rep-name{font-size:14.5px}
+  #printArea .print-page.compact .rep-meta{font-size:10.2px}
+  #printArea .print-page.compact .rep-stats{gap:4px;margin:5px 0}
+  #printArea .print-page.compact .rep-stat{padding:3px 2px}
+  #printArea .print-page.compact .rep-stat .v{font-size:14px;line-height:1.2}
+  #printArea .print-page.compact .rep-stat .l{font-size:9.5px}
+  #printArea .print-page.compact .rep-h{font-size:11.5px;margin:5px 0 2px}
+  #printArea .print-page.compact table.grid th,#printArea .print-page.compact table.grid td{padding:2px 3px;font-size:10.2px;line-height:1.25}
+  #printArea .print-page.compact .rep-note{margin-top:5px;padding:4px 7px;font-size:10.2px}
+  #printArea .print-page.compact .rep-foot{margin-top:5px;font-size:10px}
   #printArea .perf-page.compact{page-break-inside:avoid;font-size:11px;line-height:1.45}
   #printArea .perf-page.compact .rep-h{font-size:12px;margin:6px 0 3px}
   #printArea .perf-page.compact .rep-hero{padding:5px 8px;margin-bottom:6px}
@@ -407,7 +441,7 @@ nav#tabbar button .ic{transition:transform .12s}
   #printArea .perf-page.compact .psig{font-size:11px;margin-top:2px}
   #printArea .perf-page.compact .rep-note{margin-top:6px;padding:5px 9px;font-size:11px}
   /* قانون سخت: برگ عملکرد هر دانش‌آموز تحت هیچ شرایطی بیشتر از یک صفحهٔ A4 نشود */
-  #printArea .perf-page.compact{height:272mm;max-height:272mm;overflow:hidden}
+  #printArea .perf-page.compact{min-height:0;max-height:none;height:auto;overflow:visible;break-inside:avoid;page-break-inside:avoid}
   #printArea .perf-page.compact.dense{font-size:10px;line-height:1.35}
   #printArea .perf-page.compact.xdense{font-size:9.5px;line-height:1.3}
   #printArea .perf-page.compact.dense .pcard .n{font-size:14px}
@@ -435,15 +469,15 @@ nav#tabbar button .ic{transition:transform .12s}
 <div id="syncBanner"><button onclick="hideSyncBanner()" aria-label="بستن">✕</button><span id="syncBannerTxt"></span></div>
 <main id="app"></main>
 <nav id="tabbar">
-  <button data-tab="dash"><span class="ic">🏠</span>داشبورد</button>
-  <button data-tab="attendance"><span class="ic">🗓</span>حضور و غیاب</button>
-  <button data-tab="groups"><span class="ic">👥</span>گروه‌ها</button>
-  <button data-tab="plan"><span class="ic">📚</span>برنامهٔ درسی</button>
-  <button data-tab="timetable"><span class="ic">🗓</span>برنامه هفتگی</button>
-  <button data-tab="exams"><span class="ic">📝</span>آزمون‌ها</button>
-  <button data-tab="performance"><span class="ic">📊</span>عملکرد</button>
-  <button data-tab="students"><span class="ic">👧</span>دانش‌آموزان</button>
-  <button data-tab="settings"><span class="ic">⚙️</span>تنظیمات</button>
+  <button data-tab="dash"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span>داشبورد</button>
+  <button data-tab="attendance"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h3m-3 3h7"/></svg></span>حضور و غیاب</button>
+  <button data-tab="groups"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>گروه‌ها</button>
+  <button data-tab="plan"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M8 7h8M8 11h7"/></svg></span>برنامهٔ درسی</button>
+  <button data-tab="timetable"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 9h18M7 13h3m4 0h3m-10 4h3m4 0h3"/></svg></span>برنامه هفتگی</button>
+  <button data-tab="exams"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l3 3v14H5V4z"/><path d="M8 4v5h8V4M8 13h8m-8 4h5"/></svg></span>آزمون‌ها</button>
+  <button data-tab="performance"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 6-7"/><path d="M16 6h4v4"/></svg></span>عملکرد</button>
+  <button data-tab="students"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2m3-13a3 3 0 0 1 0 6m1 2a5 5 0 0 1 2 4v1"/></svg></span>دانش‌آموزان</button>
+  <button data-tab="settings"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.6-1.4-2.4 1.4-1.1a8 8 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.6 1.4 2.4-1.4 1.1a8 8 0 0 1 0 1.9Z"/></svg></span>تنظیمات</button>
 </nav>
 <div id="modalWrap"><div class="scrim" onclick="closeDlg()"></div><div class="sheet" id="sheet"></div></div>
 <div id="calWrap"><div class="scrim" onclick="closeCal()"></div><div class="calSheet" id="calSheet"></div></div>
@@ -2080,7 +2114,7 @@ function perfLoad(s,cfg){
 function perfPageWrap(s,cfg){
   var cls='perf-page';
   if(perfCompact(cfg)){ cls+=' compact'; var L=perfLoad(s,cfg); if(L>14) cls+=' dense'; if(L>24) cls+=' xdense'; }
-  return '<div class="'+cls+'">'+perfSheetHtml(s,cfg)+'</div>';
+  return '<div class="'+cls+' print-page">'+perfSheetHtml(s,cfg)+'</div>';
 }
 function printPerf(id){
   var s=studentById(id); if(!s) return;
@@ -2467,7 +2501,7 @@ function toggleStuAcc(id){
 function reportHtml(s){
   var av=studentAvg(s.id), att=attStats(s.id), es=studentEntries(s.id), qs=studentQuizEntries(s.id), rows=subjectAvgs(s.id);
   var today=''; try{ today=new Date().toLocaleDateString('fa-IR'); }catch(e){}
-  var h='<div class="rep perf-page">'
+  var h='<div class="rep perf-page print-page compact">'
     +'<div class="rep-hero"><div class="l1">گزارش عملکرد دانش‌آموز</div><div class="l2">پایه ششم · سال تحصیلی</div><div class="l3">گزارش ویژه اولیاء</div></div>'
     +'<div class="rep-id">'+(s.photo?'<img class="rep-photo" src="'+s.photo+'" alt="">':'')
     +'<div><div class="rep-name">'+esc(s.name)+' '+esc(s.family)+'</div><div class="rep-meta">نام پدر: '+esc(s.father||'—')+' · کد دانش‌آموزی: '+esc(s.code||'—')+'</div></div></div>'
@@ -2513,7 +2547,7 @@ function printParentReport(id){
   var s=studentById(id); if(!s) return;
   var pa=document.getElementById('printArea');
   pa.innerHTML=reportHtml(s);
-  window.print();
+  printAfterPreflight();
 }
 /* ===== گزارش فعالیت دانش‌آموز (کامل و چاپی) ===== */
 function activityReportHtml(s){
@@ -2521,7 +2555,7 @@ function activityReportHtml(s){
   var qes=studentQuizEntries(s.id), qav=studentQuizAvg(s.id), sacts=studentActs(s.id), swn=wallForStudent(s.id);
   var today=''; try{ today=new Date().toLocaleDateString('fa-IR'); }catch(e){}
   function subCount(sub){ var n=0; db.exams.forEach(function(e){ if(e.subject===sub&&scoreOf(e.id,s.id)!==null) n++; }); return n; }
-  var h='<div class="rep">'
+  var h='<div class="rep perf-page print-page compact">'
     +'<div class="rep-hero"><div class="l1">دبستان دخترانه حافظ — کلاس ۶/۴ — سال تحصیلی ۱۴۰۵ تا ۱۴۰۶</div><div class="l2">گزارش فعالیت دانش‌آموز · آموزگار: مریم خانمحمدی</div></div>'
     +'<div class="rep-id">'+(s.photo?'<img class="rep-photo" src="'+s.photo+'" alt="">':'')
     +'<div><div class="rep-name">'+esc(s.name)+' '+esc(s.family)+'</div><div class="rep-meta">نام پدر: '+esc(s.father||'—')+' · کد دانش‌آموزی: '+esc(s.code||'—')+'</div></div></div>'
@@ -2591,7 +2625,7 @@ function printActivityReport(id){
   var s=studentById(id); if(!s) return;
   var pa=document.getElementById('printArea');
   pa.innerHTML=activityReportHtml(s);
-  window.print();
+  printAfterPreflight();
 }
 function wrapCanvasLines(g,text,maxW,maxLines){
   var words=String(text||'').split(/\s+/).filter(Boolean), lines=[], cur='', wi=0;
@@ -2880,13 +2914,32 @@ function exportExcel(){
 }
 
 /* ===== چاپ ===== */
+function printAfterPreflight(){
+  var pa=document.getElementById('printArea'), pages=pa?pa.querySelectorAll('.print-page,.perf-page'):[];
+  if(!pages.length){window.print();return;}
+  var body=document.body,maxH=272*96/25.4,cleaned=false;
+  function cleanup(){if(cleaned)return;cleaned=true;body.classList.remove('print-measure');}
+  body.classList.add('print-measure');
+  function waitImages(){
+    var imgs=Array.prototype.slice.call(pa.querySelectorAll('img'));
+    return Promise.all(imgs.map(function(im){if(im.complete)return Promise.resolve();return new Promise(function(resolve){var done=function(){resolve();};im.addEventListener('load',done,{once:true});im.addEventListener('error',done,{once:true});setTimeout(done,2500);});}));
+  }
+  Promise.resolve(document.fonts&&document.fonts.ready?document.fonts.ready:null).then(waitImages).then(function(){
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      var tooTall=[];
+      Array.prototype.forEach.call(pages,function(p,i){var h=Math.max(p.getBoundingClientRect().height,p.scrollHeight);if(h>maxH+3)tooTall.push(i+1);});
+      cleanup();
+      if(tooTall.length){alert('چاپ متوقف شد تا هیچ بخشی حذف یا بریده نشود. صفحه(های) '+tooTall.join('، ')+' با اطلاعات فعلی در یک برگ A4 و اندازهٔ خوانا جا نمی‌شوند. لطفاً محتوای طولانی یا بخش‌های غیرضروری را کوتاه/محدود کنید و دوباره چاپ بگیرید.');return;}
+      window.print();
+    });});
+  }).catch(function(){cleanup();alert('آماده‌سازی چاپ کامل نشد. لطفاً دوباره تلاش کنید.');});
+}
 function printDoc(title,inner,opts){
   var today=''; try{ today=new Date().toLocaleDateString('fa-IR'); }catch(e){}
   var pa=document.getElementById('printArea');
-  /* opts.noHead: خودِ برگ سربرگ خودش را دارد (مثل برگ عملکرد با هیروی نارنجی)؛ سربرگ عمومی چاپ نباید رویش بیاید تا دو سربرگ نشود */
-  if(opts&&opts.noHead){ pa.innerHTML=inner; }
+  if(opts&&opts.noHead){pa.innerHTML=inner;}
   else pa.innerHTML='<div class="phead"><div class="l1">دبستان دخترانه حافظ — کلاس ۶/۴ — سال تحصیلی ۱۴۰۵ تا ۱۴۰۶</div><div class="l2">'+esc(title)+'</div><div class="l3">تاریخ چاپ: '+esc(today)+'</div></div>'+inner;
-  window.print();
+  printAfterPreflight();
 }
 function printStudents(){
   if(!db.students.length){ toast('هنوز دانش‌آموزی ثبت نشده است',true); return; }
