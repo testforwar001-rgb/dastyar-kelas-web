@@ -1,8 +1,11 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 const { chromium } = require('playwright');
 const root = process.cwd();
+const htmlSource = fs.readFileSync(path.join(root,'index.html'),'utf8');
+for (const [i,m] of [...htmlSource.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].entries()) new vm.Script(m[1],{filename:'index-inline-'+i+'.js'});
 const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.webmanifest':'application/manifest+json','.png':'image/png'};
 const server = http.createServer((req,res)=>{
   const pathname = decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
@@ -18,6 +21,7 @@ const server = http.createServer((req,res)=>{
   const page=await context.newPage();
   const pageErrors=[];
   page.on('pageerror',e=>pageErrors.push(e.message));
+  page.on('console',m=>{if(m.type()==='error')pageErrors.push('console: '+m.text());});
   try{
     await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle'});
     await page.waitForSelector('#tabbar [data-tab="timetable"]');
