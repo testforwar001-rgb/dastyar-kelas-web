@@ -254,13 +254,13 @@ table.grid td.num,table.grid th.num{text-align:center}
 #syncBanner{position:absolute;top:0;right:0;left:0;z-index:80;background:#FDECEA;color:#7B1F14;border-bottom:2px solid #C0392B;padding:10px 14px;font-size:13.5px;display:none;box-shadow:0 2px 12px rgba(0,0,0,.18)}
 #syncBanner.show{display:block}
 #syncBanner button{float:left;border:none;background:#fff;color:#C0392B;width:30px;height:30px;border-radius:8px;font-size:14px;cursor:pointer;margin-right:8px}
-.voiceBtn.listening{background:#F08A3C!important;color:#fff!important}
+.voiceBtn.listening{background:var(--chart-class)!important;color:#fff!important}
 /* ===== سطح‌های توصیفی (نمرهٔ ۱ تا ۴) ===== */
 .lvlchips{display:flex;gap:4px;flex:none;flex-wrap:wrap;justify-content:flex-end;max-width:100%}
 .lvlchip{border:1.5px solid var(--line2);background:#fff;border-radius:999px;padding:6px 10px;font-size:12px;font-family:inherit;cursor:pointer;color:var(--muted);min-height:34px;font-weight:700}
 .lvlchip.lv4.on{background:#3FA34D;border-color:#3FA34D;color:#fff}
 .lvlchip.lv3.on{background:var(--pri);border-color:var(--pri);color:var(--on-pri)}
-.lvlchip.lv2.on{background:#F08A3C;border-color:#F08A3C;color:#fff}
+.lvlchip.lv2.on{background:var(--chart-class);border-color:#F08A3C;color:#fff}
 .lvlchip.lv1.on{background:var(--warn);border-color:var(--warn);color:#fff}
 .scoregrid .srow{flex-wrap:wrap}
 .lvlTag{display:inline-block;border-radius:999px;padding:1px 9px;font-size:12px;font-weight:700;background:var(--chip);color:var(--pri-d)}
@@ -955,7 +955,7 @@ function viewStudentDetail(id){
   var rows=subjectAvgs(id);
   h+='<div class="panel"><h3>📊 میانگین در هر درس</h3>';
   if(!rows.length) h+='<p class="hint">هنوز نمره‌ای ثبت نشده است.</p>';
-  else h+='<div class="legend"><span><i style="background:#F5B301"></i>'+esc(s.name)+'</span><span><i style="background:#F08A3C"></i>میانگین کلاس</span></div>'+subjectBarsSvg(rows,true);
+  else h+='<div class="legend"><span><i style="background:var(--chart-student)"></i>'+esc(s.name)+'</span><span><i style="background:var(--chart-class)"></i>میانگین کلاس</span></div>'+subjectBarsSvg(rows,true);
   h+='</div>';
   h+='<div class="panel"><h3>📈 روند نمرات</h3>'+studentTrendInner(id)+'</div>';
   h+='<div class="panel"><h3>📝 همهٔ نمره‌ها</h3>';
