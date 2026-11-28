@@ -2086,7 +2086,7 @@ function studentGroupActs(sid){
   return out;
 }
 function descrepTableHtml(s,term,compact){
-  var rec=descrepOf(term,s.id), subs=descrepSubjects(term);
+  var rec=descrepOf(term,s.id), subs=selectedDescrepSubjects(term);
   var head='<h3 class="rep-h">📋 کارنامهٔ توصیفی — '+termLabel(term)+'</h3>';
   if(compact){
     /* چیدمان فشرده: کارنامه دو ستونه (درس|سطح|درس|سطح) تا برگ در یک صفحهٔ A4 جا شود */
