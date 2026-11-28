@@ -433,6 +433,13 @@ nav#tabbar button:nth-child(8) .ic{background:#FCEAF0;color:#C45E83}
 nav#tabbar button:nth-child(9) .ic{background:#F0EFF3;color:#746B82}
 nav#tabbar button.on .ic{box-shadow:inset 0 0 0 1.5px currentColor,0 2px 6px rgba(50,60,80,.10);transform:translateY(-2px)}
 nav#tabbar button:active .ic{transform:scale(.94)}
+/* موبایل: نمایش همهٔ ۹ آیکون نوار پایین بدون بیرون‌زدگی؛ عنوان‌ها با tooltip در دسترس‌اند */
+@media(max-width:600px){
+ nav#tabbar{width:100%;max-width:100%;box-sizing:border-box;padding:3px 2px calc(3px + env(safe-area-inset-bottom));gap:0;overflow:hidden}
+ nav#tabbar button{flex:1 1 0;min-width:0;width:0;margin:1px 0;padding:4px 0;min-height:48px;gap:0;font-size:0;overflow:hidden}
+ nav#tabbar button .ic{width:30px;height:29px;min-width:0;border-radius:9px}
+ nav#tabbar button .ic svg{width:19px;height:19px}
+}
 
 
 /* محیط سنجش پیش از چاپ: همان عرض چاپ A4، بدون نمایش روی صفحه */
@@ -559,7 +566,7 @@ body.print-measure #printArea .print-page.compact .rep-foot{margin-top:5px;font-
   <button data-tab="exams"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l3 3v14H5V4z"/><path d="M8 4v5h8V4M8 13h8m-8 4h5"/></svg></span>آزمون‌ها</button>
   <button data-tab="performance"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 14 4-4 3 3 6-7"/><path d="M16 6h4v4"/></svg></span>عملکرد</button>
   <button data-tab="students"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2m3-13a3 3 0 0 1 0 6m1 2a5 5 0 0 1 2 4v1"/></svg></span>دانش‌آموزان</button>
-  <button data-tab="settings"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.6-1.4-2.4 1.4-1.1a8 8 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.6 1.4 2.4-1.4 1.1a8 8 0 0 1 0 1.9Z"/></svg></span>تنظیمات</button>
+  <button data-tab="settings" title="تنظیمات" aria-label="تنظیمات"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.6.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.6-.9l-1.7.6-1.4-2.4 1.4-1.1a8 8 0 0 1 0-1.9l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.6-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.6.9l1.7-.6 1.4 2.4-1.4 1.1a8 8 0 0 1 0 1.9Z"/></svg></span>تنظیمات</button>
 </nav>
 <div id="modalWrap"><div class="scrim" onclick="closeDlg()"></div><div class="sheet" id="sheet"></div></div>
 <div id="calWrap"><div class="scrim" onclick="closeCal()"></div><div class="calSheet" id="calSheet"></div></div>
