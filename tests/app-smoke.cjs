@@ -21,7 +21,7 @@ const server = http.createServer((req,res)=>{
   try{
     await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle'});
     await page.waitForSelector('#tabbar [data-tab="timetable"]');
-    if(await page.locator('#app .hero').count()!==1) throw new Error('Dashboard did not render');
+    if(await page.locator('#app .hero').count()!==1) throw new Error('Dashboard did not render. appHTML='+String(await page.locator('#app').innerHTML()).slice(0,1200)+' pageErrors='+pageErrors.join(' | '));
     await page.locator('#tabbar [data-tab="timetable"]').click();
     await page.waitForSelector('#tt_sat_0');
     await page.locator('#tt_sat_0').fill('علوم آزمایشی');
