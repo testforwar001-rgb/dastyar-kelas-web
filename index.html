@@ -510,6 +510,16 @@ body.print-measure #printArea .print-page.compact .rep-foot{margin-top:5px;font-
   #printArea .perf-page.compact{min-height:0;max-height:none;height:auto;overflow:visible;break-inside:avoid;page-break-inside:avoid}
   #printArea .perf-page.compact.dense{font-size:10px;line-height:1.35}
   #printArea .perf-page.compact.xdense{font-size:9.5px;line-height:1.3}
+  /* فشرده‌سازی خودکار جدول‌ها هنگام نزدیک‌شدن گزارش به سقف یک صفحه */
+  #printArea .perf-page.compact.dense table.grid th,#printArea .perf-page.compact.dense table.grid td,
+  #printArea .print-page.compact.dense table.grid th,#printArea .print-page.compact.dense table.grid td{padding:1.2px 2px;font-size:9.4px;line-height:1.15}
+  #printArea .perf-page.compact.xdense table.grid th,#printArea .perf-page.compact.xdense table.grid td,
+  #printArea .print-page.compact.xdense table.grid th,#printArea .print-page.compact.xdense table.grid td{padding:.7px 1.5px;font-size:8.8px;line-height:1.08}
+  #printArea .perf-page.compact.dense .rep-id,#printArea .print-page.compact.dense .rep-id{margin:3px 0;gap:5px}
+  #printArea .perf-page.compact.xdense .rep-id,#printArea .print-page.compact.xdense .rep-id{margin:2px 0;gap:4px}
+  #printArea .perf-page.compact.dense .rep-stats,#printArea .print-page.compact.dense .rep-stats{gap:3px;margin:3px 0}
+  #printArea .perf-page.compact.xdense .rep-stats,#printArea .print-page.compact.xdense .rep-stats{gap:2px;margin:2px 0}
+  #printArea .perf-page.compact.xdense .rep-h,#printArea .print-page.compact.xdense .rep-h{font-size:10.5px;margin:2px 0 1px}
   #printArea .perf-page.compact.dense .pcard .n{font-size:14px}
   #printArea .perf-page.compact.xdense .pcard .n{font-size:13px}
   #printArea .perf-page.compact.dense .rep-h{margin:4px 0 2px}
@@ -3034,9 +3044,15 @@ function printAfterPreflight(){
   Promise.resolve(document.fonts&&document.fonts.ready?document.fonts.ready:null).then(waitImages).then(function(){
     requestAnimationFrame(function(){requestAnimationFrame(function(){
       var tooTall=[];
-      Array.prototype.forEach.call(pages,function(p,i){var h=Math.max(p.getBoundingClientRect().height,p.scrollHeight);if(h>maxH+3)tooTall.push(i+1);});
+      Array.prototype.forEach.call(pages,function(p){
+        p.classList.remove('dense','xdense');
+        function pageHeight(){return Math.max(p.getBoundingClientRect().height,p.scrollHeight);}
+        if(pageHeight()>maxH+3){p.classList.add('dense');}
+        if(pageHeight()>maxH+3){p.classList.add('xdense');}
+      });
+      Array.prototype.forEach.call(pages,function(p,i){if(Math.max(p.getBoundingClientRect().height,p.scrollHeight)>maxH+3)tooTall.push(i+1);});
       cleanup();
-      if(tooTall.length){alert('چاپ متوقف شد تا هیچ بخشی حذف یا بریده نشود. صفحه(های) '+tooTall.join('، ')+' با اطلاعات فعلی در یک برگ A4 و اندازهٔ خوانا جا نمی‌شوند. لطفاً محتوای طولانی یا بخش‌های غیرضروری را کوتاه/محدود کنید و دوباره چاپ بگیرید.');return;}
+      if(tooTall.length){alert('چاپ متوقف شد تا هیچ بخشی حذف یا بریده نشود. حتی پس از فشرده‌سازی خودکار و حفظ همهٔ اطلاعات، صفحه(های) '+tooTall.join('، ')+' در یک برگ A4 جا نمی‌شوند. لطفاً فقط در صورت امکان متن توضیحات یا بخش‌های اختیاری را کوتاه کنید و دوباره چاپ بگیرید.');return;}
       window.print();
     });});
   }).catch(function(){cleanup();alert('آماده‌سازی چاپ کامل نشد. لطفاً دوباره تلاش کنید.');});
