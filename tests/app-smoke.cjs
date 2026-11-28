@@ -5,7 +5,8 @@ const vm = require('vm');
 const { chromium } = require('playwright');
 const root = process.cwd();
 const htmlSource = fs.readFileSync(path.join(root,'index.html'),'utf8');
-for (const [i,m] of [...htmlSource.matchAll(/<script\\b[^>]*>([\\s\\S]*?)<\\/script>/gi)].entries()) new vm.Script(m[1],{filename:'index-inline-'+i+'.js'});
+let scriptPos=0, scriptNo=0;
+while((scriptPos=htmlSource.indexOf('<script',scriptPos))>=0){const scriptStart=htmlSource.indexOf('>',scriptPos)+1;const scriptEnd=htmlSource.indexOf('</script>',scriptStart);if(scriptStart<1||scriptEnd<0)throw new Error('Malformed inline script tag');new vm.Script(htmlSource.slice(scriptStart,scriptEnd),{filename:'index-inline-'+scriptNo+'.js'});scriptNo++;scriptPos=scriptEnd+9;}
 const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.webmanifest':'application/manifest+json','.png':'image/png'};
 const server = http.createServer((req,res)=>{
   const pathname = decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
