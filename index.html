@@ -369,6 +369,34 @@ nav#tabbar button .ic{transition:transform .12s}
 }
 
 
+
+/* پرداخت نهایی تم روشن چندرنگ: کارت‌ها، پنل‌ها و کنترل‌ها */
+#app .stats .stat{border-top:3px solid transparent;transition:transform .16s ease,box-shadow .16s ease}
+#app .stats .stat:nth-child(4n+1){border-top-color:#E8B33D;background:linear-gradient(180deg,#FFFCF2,#fff 42%)}
+#app .stats .stat:nth-child(4n+2){border-top-color:#67A9D8;background:linear-gradient(180deg,#F4FAFF,#fff 42%)}
+#app .stats .stat:nth-child(4n+3){border-top-color:#65B88A;background:linear-gradient(180deg,#F3FBF6,#fff 42%)}
+#app .stats .stat:nth-child(4n){border-top-color:#B08BD8;background:linear-gradient(180deg,#FAF6FF,#fff 42%)}
+#app .stats .stat:nth-child(4n+1) .v{color:#A87512}
+#app .stats .stat:nth-child(4n+2) .v{color:#3479AE}
+#app .stats .stat:nth-child(4n+3) .v{color:#34865B}
+#app .stats .stat:nth-child(4n) .v{color:#7954A8}
+#app .cards .card{border-top:3px solid transparent}
+#app .cards .card:nth-child(4n+1){border-top-color:#E8B33D}
+#app .cards .card:nth-child(4n+2){border-top-color:#67A9D8}
+#app .cards .card:nth-child(4n+3){border-top-color:#65B88A}
+#app .cards .card:nth-child(4n){border-top-color:#B08BD8}
+#app .panel{box-shadow:0 3px 14px rgba(65,75,95,.055);border-color:color-mix(in srgb,var(--line) 78%,#D8E1EE)}
+#app .panel h3::before{content:'';display:inline-block;width:4px;height:14px;border-radius:5px;background:linear-gradient(180deg,#F0B84B,#69B7A0);margin-left:7px;vertical-align:-2px}
+#app .rowitem{transition:transform .14s ease,border-color .14s ease,box-shadow .14s ease}
+#app .rowitem:active{transform:scale(.992)}
+#app .avatar{box-shadow:inset 0 0 0 1px rgba(255,255,255,.85)}
+#app .btn{transition:transform .14s ease,box-shadow .14s ease,filter .14s ease}
+#app .btn:active{transform:translateY(1px);filter:saturate(1.05)}
+#app .btn:focus-visible,#app .iconbtn:focus-visible{outline:3px solid rgba(66,130,190,.28);outline-offset:2px}
+#app .guide{background:linear-gradient(100deg,#FFF8E6,#F2FAFF);border-color:#EADAAE;color:#80653C}
+#app .empty{background:linear-gradient(145deg,#FFFDF4,#F6FAFF);border-color:#E7DDBF}
+@media(max-width:420px){#app .stats{gap:6px}#app .stats .stat{border-radius:14px;padding:7px 4px}}
+
 /* آیکون‌های برداری ناوبری و رنگ‌های ملایم هر بخش */
 nav#tabbar button .ic{width:38px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:0;transition:transform .18s ease,background .18s ease}
 nav#tabbar button .ic svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
