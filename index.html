@@ -1146,50 +1146,57 @@ function printTimetable(){
   printDoc('برنامه هفتگی کلاس','<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>');
 }
 
-var planSubject='ریاضی';
+var planSubject='ریاضی', planMonth='مهر', planWeek='1';
 function planWeeklyCount(subject){var n=0,tt=db.timetable||defaultTimetable();(tt.days||[]).filter(function(d){return d.enabled!==false;}).forEach(function(d){(d.lessons||[]).slice(0,tt.periodCount).forEach(function(x){if(String(x||'').trim()===subject)n++;});});return n;}
+function planFormForSlot(month,week,subject,sessionNo){planMonth=month;planWeek=String(week);planSubject=subject;planForm(null,{month:month,week:String(week),subject:subject,sessionNo:sessionNo});}
 function viewPlan(){
   var subs=SUBJECTS.slice();(db.plan||[]).forEach(function(p){if(subs.indexOf(p.subject)<0)subs.push(p.subject);});
-  var h='<p class="guide">برای هر درس، طرح درس را بر اساس ماه، هفته و جلسه تنظیم کنید. تعداد جلسه‌های هفتگی از برنامه هفتگی خوانده می‌شود؛ با تغییر برنامه، اطلاعات ثبت‌شده حذف نمی‌شود.</p>';
-  h+='<div class="panel"><label class="f" for="planSubject">انتخاب درس</label><select id="planSubject" onchange="planSubject=this.value;render()">'+subs.map(function(x){return '<option value="'+esc(x)+'"'+(x===planSubject?' selected':'')+'>'+esc(x)+'</option>';}).join('')+'</select><div class="hint">جلسه‌های این درس در برنامه هفتگی: '+fa(planWeeklyCount(planSubject))+' جلسه در هفته</div></div>';
-  h+='<button class="btn block fab" onclick="planForm()">➕ افزودن جلسهٔ طرح درس</button>';
-  if(!db.plan.length) h+='<div class="empty"><span class="big">📚</span>هنوز برنامه‌ای ثبت نشده است.</div>';
-  else{
-    MONTHS.forEach(function(mo){
-      var rows=db.plan.filter(function(p){return p.month===mo&&p.subject===planSubject;});
-      if(!rows.length) return;
-      h+='<div class="monthttl">🗓 '+esc(mo)+'</div>'+rows.map(function(p){ return planRow(p); }).join('');
-    });
-    var others=db.plan.filter(function(p){return MONTHS.indexOf(p.month)<0&&p.subject===planSubject;});
-    if(others.length) h+='<div class="monthttl">🗓 سایر</div>'+others.map(function(p){ return planRow(p); }).join('');
+  var h='<p class="guide">برای هر درس، ماه و هفته را انتخاب کنید. تعداد جلسه‌های قابل برنامه‌ریزی مستقیماً از برنامه هفتگی خوانده می‌شود. محتوای جلسات قبلی با تغییر برنامه حذف نمی‌شود.</p>';
+  h+='<div class="panel"><label class="f" for="planSubject">درس</label><select id="planSubject" onchange="planSubject=this.value;render()">'+subs.map(function(x){return '<option value="'+esc(x)+'"'+(x===planSubject?' selected':'')+'>'+esc(x)+'</option>';}).join('')+'</select>';
+  h+='<div class="formgrid"><div><label class="f" for="planMonth">ماه</label><select id="planMonth" onchange="planMonth=this.value;render()">'+MONTHS.map(function(x){return '<option value="'+esc(x)+'"'+(x===planMonth?' selected':'')+'>'+esc(x)+'</option>';}).join('')+'</select></div><div><label class="f" for="planWeek">هفته</label><select id="planWeek" onchange="planWeek=this.value;render()">'+[1,2,3,4,5].map(function(x){return '<option value="'+x+'"'+(String(x)===String(planWeek)?' selected':'')+'>هفتهٔ '+fa(x)+'</option>';}).join('')+'</select></div></div>';
+  h+='<div class="hint">جلسه‌های هفتگی این درس طبق برنامه کلاس: '+fa(planWeeklyCount(planSubject))+' جلسه</div></div>';
+  var count=planWeeklyCount(planSubject);
+  h+='<div class="panel"><h3>📚 طرح درس '+esc(planSubject)+' — '+esc(planMonth)+'، هفتهٔ '+fa(planWeek)+'</h3>';
+  if(!count)h+='<p class="hint">برای این درس در برنامه هفتگی زنگی ثبت نشده است؛ ابتدا برنامه هفتگی را تنظیم کنید.</p>';
+  for(var n=1;n<=count;n++){
+    var rows=db.plan.filter(function(p){return p.subject===planSubject&&p.month===planMonth&&String(p.week)===String(planWeek)&&Number(p.sessionNo||1)===n;});
+    h+='<div class="panel" style="padding:9px;margin:8px 0"><b>جلسهٔ '+fa(n)+'</b>';
+    h+=rows.length?rows.map(function(p){return planRow(p);}).join(''):'<p class="hint">برای این جلسه هنوز طرح درسی ثبت نشده است.</p><button class="btn small" onclick="planFormForSlot(\''+planMonth+'\',\''+planWeek+'\',\''+planSubject+'\','+n+')">➕ ثبت محتوای جلسه</button>';
+    h+='</div>';
   }
+  var archived=db.plan.filter(function(p){return p.subject===planSubject&&p.month===planMonth&&String(p.week)===String(planWeek)&&Number(p.sessionNo||1)>count;});
+  if(archived.length)h+='<div class="panel"><h3>جلسه‌های حفظ‌شده از برنامه قبلی</h3>'+archived.map(function(p){return planRow(p);}).join('')+'</div>';
+  h+='</div>';
   return h;
 }
 function planRow(p){
-  var done=p.status==='done';
-  return '<div class="rowitem"><div class="grow"><div class="nm'+(done?' done-topic':'')+'">'+esc(p.topic)+'</div><div class="meta"><span class="badge">'+esc(p.subject)+'</span> هفتهٔ '+fa(p.week)+' · جلسهٔ '+fa(p.sessionNo||1)+' · '+(done?'<span class="badge green">انجام شد</span>':'در پیش')+'</div>'+(p.objectives?'<div class="hint">هدف‌ها: '+esc(p.objectives)+'</div>':'')+(p.materials?'<div class="hint">وسایل: '+esc(p.materials)+'</div>':'')+'</div>'
+  var done=p.status==='done',arch=Number(p.sessionNo||1)>planWeeklyCount(p.subject);
+  return '<div class="rowitem"><div class="grow"><div class="nm'+(done?' done-topic':'')+'">'+esc(p.topic)+'</div><div class="meta"><span class="badge">'+esc(p.subject)+'</span> هفتهٔ '+fa(p.week)+' · جلسهٔ '+fa(p.sessionNo||1)+' · '+(done?'<span class="badge green">انجام شد</span>':'در پیش')+(arch?' · <span class="badge red">جلسهٔ حفظ‌شده؛ نیازمند بازبینی</span>':'')+'</div>'+(p.objectives?'<div class="hint">هدف‌ها: '+esc(p.objectives)+'</div>':'')+(p.materials?'<div class="hint">وسایل: '+esc(p.materials)+'</div>':'')+'</div>'
     +'<button class="btn small '+(done?'soft':'')+'" onclick="togglePlan(\''+p.id+'\')">'+(done?'↩ برگردان':'✔ انجام شد')+'</button>'
     +'<button class="iconbtn" title="ویرایش" onclick="planForm(\''+p.id+'\')">✏️</button>'
     +'<button class="iconbtn red" title="حذف" onclick="delPlan(\''+p.id+'\')">🗑</button></div>';
 }
-function planForm(id){
+function planForm(id,slot){
   var p=id?db.plan.filter(function(x){return x.id===id;})[0]:null;
-  var mOpts=MONTHS.map(function(m){ return '<option value="'+esc(m)+'"'+(p&&p.month===m?' selected':'')+'>'+esc(m)+'</option>'; }).join('');
-  openDlg(dlgHead(p?'✏️ ویرایش مبحث':'➕ مبحث جدید')
+  var mo=p?p.month:(slot?slot.month:planMonth), wk=p?p.week:(slot?slot.week:planWeek), sub=p?p.subject:(slot?slot.subject:planSubject), sn=p?Number(p.sessionNo||1):(slot?Number(slot.sessionNo)||1:1);
+  var mOpts=MONTHS.map(function(m){ return '<option value="'+esc(m)+'"'+(mo===m?' selected':'')+'>'+esc(m)+'</option>'; }).join('');
+  openDlg(dlgHead(p?'✏️ ویرایش جلسهٔ طرح درس':'➕ ثبت جلسهٔ طرح درس')
     +'<label class="f" for="p_month">ماه</label><select id="p_month">'+mOpts+'</select>'
-    +'<label class="f" for="p_week">هفته</label><select id="p_week">'+[1,2,3,4,5].map(function(w){ return '<option value="'+w+'"'+(p&&String(p.week)===String(w)?' selected':'')+'>هفتهٔ '+fa(w)+'</option>'; }).join('')+'</select>'
-    +'<label class="f" for="p_subject">درس</label><select id="p_subject">'+subjectOptions(p?p.subject:planSubject)+'</select>'
-    +'<label class="f" for="p_session">جلسهٔ هفته</label><select id="p_session">'+Array.from({length:Math.max(1,planWeeklyCount(p?p.subject:planSubject))},function(_,i){var n=i+1;return '<option value="'+n+'"'+(p&&Number(p.sessionNo)===n?' selected':'')+'>جلسهٔ '+fa(n)+'</option>';}).join('')+'</select>'
+    +'<label class="f" for="p_week">هفته</label><select id="p_week">'+[1,2,3,4,5].map(function(w){ return '<option value="'+w+'"'+(String(wk)===String(w)?' selected':'')+'>هفتهٔ '+fa(w)+'</option>'; }).join('')+'</select>'
+    +'<label class="f" for="p_subject">درس</label><select id="p_subject" onchange="planRefreshSessions(this.value)">'+subjectOptions(sub)+'</select>'
+    +'<label class="f" for="p_session">جلسهٔ هفته</label><select id="p_session">'+Array.from({length:Math.max(1,planWeeklyCount(sub),sn)},function(_,i){var n=i+1;return '<option value="'+n+'"'+(sn===n?' selected':'')+'>'+('جلسهٔ '+fa(n)+(n>planWeeklyCount(sub)?' — حفظ‌شده از برنامهٔ قبلی':''))+'</option>';}).join('')+'</select>'
     +field('p_topic','رئوس مطالب / موضوع جلسه *',p?p.topic:'','موضوع یا محتوای جلسه')
     +'<label class="f" for="p_objectives">هدف‌ها</label><textarea id="p_objectives" rows="2">'+esc(p?p.objectives||'':'')+'</textarea>'
     +'<label class="f" for="p_materials">وسایل و منابع</label><textarea id="p_materials" rows="2">'+esc(p?p.materials||'':'')+'</textarea>'
     +'<div class="btnrow"><button class="btn" onclick="savePlan('+(p?'\''+p.id+'\'':'null')+')">💾 ذخیره</button><button class="btn soft" onclick="closeDlg()">انصراف</button></div>');
   dlgCommit=silentFormSave(function(){ savePlan(p?p.id:null); });
 }
+function planRefreshSessions(subject){var el=document.getElementById('p_session');if(!el)return;var old=Number(el.value)||1,max=Math.max(1,planWeeklyCount(subject),old);el.innerHTML=Array.from({length:max},function(_,i){var n=i+1;return '<option value="'+n+'"'+(n===old?' selected':'')+'>'+('جلسهٔ '+fa(n)+(n>planWeeklyCount(subject)?' — حفظ‌شده از برنامهٔ قبلی':''))+'</option>';}).join('');}
 function savePlan(id){
   var topic=document.getElementById('p_topic').value.trim();
   if(!topic){ toast('نام مبحث لازم است',true); return; }
   var data={month:document.getElementById('p_month').value,week:document.getElementById('p_week').value,subject:document.getElementById('p_subject').value,sessionNo:Number(document.getElementById('p_session').value)||1,topic:topic,objectives:document.getElementById('p_objectives').value.trim(),materials:document.getElementById('p_materials').value.trim()};
+  planSubject=data.subject;planMonth=data.month;planWeek=String(data.week);
   if(id){ var p=db.plan.filter(function(x){return x.id===id;})[0]; Object.keys(data).forEach(function(k){ p[k]=data[k]; }); }
   else{ data.id=uid(); data.status='todo'; db.plan.push(data); }
   saveDb(); closeDlg(); render(); toast('ذخیره شد ✅');
