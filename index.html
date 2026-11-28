@@ -498,7 +498,7 @@ var db=loadDb();
 var syncDirty=false, syncConflict=false, syncBusy=false;
 try{ syncDirty=localStorage.getItem('dk_dirty')==='1'; }catch(e){}
 function markDirty(){ syncDirty=true; try{localStorage.setItem('dk_dirty','1');}catch(e){} updateSyncDot(); }
-function saveDb(){ dlgCommit=null; try{localStorage.setItem(LS_DB,JSON.stringify(db)); markDirty();}catch(e){toast('خطا در ذخیره‌سازی',true);} }
+function saveDb(){ dlgCommit=null; try{localStorage.setItem(LS_DB,JSON.stringify(db)); markDirty(); if(navigator.onLine!==false) maybeAutoSync();}catch(e){toast('خطا در ذخیره‌سازی محلی؛ فضای ذخیره‌سازی دستگاه را بررسی کنید.',true);} }
 function dbPayload(){ return {students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{},behavior:db.behavior||[],meetings:db.meetings||[],descrep:db.descrep||{},costs:db.costs||[],timetable:db.timetable||defaultTimetable(),_lv:1}; }
 function syncCfg(){ try{return JSON.parse(localStorage.getItem(LS_CFG)||'{}');}catch(e){return {};} }
 function saveSyncCfg(c){ try{localStorage.setItem(LS_CFG,JSON.stringify(c));}catch(e){} }
@@ -2679,12 +2679,12 @@ function markSynced(){ lastSyncAt=new Date().toISOString(); try{localStorage.set
 /* نقطهٔ وضعیت همگام‌سازی در سربرگ + بنر غیرمسدودکنندهٔ تعارض */
 function updateSyncDot(){
   var el=document.getElementById('syncStatus'); if(!el) return;
-  var cfg=syncCfg();
-  if(!cfg.token){ el.style.display='none'; el.textContent=''; return; }
-  el.style.display='inline-flex';
-  if(syncConflict){ el.className='syncst bad'; el.textContent='نیازمند بررسی'; }
-  else if(syncDirty){ el.className='syncst wait'; el.textContent='در انتظار اتصال'; }
-  else { el.className='syncst ok'; el.textContent='همگام ✓'; }
+  var cfg=syncCfg(); el.style.display='inline-flex';
+  if(navigator.onLine===false){el.className='syncst wait';el.textContent='آفلاین · ذخیره روی دستگاه';return;}
+  if(!cfg.token){el.className='syncst wait';el.textContent='ذخیره محلی';return;}
+  if(syncConflict){el.className='syncst bad';el.textContent='نیازمند بررسی';}
+  else if(syncDirty){el.className='syncst wait';el.textContent='در انتظار همگام‌سازی';}
+  else{el.className='syncst ok';el.textContent='همگام ✓';}
 }
 function showSyncBanner(txt){ var b=document.getElementById('syncBanner'), t=document.getElementById('syncBannerTxt'); if(!b||!t) return; t.textContent=txt; b.classList.add('show'); }
 function hideSyncBanner(){ var b=document.getElementById('syncBanner'); if(b) b.classList.remove('show'); }
@@ -2777,7 +2777,8 @@ function maybeAutoSync(){
   if(!cfg.token||!cfg.url||!syncDirty){ updateSyncDot(); return; }
   autoPush();
 }
-window.addEventListener('online',function(){ maybeAutoSync(); });
+window.addEventListener('online',function(){ updateSyncDot(); maybeAutoSync(); });
+window.addEventListener('offline',function(){ updateSyncDot(); });
 document.addEventListener('visibilitychange',function(){ if(!document.hidden) maybeAutoSync(); });
 /* ===== خروجی اکسل (فایل .xls چندبرگی) ===== */
 function exportExcel(){
