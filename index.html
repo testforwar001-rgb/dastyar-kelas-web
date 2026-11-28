@@ -85,6 +85,17 @@ h2.sec::before{content:'';display:inline-block;width:10px;height:10px;border-rad
 .card .sub{font-size:12px;color:var(--muted)}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow);margin-bottom:9px}
 .panel h3{margin:0 0 8px;font-size:15px}
+/* ===== بخش‌های کرکره‌ای سراسری ===== */
+.panel.accordion-panel{padding:0;overflow:hidden}
+.accordion-panel>summary{display:flex;align-items:center;gap:10px;list-style:none;cursor:pointer;padding:13px 14px;min-height:48px;font-weight:800;font-size:15px;color:var(--ink);-webkit-tap-highlight-color:transparent}
+.accordion-panel>summary::-webkit-details-marker{display:none}
+.accordion-panel>summary:after{content:'⌄';font-size:19px;color:var(--pri-d);margin-right:auto;transition:transform .18s ease}
+.accordion-panel[open]>summary:after{transform:rotate(180deg)}
+.accordion-panel>.accordion-body{padding:0 12px 12px}
+.accordion-panel>.accordion-body>:first-child{margin-top:0}
+.accordion-panel>summary:focus-visible{outline:2px solid var(--pri);outline-offset:-3px;border-radius:12px}
+@media(prefers-reduced-motion:reduce){.accordion-panel>summary:after{transition:none}}
+
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer;font-family:inherit;color:var(--ink)}
 .chip.on{background:var(--pri);border-color:var(--pri);color:#3D2C22;font-weight:700}
@@ -742,6 +753,7 @@ function sparkSvg(sid){
 /* ===== ناوبری و رندر ===== */
 var curTab='dash', chartSubject='همه', stuSubject='همه', studentQuery='', detailStudent=null, detailGroup=null, detailWall=null;
 var attDate='', attMarks=null, formPhoto='';
+var accordionOpenState={};
 var app=document.getElementById('app');
 document.querySelectorAll('#tabbar button').forEach(function(b){ b.addEventListener('click',function(){ go(b.getAttribute('data-tab')); }); });
 function scrollMainTop(){ var m=document.getElementById('app'); if(m) m.scrollTop=0; }
@@ -759,7 +771,33 @@ function render(){
   else if(curTab==='settings') app.innerHTML=viewSettings();
   bindView();
 }
+function makePanelsAccordion(){
+  if(!app) return;
+  var panels=Array.prototype.slice.call(app.querySelectorAll('.panel'));
+  var counts={}, panelNo=0;
+  panels.forEach(function(panel){
+    if(panel.classList.contains('accordion-panel')) return;
+    var heading=panel.querySelector(':scope > h3');
+    if(!heading) return;
+    var title=(heading.textContent||'بخش').trim();
+    var idx=counts[title]||0; counts[title]=idx+1;
+    var key=curTab+'|'+title+'|'+idx;
+    var details=document.createElement('details');
+    details.className=panel.className+' accordion-panel';
+    details.open=Object.prototype.hasOwnProperty.call(accordionOpenState,key)?accordionOpenState[key]:(panelNo===0); panelNo++;
+    var summary=document.createElement('summary');
+    summary.textContent=title;
+    var body=document.createElement('div'); body.className='accordion-body';
+    var child=panel.firstChild;
+    while(child){ var next=child.nextSibling; if(child!==heading) body.appendChild(child); child=next; }
+    summary.addEventListener('click',function(){});
+    details.appendChild(summary); details.appendChild(body);
+    details.addEventListener('toggle',function(){ accordionOpenState[key]=details.open; });
+    panel.parentNode.replaceChild(details,panel);
+  });
+}
 function bindView(){
+  makePanelsAccordion();
   var sb=document.querySelector('.searchbar'); if(sb){ sb.style.top='0px'; }
   var q=document.getElementById('stuSearch'); if(q){ q.addEventListener('input',function(){ studentQuery=q.value; if(typeof openStuAcc!=='undefined') openStuAcc=null; var pos=q.selectionStart; render(); var nq=document.getElementById('stuSearch'); if(nq){ nq.focus(); try{nq.setSelectionRange(pos,pos);}catch(e){} } }); }
   document.querySelectorAll('[data-subject-chip]').forEach(function(c){ c.addEventListener('click',function(){ chartSubject=c.getAttribute('data-subject-chip'); render(); }); });
