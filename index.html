@@ -1886,7 +1886,7 @@ function descrepForm(sid,term){
   var s=studentById(sid); if(!s) return;
   descrepCtx={sid:sid,term:term};
   var rec=descrepOf(term,sid); descrepSel={}; Object.keys(rec).forEach(function(k){ descrepSel[k]=rec[k]; });
-  var subs=db.descrepSubjects||[];
+  var subs=selectedDescrepSubjects(term);
   var rows=subs.map(function(sub){
     return '<div class="srow"><span class="sname">'+esc(sub)+'</span><span class="lvlchips">'+LEVEL_LIST.map(function(lv){
       return '<button type="button" class="lvlchip lv'+lv+(descrepSel[sub]===lv?' on':'')+'" data-descrep-for="'+esc(sub)+'" data-lvl="'+lv+'" onclick="descrepChip(this)">'+LEVELS[lv]+'</button>';
