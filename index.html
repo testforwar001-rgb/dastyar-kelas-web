@@ -2351,23 +2351,34 @@ function toggleStuAcc(id){
 
 /* ===== گزارش والدین ===== */
 function reportHtml(s){
-  var av=studentAvg(s.id), att=attStats(s.id), es=studentEntries(s.id), rows=subjectAvgs(s.id);
+  var av=studentAvg(s.id), att=attStats(s.id), es=studentEntries(s.id), qs=studentQuizEntries(s.id), rows=subjectAvgs(s.id);
   var today=''; try{ today=new Date().toLocaleDateString('fa-IR'); }catch(e){}
-  var h='<div class="rep">'
-    +'<div class="rep-hero"><div class="l1">دبستان دخترانه حافظ — کلاس ۶/۴ — سال تحصیلی ۱۴۰۵ تا ۱۴۰۶</div><div class="l2">گزارش پیشرفت تحصیلی · آموزگار: مریم خانمحمدی</div></div>'
+  var h='<div class="rep perf-page">'
+    +'<div class="rep-hero"><div class="l1">گزارش عملکرد دانش‌آموز</div><div class="l2">پایه ششم · سال تحصیلی</div><div class="l3">گزارش ویژه اولیاء</div></div>'
     +'<div class="rep-id">'+(s.photo?'<img class="rep-photo" src="'+s.photo+'" alt="">':'')
     +'<div><div class="rep-name">'+esc(s.name)+' '+esc(s.family)+'</div><div class="rep-meta">نام پدر: '+esc(s.father||'—')+' · کد دانش‌آموزی: '+esc(s.code||'—')+'</div></div></div>'
     +'<div class="rep-stats">'
-    +'<div class="rep-stat"><div class="v" style="font-size:15px">'+faLevel(av)+'</div><div class="l">میانگین کل</div></div>'
+    +'<div class="rep-stat"><div class="v" style="font-size:15px">'+faLevel(av)+'</div><div class="l">میانگین آزمون‌ها</div></div>'
     +'<div class="rep-stat"><div class="v">'+(att.pct===null?'—':fa(att.pct)+'٪')+'</div><div class="l">درصد حضور</div></div>'
-    +'<div class="rep-stat"><div class="v">'+fa(es.length)+'</div><div class="l">آزمون شرکت‌کرده</div></div>'
-    +'<div class="rep-stat"><div class="v">'+fa(att.a)+'</div><div class="l">تعداد غیبت</div></div>'
-    +'</div>'
-    +'<h3 class="rep-h">📊 میانگین در هر درس</h3>'+(rows.length?'<div class="legend"><span><i style="background:#F5B301"></i>'+esc(s.name)+'</span><span><i style="background:#F08A3C"></i>میانگین کلاس</span></div>'+subjectBarsSvg(rows,true):'<p>هنوز نمره‌ای ثبت نشده است.</p>')
-    +'<h3 class="rep-h">📈 روند نمرات</h3>'+sparkSvg(s.id)
-    +(s.parentNote?'<div class="rep-note"><b>✉️ پیام معلم:</b> '+esc(s.parentNote)+'</div>':'')
-    +'<div class="rep-foot">با آرزوی موفقیت و سربلندی برای '+esc(s.name)+' عزیز 🌻 · تاریخ گزارش: '+esc(today)+'</div>'
+    +'<div class="rep-stat"><div class="v">'+fa(es.length)+'</div><div class="l">تعداد آزمون</div></div>'
+    +'<div class="rep-stat"><div class="v">'+fa(qs.length)+'</div><div class="l">تعداد آزمونک</div></div>'
     +'</div>';
+  if(rows.length) h+='<h3 class="rep-h">📊 وضعیت درس‌ها</h3><table class="grid"><tr><th>درس</th><th class="num">میانگین آزمون</th><th class="num">میانگین کلاس</th></tr>'
+    +rows.map(function(x){ return '<tr><td>'+esc(x.subject)+'</td><td class="num">'+faLevel(x.stu)+'</td><td class="num">'+faLevel(x.cls)+'</td></tr>'; }).join('')+'</table>';
+  if(es.length) h+='<h3 class="rep-h">📝 نتایج آزمون‌ها</h3><table class="grid"><tr><th>عنوان آزمون</th><th>درس</th><th>تاریخ</th><th class="num">نتیجه</th></tr>'
+    +es.map(function(x){ return '<tr><td>'+esc(x.exam.title)+'</td><td>'+esc(x.exam.subject)+'</td><td>'+esc(x.exam.date||'—')+'</td><td class="num"><b>'+scoreLabel(x.score)+'</b></td></tr>'; }).join('')+'</table>';
+  if(qs.length) h+='<h3 class="rep-h">❓ نتایج آزمونک‌ها و سؤال‌های کلاسی</h3><table class="grid"><tr><th>عنوان آزمونک</th><th>درس</th><th>تاریخ</th><th class="num">نتیجه</th></tr>'
+    +qs.map(function(x){ return '<tr><td>'+esc(x.quiz.title)+'</td><td>'+esc(x.quiz.subject)+'</td><td>'+esc(x.quiz.date||'—')+'</td><td class="num"><b>'+scoreLabel(x.score)+'</b></td></tr>'; }).join('')+'</table>';
+  var kar='';
+  [1,2].forEach(function(term){
+    var rec=descrepOf(term,s.id), subs=Object.keys(rec);
+    if(subs.length) kar+='<h4 style="margin:5px 0">نوبت '+(term===1?'اول':'دوم')+'</h4><table class="grid"><tr><th>درس</th><th>سطح توصیفی</th></tr>'
+      +subs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlTag(rec[sub])+'</td></tr>'; }).join('')+'</table>';
+  });
+  if(kar) h+='<h3 class="rep-h">📋 کارنامهٔ توصیفی</h3>'+kar;
+  if(att.total) h+='<h3 class="rep-h">🗓 حضور و غیاب</h3><table class="grid"><tr><th>روزهای ثبت‌شده</th><th>حضور</th><th>غیبت</th><th>تأخیر</th></tr><tr><td>'+fa(att.marked)+'</td><td>'+fa(att.p)+'</td><td>'+fa(att.a)+'</td><td>'+fa(att.l)+'</td></tr></table>';
+  if(s.parentNote) h+='<div class="rep-note"><b>✉️ پیام معلم:</b> '+esc(s.parentNote)+'</div>';
+  h+='<div class="rep-foot">با آرزوی موفقیت و سربلندی برای '+esc(s.name)+' عزیز 🌻 · تاریخ گزارش: '+esc(today)+'</div></div>';
   return h;
 }
 function parentReport(id){
@@ -2483,84 +2494,67 @@ async function downloadParentPng(id){
   var s=studentById(id); if(!s) return;
   toast('در حال ساخت تصویر گزارش…');
   try{
-    var av=studentAvg(s.id), att=attStats(s.id), es=studentEntries(s.id), rows=subjectAvgs(s.id).slice(0,6);
-    var W=1080,H=1350, cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+    var av=studentAvg(s.id), att=attStats(s.id), es=studentEntries(s.id), qs=studentQuizEntries(s.id);
+    var rows=subjectAvgs(s.id), today=''; try{ today=new Date().toLocaleDateString('fa-IR'); }catch(e){}
+    var W=1200, pad=54, lineH=42, sections=[];
+    sections.push({title:'وضعیت درس‌ها',rows:rows.map(function(x){return [x.subject,faLevel(x.stu),faLevel(x.cls)];}),head:['درس','میانگین دانش‌آموز','میانگین کلاس']});
+    if(es.length) sections.push({title:'نتایج آزمون‌ها',rows:es.map(function(x){return [x.exam.title,x.exam.subject,x.exam.date||'—',scoreLabel(x.score)];}),head:['عنوان آزمون','درس','تاریخ','نتیجه']});
+    if(qs.length) sections.push({title:'نتایج آزمونک‌ها',rows:qs.map(function(x){return [x.quiz.title,x.quiz.subject,x.quiz.date||'—',scoreLabel(x.score)];}),head:['عنوان آزمونک','درس','تاریخ','نتیجه']});
+    [1,2].forEach(function(term){
+      var rec=descrepOf(term,s.id), subs=Object.keys(rec);
+      if(subs.length) sections.push({title:'کارنامه توصیفی — نوبت '+(term===1?'اول':'دوم'),rows:subs.map(function(sub){return [sub,lvlLabel(rec[sub])];}),head:['درس','سطح']});
+    });
+    if(att.total) sections.push({title:'حضور و غیاب',rows:[['روزهای ثبت‌شده',fa(att.marked)],['حضور',fa(att.p)],['غیبت',fa(att.a)],['تأخیر',fa(att.l)]],head:['شاخص','تعداد']});
+    var noteLines=[];
+    var measure=document.createElement('canvas').getContext('2d'); measure.font='27px Tahoma';
+    if(s.parentNote) noteLines=wrapCanvasLines(measure,s.parentNote,W-2*pad-40,20);
+    var totalRows=sections.reduce(function(n,x){return n+x.rows.length+1;},0);
+    var H=470+sections.length*76+totalRows*lineH+(noteLines.length?90+noteLines.length*38:0)+100;
+    H=Math.max(1050,H);
+    var cv=document.createElement('canvas'); cv.width=W; cv.height=H;
     var g=cv.getContext('2d');
     g.fillStyle='#FFFDF5'; g.fillRect(0,0,W,H);
     var gr=g.createLinearGradient(0,0,W,0); gr.addColorStop(0,'#F5A623'); gr.addColorStop(1,'#D98E04');
-    g.fillStyle=gr; g.fillRect(0,0,W,214);
-    g.fillStyle='rgba(255,255,255,0.20)';
-    [[64,52,27],[150,168,15],[W-70,58,20],[W-150,172,13],[W/2-330,44,11]].forEach(function(c){ g.beginPath(); g.arc(c[0],c[1],c[2],0,7); g.fill(); });
-    g.fillStyle='#4A3205'; g.textAlign='center';
-    g.font='800 47px Tahoma'; g.fillText('دبستان دخترانه حافظ', W/2, 80);
-    g.font='33px Tahoma'; g.fillText('کلاس ۶/۴ · سال تحصیلی ۱۴۰۵ تا ۱۴۰۶', W/2, 136);
-    g.font='29px Tahoma'; g.fillText('گزارش پیشرفت تحصیلی · آموزگار: مریم خانمحمدی', W/2, 184);
-    /* عکس یا حرف اول نام */
-    var cx=W-168, cy=342, r=92;
-    g.beginPath(); g.arc(cx,cy,r,0,7); g.fillStyle='#FFF3C4'; g.fill();
-    if(s.photo){
-      await new Promise(function(res){
-        var img=new Image();
-        img.onload=function(){ g.save(); g.beginPath(); g.arc(cx,cy,r,0,7); g.clip(); var sc=Math.max(2*r/img.width,2*r/img.height); g.drawImage(img,cx-img.width*sc/2,cy-img.height*sc/2,img.width*sc,img.height*sc); g.restore(); res(); };
-        img.onerror=function(){ res(); };
-        img.src=s.photo;
-      });
-    }else{
-      g.fillStyle='#9C6603'; g.font='800 74px Tahoma'; g.textAlign='center'; g.fillText((s.name||'؟').charAt(0),cx,cy+26);
-    }
-    g.beginPath(); g.arc(cx,cy,r,0,7); g.strokeStyle='#F5A623'; g.lineWidth=5; g.stroke();
-    /* نام و مشخصات */
-    g.textAlign='right'; g.fillStyle='#3D2C22';
-    g.font='800 56px Tahoma'; g.fillText(s.name+' '+s.family, W-300, 322);
-    g.font='30px Tahoma'; g.fillStyle='#9A7B68';
-    g.fillText('نام پدر: '+(s.father||'—'), W-300, 372);
-    g.fillText('کد دانش‌آموزی: '+(s.code?fa(s.code):'—'), W-300, 418);
-    /* سه کارت آماری */
-    var stats=[{v:av===null?'—':lvlLabel(av),l:'میانگین کل'},{v:att.pct===null?'—':fa(att.pct)+'٪',l:'درصد حضور'},{v:fa(es.length),l:'آزمون شرکت‌کرده'}];
-    var bw=(W-120-2*24)/3, by=472, bh=132;
-    stats.forEach(function(st,i){
-      var x=W-60-bw-i*(bw+24);
-      g.fillStyle='#FFFFFF'; g.strokeStyle='#F7EBC8'; g.lineWidth=2;
-      g.beginPath(); g.roundRect(x,by,bw,bh,18); g.fill(); g.stroke();
-      g.fillStyle='#9C6603'; g.font='800 52px Tahoma'; g.textAlign='center'; g.fillText(st.v, x+bw/2, by+66);
-      g.fillStyle='#9A7B68'; g.font='27px Tahoma'; g.fillText(st.l, x+bw/2, by+108);
+    g.fillStyle=gr; g.fillRect(0,0,W,190);
+    g.fillStyle='#4A3205'; g.textAlign='center'; g.font='800 46px Tahoma'; g.fillText('گزارش عملکرد دانش‌آموز',W/2,75);
+    g.font='29px Tahoma'; g.fillText('پایه ششم · گزارش ویژه اولیاء',W/2,128);
+    g.font='23px Tahoma'; g.fillText('تاریخ گزارش: '+today,W/2,166);
+    var y=242;
+    g.textAlign='right'; g.fillStyle='#3D2C22'; g.font='800 38px Tahoma'; g.fillText(s.name+' '+s.family,W-pad,y);
+    y+=48; g.font='25px Tahoma'; g.fillStyle='#765F4B'; g.fillText('نام پدر: '+(s.father||'—')+'    کد دانش‌آموزی: '+(s.code?fa(s.code):'—'),W-pad,y);
+    y+=40;
+    var statItems=[['میانگین آزمون‌ها',av===null?'—':faLevel(av)],['درصد حضور',att.pct===null?'—':fa(att.pct)+'٪'],['تعداد آزمون',fa(es.length)],['تعداد آزمونک',fa(qs.length)]];
+    var sw=(W-2*pad-30)/4;
+    statItems.forEach(function(st,i){var x=pad+i*(sw+10);g.fillStyle='#FFFFFF';g.strokeStyle='#E8D18D';g.lineWidth=2;g.beginPath();g.roundRect(x,y,sw,92,14);g.fill();g.stroke();g.textAlign='center';g.fillStyle='#9C6603';g.font='800 28px Tahoma';g.fillText(st[1],x+sw/2,y+38);g.fillStyle='#806C54';g.font='21px Tahoma';g.fillText(st[0],x+sw/2,y+72);});
+    y+=124;
+    sections.forEach(function(sec){
+      g.textAlign='right';g.fillStyle='#8A5A00';g.font='800 30px Tahoma';g.fillText(sec.title,W-pad,y);y+=18;
+      var cols=sec.head.length, widths=cols===4?[.34,.22,.22,.22]:cols===3?[.44,.28,.28]:[.58,.42];
+      function drawRow(cells,header){
+        var x=W-pad;
+        cells.forEach(function(cell,i){
+          var cw=(W-2*pad)*widths[i]; x-=cw;
+          g.fillStyle=header?'#F8E9BD':'#FFFFFF';g.fillRect(x,y,cw,lineH);
+          g.strokeStyle='#E4D5B5';g.lineWidth=1;g.strokeRect(x,y,cw,lineH);
+          g.fillStyle='#3D2C22';g.font=header?'bold 19px Tahoma':'22px Tahoma';g.textAlign='center';
+          var txt=String(cell||'—'); if(txt.length>25) txt=txt.slice(0,23)+'…';
+          g.fillText(txt,x+cw/2,y+28);
+        });
+        y+=lineH;
+      }
+      drawRow(sec.head,true); sec.rows.forEach(function(row){drawRow(row,false);}); y+=20;
     });
-    /* نمودار درس‌ها */
-    var y=664;
-    g.textAlign='right'; g.fillStyle='#3D2C22'; g.font='800 34px Tahoma'; g.fillText('میانگین در هر درس', W-60, y); y+=26;
-    g.font='24px Tahoma'; g.fillStyle='#9A7B68'; g.fillText('میلهٔ طلایی: '+s.name+' · خط نارنجی: میانگین کلاس', W-60, y); y+=30;
-    rows.forEach(function(rw){
-      g.fillStyle='#3D2C22'; g.font='bold 29px Tahoma'; g.textAlign='right'; g.fillText(rw.subject, W-60, y+30);
-      var tx=60, tw=W-120, ty=y+44;
-      g.fillStyle='#F7EBC8'; g.beginPath(); g.roundRect(tx,ty,tw,30,15); g.fill();
-      if(rw.stu!==null){ g.fillStyle='#F5B301'; g.beginPath(); g.roundRect(tx,ty,Math.max(30,tw*rw.stu/4),30,15); g.fill(); }
-      if(rw.cls!==null){ g.fillStyle='#B85C12'; g.fillRect(tx+tw*rw.cls/4-3, ty-6, 6, 42); }
-      g.textAlign='left'; g.fillStyle='#9C6603'; g.font='800 29px Tahoma'; g.fillText(rw.stu===null?'—':faMean(rw.stu), tx+6, ty-10);
-      y+=96;
-    });
-    if(s.parentNote){
-      g.font='27px Tahoma';
-      var noteLines=wrapCanvasLines(g, s.parentNote, W-184, 3);
-      var boxH=58+noteLines.length*38+16;
-      y+=8;
-      g.fillStyle='#FFFFFF'; g.strokeStyle='#F5B301'; g.lineWidth=2; g.setLineDash([8,6]);
-      g.beginPath(); g.roundRect(60,y,W-120,boxH,16); g.fill(); g.stroke(); g.setLineDash([]);
-      g.fillStyle='#9C6603'; g.font='800 28px Tahoma'; g.textAlign='right'; g.fillText('✉️ پیام معلم:', W-92, y+44);
-      g.fillStyle='#3D2C22'; g.font='27px Tahoma';
-      noteLines.forEach(function(ln,li){ g.fillText(ln, W-92, y+88+li*38); });
-      y+=boxH;
+    if(noteLines.length){
+      g.textAlign='right';g.fillStyle='#8A5A00';g.font='800 29px Tahoma';g.fillText('پیام معلم',W-pad,y);y+=18;
+      noteLines.forEach(function(ln){g.fillStyle='#3D2C22';g.font='24px Tahoma';g.fillText(ln,W-pad,y+32);y+=38;}); y+=18;
     }
-    /* پاصفحه */
-    g.fillStyle='#9A7B68'; g.textAlign='center'; g.font='26px Tahoma';
-    var today=''; try{ today=new Date().toLocaleDateString('fa-IR'); }catch(e){}
-    g.fillText('با آرزوی موفقیت و سربلندی برای '+s.name+' عزیز 🌻 · '+today, W/2, H-44);
+    g.textAlign='center';g.fillStyle='#806C54';g.font='22px Tahoma';g.fillText('با آرزوی موفقیت و سربلندی 🌻',W/2,H-35);
     cv.toBlob(function(b){
-      if(!b){ toast('ساخت تصویر انجام نشد',true); return; }
-      var a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='report-'+(s.family||'student')+'.png'; document.body.appendChild(a); a.click();
-      setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
-      toast('تصویر گزارش دانلود شد 🖼');
+      if(!b){toast('ساخت تصویر انجام نشد',true);return;}
+      var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='gozaresh-'+(s.family||'danesh-amooz')+'.png';document.body.appendChild(a);a.click();
+      setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);toast('تصویر کامل گزارش دانلود شد 🖼');
     },'image/png');
-  }catch(e){ toast('ساخت تصویر انجام نشد',true); }
+  }catch(e){toast('ساخت تصویر انجام نشد: '+(e&&e.message?e.message:''),true);}
 }
 
 /* ===== تنظیمات و همگام‌سازی گیت‌هاب ===== */
