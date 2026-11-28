@@ -2692,6 +2692,7 @@ async function syncPull(silent){ if(syncBusy) return false; syncBusy=true; try{ 
 async function syncPullCore(silent){
   var cfg=(curTab==='settings')?readCfgFromForm():syncCfg();
   if(!cfg.token){ if(!silent){ syncMsg('اول توکن گیت‌هاب را وارد و ذخیره کنید.',false); toast('توکن وارد نشده است',true);} return false; }
+  if(syncDirty){var warn='این دستگاه تغییرات ذخیره‌نشده دارد. برای جلوگیری از پاک‌شدن اطلاعات، دریافت از گیت‌هاب متوقف شد؛ ابتدا ذخیره خودکار را بررسی کنید یا از بخش پشتیبان‌گیری خروجی JSON بگیرید.';if(!silent){syncMsg(warn,false);toast('تغییرات محلی حفظ شدند؛ دریافت متوقف شد.',true);}else showSyncBanner(warn);updateSyncDot();return false;}
   try{
     var j=await ghGetFile(cfg);
     if(!j){ if(!silent) syncMsg('هنوز فایلی روی گیت‌هاب نیست؛ ابتدا «ذخیره در گیت‌هاب» را بزنید.',false); return false; }
