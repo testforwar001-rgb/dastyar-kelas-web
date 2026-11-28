@@ -862,7 +862,7 @@ function viewStudentDetail(id){
   }
   h+='</div>';
   var qes2=studentQuizEntries(id), qav2=studentQuizAvg(id);
-  h+='<div class="panel"><h3>❓ آزمونک‌ها و سوالات کلاسی</h3>';
+  h+='<div class="panel"><h3>❓ آزمونک‌ها</h3>';
   if(!qes2.length) h+='<p class="hint">هنوز در آزمونکی شرکت نکرده است.</p>';
   else{
     h+='<table class="grid"><tr><th>آزمونک</th><th>درس</th><th>تاریخ</th><th class="num">سطح</th></tr>'
@@ -1135,8 +1135,8 @@ function saveTimetable(){
   var old=db.timetable||defaultTimetable(),count=Math.max(1,Math.min(8,Number(document.getElementById('tt_count').value)||5));
   var next={periodCount:count,startTime:old.startTime||'07:30',periodMinutes:old.periodMinutes||50,breakAfter:old.breakAfter||2,breakMinutes:old.breakMinutes===undefined?10:old.breakMinutes,days:[]};
   (old.days||defaultTimetable().days).forEach(function(day){var lessons=[];for(var i=0;i<8;i++){var el=document.getElementById('tt_'+day.key+'_'+i);lessons.push(el?el.value.trim():(day.lessons||[])[i]||'');}var en=document.getElementById('tt_enabled_'+day.key);next.days.push({key:day.key,name:day.name,enabled:!!(en&&en.checked),lessons:lessons});});
-  var a=timetableCounts(old),b=timetableCounts(next),diff=[];Object.keys(a).concat(Object.keys(b)).filter(function(k,i,ar){return ar.indexOf(k)===i;}).forEach(function(k){if((a[k]||0)!==(b[k]||0))diff.push(k+': '+fa(a[k]||0)+' ← '+fa(b[k]||0)+' جلسه در هفته');});
-  if(diff.length&&db.plan&&db.plan.length&&!confirm('تغییر برنامه هفتگی روی تعداد جلسه‌های این درس‌ها اثر می‌گذارد:\n'+diff.join('\n')+'\n\nمحتوای ثبت‌شدهٔ طرح درس حذف نمی‌شود و حفظ خواهد شد. تغییرات اعمال شود؟'))return;
+  var a=timetableCounts(old),b=timetableCounts(next),diff=[];Object.keys(a).concat(Object.keys(b)).filter(function(k,i,ar){return ar.indexOf(k)===i;}).forEach(function(k){if((a[k]||0)!==(b[k]||0)){var weeks=(db.plan||[]).filter(function(p){return p.subject===k;}).map(function(p){return p.month+'، هفتهٔ '+fa(p.week);}).filter(function(x,i,ar){return ar.indexOf(x)===i;});diff.push(k+': '+fa(a[k]||0)+' به '+fa(b[k]||0)+' جلسه در هفته'+(weeks.length?'؛ طرح درس ثبت‌شده در '+weeks.join(' / '):''));}});
+  if(diff.length&&db.plan&&db.plan.length&&!confirm('تغییر برنامه هفتگی روی جلسه‌های طرح درس این موارد اثر می‌گذارد:\n'+diff.join('\n')+'\n\nجلسه‌های قبلی و محتوای آن‌ها حذف نمی‌شوند؛ موارد خارج از تعداد جدید حفظ می‌شوند و باید بازبینی شوند. فقط پس از تأیید شما برنامه تغییر می‌کند. ادامه می‌دهید؟'))return;
   db.timetable=next;saveDb();render();toast('برنامه هفتگی ذخیره شد؛ محتوای طرح درس حفظ شد.');
 }
 function printTimetable(){
@@ -1178,7 +1178,7 @@ function planForm(id){
   openDlg(dlgHead(p?'✏️ ویرایش مبحث':'➕ مبحث جدید')
     +'<label class="f" for="p_month">ماه</label><select id="p_month">'+mOpts+'</select>'
     +'<label class="f" for="p_week">هفته</label><select id="p_week">'+[1,2,3,4,5].map(function(w){ return '<option value="'+w+'"'+(p&&String(p.week)===String(w)?' selected':'')+'>هفتهٔ '+fa(w)+'</option>'; }).join('')+'</select>'
-    +'<label class="f" for="p_subject">درس</label><select id="p_subject">'+subjectOptions(p?p.subject:'ریاضی')+'</select>'
+    +'<label class="f" for="p_subject">درس</label><select id="p_subject">'+subjectOptions(p?p.subject:planSubject)+'</select>'
     +'<label class="f" for="p_session">جلسهٔ هفته</label><select id="p_session">'+Array.from({length:Math.max(1,planWeeklyCount(p?p.subject:planSubject))},function(_,i){var n=i+1;return '<option value="'+n+'"'+(p&&Number(p.sessionNo)===n?' selected':'')+'>جلسهٔ '+fa(n)+'</option>';}).join('')+'</select>'
     +field('p_topic','رئوس مطالب / موضوع جلسه *',p?p.topic:'','موضوع یا محتوای جلسه')
     +'<label class="f" for="p_objectives">هدف‌ها</label><textarea id="p_objectives" rows="2">'+esc(p?p.objectives||'':'')+'</textarea>'
@@ -1528,7 +1528,7 @@ function saveWallItem(wid,iid){
 }
 function delWallItem(wid,iid){ if(!confirm('این بخش حذف شود؟')) return; var w=wallById(wid); if(!w) return; w.items=(w.items||[]).filter(function(x){ return x.id!==iid; }); saveDb(); render(); toast('حذف شد'); }
 
-/* ===== آزمونک و سؤال کلاسی ===== */
+/* ===== آزمونک‌ها ===== */
 function quizById(id){ var qs=db.quizzes||[]; for(var i=0;i<qs.length;i++) if(qs[i].id===id) return qs[i]; return null; }
 function quizzesSorted(){ return (db.quizzes||[]).slice().sort(function(a,b){ var ka=dateKey(a.date),kb=dateKey(b.date); if(ka<kb) return -1; if(ka>kb) return 1; return 0; }); }
 function qScoreOf(qid,sid){ var m=(db.qscores||{})[qid]; if(!m) return null; var v=m[sid]; return (v===null||v===undefined||v==='')?null:Number(v); }
@@ -1537,7 +1537,7 @@ function quizAvg(qid){ return avgOf(quizScores(qid)); }
 function studentQuizEntries(sid){ var out=[]; quizzesSorted().forEach(function(q){ var v=qScoreOf(q.id,sid); if(v!==null) out.push({quiz:q,score:v}); }); return out; }
 function studentQuizAvg(sid){ return avgOf(studentQuizEntries(sid).map(function(x){ return x.score; })); }
 function quizzesSectionHtml(){
-  var h='<h2 class="sec">آزمونک و سؤال کلاسی</h2>';
+  var h='<h2 class="sec">آزمونک‌ها</h2>';
   h+='<p class="guide">💡 آزمونک‌ها و سؤال‌های کلاسی اینجاست؛ با «ثبت نتایج» همهٔ کلاس در یک صفحه نمره می‌گیرند و نتیجه خودکار در کارتابل هر دانش‌آموز می‌نشیند. این نمره‌ها در میانگین آزمون‌های رسمی حساب نمی‌شوند.</p>';
   h+='<button class="btn block fab" onclick="quizForm()">➕ آزمونک جدید</button>';
   var qs=quizzesSorted();
@@ -2459,7 +2459,7 @@ function reportHtml(s){
     +rows.map(function(x){ return '<tr><td>'+esc(x.subject)+'</td><td class="num">'+faLevel(x.stu)+'</td><td class="num">'+faLevel(x.cls)+'</td></tr>'; }).join('')+'</table>';
   if(es.length) h+='<h3 class="rep-h">📝 نتایج آزمون‌ها</h3><table class="grid"><tr><th>عنوان آزمون</th><th>درس</th><th>تاریخ</th><th class="num">نتیجه</th></tr>'
     +es.map(function(x){ return '<tr><td>'+esc(x.exam.title)+'</td><td>'+esc(x.exam.subject)+'</td><td>'+esc(x.exam.date||'—')+'</td><td class="num"><b>'+scoreLabel(x.score)+'</b></td></tr>'; }).join('')+'</table>';
-  if(qs.length) h+='<h3 class="rep-h">❓ نتایج آزمونک‌ها و سؤال‌های کلاسی</h3><table class="grid"><tr><th>عنوان آزمونک</th><th>درس</th><th>تاریخ</th><th class="num">نتیجه</th></tr>'
+  if(qs.length) h+='<h3 class="rep-h">❓ نتایج آزمونک‌ها</h3><table class="grid"><tr><th>عنوان آزمونک</th><th>درس</th><th>تاریخ</th><th class="num">نتیجه</th></tr>'
     +qs.map(function(x){ return '<tr><td>'+esc(x.quiz.title)+'</td><td>'+esc(x.quiz.subject)+'</td><td>'+esc(x.quiz.date||'—')+'</td><td class="num"><b>'+scoreLabel(x.score)+'</b></td></tr>'; }).join('')+'</table>';
   var kar='';
   TERM_KEYS.forEach(function(item){var term=item.key;
@@ -2528,7 +2528,7 @@ function activityReportHtml(s){
       +(att.absDates.length?'<p style="margin:8px 0 0">تاریخ‌های غیبت: '+att.absDates.map(function(d){ return esc(d); }).join('، ')+'</p>':'')
       +(att.lateDates.length?'<p style="margin:4px 0 0">تاریخ‌های تأخیر: '+att.lateDates.map(function(d){ return esc(d); }).join('، ')+'</p>':'')
       :'<p>هنوز جلسهٔ حضور و غیابی ثبت نشده است.</p>')
-    +'<h3 class="rep-h">❓ آزمونک‌ها و سوالات کلاسی</h3>'
+    +'<h3 class="rep-h">❓ آزمونک‌ها</h3>'
     +(qes.length?'<table class="grid"><tr><th>آزمونک</th><th>درس</th><th>تاریخ</th><th class="num">نمره</th><th class="num">میانگین کلاس</th></tr>'
       +qes.map(function(x){ return '<tr><td>'+esc(x.quiz.title)+'</td><td>'+esc(x.quiz.subject)+'</td><td>'+esc(x.quiz.date||'—')+'</td><td class="num"><b>'+scoreLabel(x.score)+'</b></td><td class="num">'+faLevel(quizAvg(x.quiz.id))+'</td></tr>'; }).join('')+'</table>'
       +'<p style="margin:6px 0 0">میانگین آزمونک‌ها: <b>'+faLevel(qav)+'</b> (این میانگین جدا از میانگین آزمون‌های رسمی است.)</p>'
