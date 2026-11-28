@@ -871,7 +871,7 @@ function viewDash(){
   var rowsC=subjectAvgs(null);
   h+='<div class="panel"><h3>📊 میانگین کلاس به تفکیک درس</h3>'+(rowsC.length?subjectBarsSvg(rowsC,false):'<p class="hint">هنوز نمره‌ای ثبت نشده است.</p>')+'</div>';
   h+='<div class="panel"><h3>🎯 توزیع میانگین دانش‌آموزان</h3>'+(db.students.length?distSvg():'<p class="hint">هنوز دانش‌آموزی ثبت نشده است.</p>')+'</div>';
-  h+='<h2 class="sec">دانش‌آموزان در یک نگاه</h2>';
+  h+='<div class="panel"><h3>👩‍🎓 دانش‌آموزان در یک نگاه</h3>';
   if(!db.students.length) h+='<div class="empty"><span class="big">👧</span>هنوز دانش‌آموزی ثبت نشده است.</div>';
   else h+=db.students.map(function(s){
     var av=studentAvg(s.id), tr=studentTrend(s.id);
@@ -881,6 +881,7 @@ function viewDash(){
     else if(tr===0) arrow='<span class="trend flat">● ثابت</span>';
     return '<div class="rowitem" onclick="studentPopup(\''+s.id+'\')"><div class="avatar">'+avatarHtml(s)+'</div><div class="grow"><div class="nm">'+esc(s.name)+' '+esc(s.family)+'</div><div class="meta">میانگین: '+faLevel(av)+'</div></div>'+arrow+'</div>';
   }).join('');
+  h+='</div>';
   h+=costsHtml();
   h+=readyCmdsHtml();
   return h;
