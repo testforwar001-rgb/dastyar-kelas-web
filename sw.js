@@ -1,6 +1,6 @@
 /* دستیار مدیریت کلاس — Service Worker
    پوستهٔ برنامه cache-first است؛ پاسخ‌های API گیت‌هاب هرگز کش نمی‌شوند. */
-var SW_VERSION = 'final12';
+var SW_VERSION = 'final13';
 var CACHE = 'dastyar-kelas-' + SW_VERSION;
 var SHELL = [
   './',
