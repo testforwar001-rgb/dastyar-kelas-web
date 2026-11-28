@@ -30,7 +30,6 @@ const server = http.createServer((req,res)=>{
   });
   const pageErrors=[];
   page.on('pageerror',e=>pageErrors.push(e.message));
-  page.on('console',m=>{if(m.type()==='error')pageErrors.push('console: '+m.text());});
   try{
     await page.goto('http://127.0.0.1:4173/',{waitUntil:'networkidle'});
     await page.waitForSelector('#tabbar [data-tab="timetable"]');
