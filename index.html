@@ -2814,8 +2814,7 @@ function exportExcel(){
   var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">'
     +'<head><meta charset="UTF-8"><meta name="ProgId" content="Excel.Sheet">'
     +'<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>'+ws+'</x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->'
-    +'</head><body>'+t1+t2+t3+t4+'<!-- Offline and timetable release marker -->
-</body></html>';
+    +'</head><body>'+t1+t2+t3+t4+'</body></html>';
   var blob=new Blob(['\ufeff'+html],{type:'application/vnd.ms-excel'});
   var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='dastyar-kelas.xls'; document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },400);
