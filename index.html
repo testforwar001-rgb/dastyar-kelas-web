@@ -569,14 +569,17 @@ function seedAnnualPlans(d){
   });
   d._annualSeedV1=1;
 }
-function emptyDb(){return {students:[],exams:[],scores:{},plan:[],attendance:[],groups:[],gacts:[],quizzes:[],qscores:{},acts:[],wallnews:[],behavior:[],meetings:[],descrep:{},descrepSubjectSelection:{},costs:[],timetable:defaultTimetable(),_lv:1,_rev:0};}
+function emptyDb(){return {students:[],exams:[],scores:{},plan:[],attendance:[],groups:[],gacts:[],quizzes:[],qscores:{},acts:[],wallnews:[],behavior:[],meetings:[],descrep:{},descrepSubjects:[],descrepArchivedSubjects:[],descrepSubjectSelection:{},costs:[],timetable:defaultTimetable(),_lv:1,_rev:0};}
 function normalizeDb(d){
   d.students=d.students||[]; d.exams=d.exams||[]; d.scores=d.scores||{}; d.plan=d.plan||[]; d.attendance=d.attendance||[]; d.groups=d.groups||[]; d.gacts=d.gacts||[]; d.acts=d.acts||[]; d.wallnews=d.wallnews||[]; d.quizzes=d.quizzes||[]; d.qscores=d.qscores||{};
-  d.behavior=d.behavior||[]; d.meetings=d.meetings||[]; d.descrep=d.descrep||{}; d.descrepSubjectSelection=d.descrepSubjectSelection||{}; d.costs=d.costs||[];
+  d.behavior=d.behavior||[]; d.meetings=d.meetings||[]; d.descrep=d.descrep||{}; d.descrepSubjectSelection=d.descrepSubjectSelection||{}; d.descrepSubjects=Array.isArray(d.descrepSubjects)?d.descrepSubjects:null; d.descrepArchivedSubjects=Array.isArray(d.descrepArchivedSubjects)?d.descrepArchivedSubjects:[]; d.costs=d.costs||[];
   if(!d.timetable||!Array.isArray(d.timetable.days)) d.timetable=defaultTimetable();
   var td=defaultTimetable(); d.timetable.periodCount=Math.max(1,Math.min(8,Number(d.timetable.periodCount)||5));
   ['startTime','periodMinutes','breakAfter','breakMinutes'].forEach(function(k){if(d.timetable[k]===undefined)d.timetable[k]=td[k];});
   td.days.forEach(function(day){var old=d.timetable.days.filter(function(x){return x.key===day.key;})[0];if(!old){d.timetable.days.push(day);}else{old.name=day.name;old.lessons=Array.isArray(old.lessons)?old.lessons:day.lessons.slice();old.enabled=old.enabled!==false;while(old.lessons.length<8)old.lessons.push('');}});
+  if(!d.descrepSubjects){var legacy=[];(d.timetable.days||[]).filter(function(x){return x.enabled!==false;}).forEach(function(day){(day.lessons||[]).slice(0,d.timetable.periodCount||5).forEach(function(v){var x=String(v||'').trim();if(x&&legacy.indexOf(x)<0)legacy.push(x);});});(d.exams||[]).forEach(function(e){var x=String(e.subject||'').trim();if(x&&legacy.indexOf(x)<0)legacy.push(x);});Object.keys(d.descrep||{}).forEach(function(term){Object.keys(d.descrep[term]||{}).forEach(function(sid){Object.keys(d.descrep[term][sid]||{}).forEach(function(x){if(x&&legacy.indexOf(x)<0)legacy.push(x);});});});d.descrepSubjects=legacy;}
+  d.descrepSubjects=d.descrepSubjects.map(function(x){return String(x||'').trim();}).filter(function(x,i,a){return x&&a.indexOf(x)===i;});
+  d.descrepArchivedSubjects=d.descrepArchivedSubjects.map(function(x){return String(x||'').trim();}).filter(function(x,i,a){return x&&a.indexOf(x)===i&&d.descrepSubjects.indexOf(x)<0;});
   seedAnnualPlans(d);
   d._rev=d._rev||0; return d;
 }
@@ -615,7 +618,7 @@ var syncDirty=false, syncConflict=false, syncBusy=false;
 try{ syncDirty=localStorage.getItem('dk_dirty')==='1'; }catch(e){}
 function markDirty(){ syncDirty=true; try{localStorage.setItem('dk_dirty','1');}catch(e){} updateSyncDot(); }
 function saveDb(){ dlgCommit=null; try{localStorage.setItem(LS_DB,JSON.stringify(db)); markDirty(); if(navigator.onLine!==false) maybeAutoSync();}catch(e){toast('خطا در ذخیره‌سازی محلی؛ فضای ذخیره‌سازی دستگاه را بررسی کنید.',true);} }
-function dbPayload(){ return {students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{},behavior:db.behavior||[],meetings:db.meetings||[],descrep:db.descrep||{},costs:db.costs||[],timetable:db.timetable||defaultTimetable(),_lv:1}; }
+function dbPayload(){ return {students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{},behavior:db.behavior||[],meetings:db.meetings||[],descrep:db.descrep||{},descrepSubjects:db.descrepSubjects||[],descrepArchivedSubjects:db.descrepArchivedSubjects||[],descrepSubjectSelection:db.descrepSubjectSelection||{},costs:db.costs||[],timetable:db.timetable||defaultTimetable(),_lv:1}; }
 function syncCfg(){ try{return JSON.parse(localStorage.getItem(LS_CFG)||'{}');}catch(e){return {};} }
 function saveSyncCfg(c){ try{localStorage.setItem(LS_CFG,JSON.stringify(c));}catch(e){} }
 function uid(){return 'id'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
@@ -1271,8 +1274,19 @@ function viewTimetable(){
   h+='<div class="panel"><label class="f" for="tt_count">تعداد زنگ در روز</label><select id="tt_count">'+[1,2,3,4,5,6,7,8].map(function(n){return '<option value="'+n+'"'+(tt.periodCount===n?' selected':'')+'>'+fa(n)+' زنگ</option>';}).join('')+'</select>';
   h+='<div style="overflow-x:auto"><table class="grid"><thead><tr><th>روز</th>'+Array.from({length:tt.periodCount},function(_,i){return '<th>زنگ '+fa(i+1)+'</th>';}).join('')+'</tr></thead><tbody>';
   (tt.days||[]).forEach(function(day){h+='<tr><th><label style="display:flex;gap:5px;align-items:center"><input type="checkbox" id="tt_enabled_'+day.key+'" '+(day.enabled!==false?'checked':'')+' style="width:auto">'+esc(day.name)+'</label></th>';for(var i=0;i<tt.periodCount;i++)h+='<td><input id="tt_'+day.key+'_'+i+'" value="'+esc((day.lessons||[])[i]||'')+'" placeholder="درس" style="min-width:90px;width:100%"></td>';h+='</tr>';});
-  h+='</tbody></table></div><div class="btnrow"><button class="btn" onclick="saveTimetable()">💾 ذخیره برنامه هفتگی</button><button class="btn soft" onclick="printTimetable()">🖨 چاپ برنامه</button></div></div>';return h;
+  h+='</tbody></table></div><div class="btnrow"><button class="btn" onclick="saveTimetable()">💾 ذخیره برنامه هفتگی</button><button class="btn soft" onclick="printTimetable()">🖨 چاپ برنامه</button></div></div>';
+  h+=viewDescrepSubjectManager();return h;
 }
+function jsq(v){return JSON.stringify(String(v==null?'':v)).replace(/</g,'\\u003c');}
+function viewDescrepSubjectManager(){var active=db.descrepSubjects||[],archived=db.descrepArchivedSubjects||[],term=String(window.descrepManageTerm||'1'),chosen=selectedDescrepSubjects(term);var h='<div class="panel"><h3>📚 مدیریت درس‌های کارنامه</h3><p class="hint">فهرست درس‌ها برای همه دانش‌آموزان مشترک است و مستقل از خانه‌های برنامه هفتگی مدیریت می‌شود. حذف درس، سوابق قبلی را پاک نمی‌کند.</p><div class="formgrid"><label class="f" for="descrepNewSubject">نام درس جدید</label><input id="descrepNewSubject" placeholder="مثلاً هنر یا تفکر و پژوهش"><button class="btn" onclick="addDescrepSubject()">افزودن درس</button></div><div class="chips" style="margin:12px 0">'+TERM_KEYS.map(function(t){return '<button type="button" class="chip'+(term===String(t.key)?' on':'')+'" onclick="setDescrepManageTerm('+jsq(t.key)+')">'+t.label+'</button>';}).join('')+'</div><p class="hint">درس‌های فعال در کارنامه '+termLabel(term)+'؛ انتخاب هر درس برای همه دانش‌آموزان و ورود گروهی و چاپ اعمال می‌شود.</p>';
+h+=active.length?'<div class="formgrid">'+active.map(function(sub){return '<div class="kv"><label class="f"><input type="checkbox" style="width:auto" '+(chosen.indexOf(sub)>=0?'checked':'')+' onchange="toggleDescrepSubject('+jsq(term)+','+jsq(sub)+',this.checked)"> '+esc(sub)+'</label><button class="btn small soft" onclick="archiveDescrepSubject('+jsq(sub)+')">حذف از فهرست فعال</button></div>';}).join('')+'</div>':'<p class="hint">هنوز درسی به فهرست اضافه نشده است.</p>';
+if(archived.length)h+='<details style="margin-top:12px"><summary>درس‌های بایگانی‌شده ('+fa(archived.length)+')</summary>'+archived.map(function(sub){return '<div class="kv"><span>'+esc(sub)+'</span><button class="btn small soft" onclick="restoreDescrepSubject('+jsq(sub)+')">بازگردانی</button></div>';}).join('')+'</details>';
+h+='<div class="btnrow"><button class="btn soft" onclick="selectAllDescrepSubjects('+jsq(term)+',true)">انتخاب همه</button><button class="btn soft" onclick="selectAllDescrepSubjects('+jsq(term)+',false)">لغو انتخاب همه</button></div></div>';return h;}
+function setDescrepManageTerm(term){window.descrepManageTerm=String(term);render();}
+function addDescrepSubject(){var el=document.getElementById('descrepNewSubject'),name=String(el&&el.value||'').trim();if(!name){toast('نام درس را وارد کنید',true);return;}if(!db.descrepSubjects)db.descrepSubjects=[];if(db.descrepSubjects.indexOf(name)>=0){toast('این درس در فهرست فعال وجود دارد',true);return;}db.descrepArchivedSubjects=(db.descrepArchivedSubjects||[]).filter(function(x){return x!==name;});db.descrepSubjects.push(name);TERM_KEYS.forEach(function(t){var k=String(t.key);if(Array.isArray(db.descrepSubjectSelection[k])&&db.descrepSubjectSelection[k].indexOf(name)<0)db.descrepSubjectSelection[k].push(name);});saveDb();render();toast('درس به فهرست مشترک اضافه شد.');}
+function archiveDescrepSubject(name){if(!confirm('درس «'+name+'» از فهرست فعال کارنامه خارج شود؟ سوابق قبلی آن حفظ می‌شود.'))return;db.descrepSubjects=(db.descrepSubjects||[]).filter(function(x){return x!==name;});if(!db.descrepArchivedSubjects)db.descrepArchivedSubjects=[];if(db.descrepArchivedSubjects.indexOf(name)<0)db.descrepArchivedSubjects.push(name);Object.keys(db.descrepSubjectSelection||{}).forEach(function(k){db.descrepSubjectSelection[k]=(db.descrepSubjectSelection[k]||[]).filter(function(x){return x!==name;});});saveDb();render();toast('درس بایگانی شد؛ سوابق آن باقی است.');}
+function restoreDescrepSubject(name){db.descrepArchivedSubjects=(db.descrepArchivedSubjects||[]).filter(function(x){return x!==name;});if(!db.descrepSubjects)db.descrepSubjects=[];if(db.descrepSubjects.indexOf(name)<0)db.descrepSubjects.push(name);TERM_KEYS.forEach(function(t){var k=String(t.key);if(Array.isArray(db.descrepSubjectSelection[k])&&db.descrepSubjectSelection[k].indexOf(name)<0)db.descrepSubjectSelection[k].push(name);});saveDb();render();toast('درس به فهرست فعال بازگشت.');}
+function selectAllDescrepSubjects(term,checked){db.descrepSubjectSelection=db.descrepSubjectSelection||{};db.descrepSubjectSelection[String(term)]=checked?(db.descrepSubjects||[]).slice():[];saveDb();render();}
 function timetableCounts(tt){var out={};(tt.days||[]).filter(function(d){return d.enabled!==false;}).forEach(function(d){(d.lessons||[]).slice(0,tt.periodCount||5).forEach(function(x){var k=String(x||'').trim();if(k)out[k]=(out[k]||0)+1;});});return out;}
 function saveTimetable(){
   var old=db.timetable||defaultTimetable(),count=Math.max(1,Math.min(8,Number(document.getElementById('tt_count').value)||5));
@@ -1863,16 +1877,13 @@ function descrepSummaryHtml(sid){
   return out||'<p class="hint">هنوز سطحی در کارنامهٔ این دانش‌آموز ثبت نشده است.</p>';
 }
 function timetableSubjectList(){var out=[],tt=db.timetable||defaultTimetable();(tt.days||[]).filter(function(d){return d.enabled!==false;}).forEach(function(d){(d.lessons||[]).slice(0,tt.periodCount||5).forEach(function(v){var x=String(v||'').trim();if(x&&out.indexOf(x)<0)out.push(x);});});return out;}
-function selectedDescrepSubjects(term){var a=timetableSubjectList(),v=(db.descrepSubjectSelection||{})[String(term)];return Array.isArray(v)?v.filter(function(x){return a.indexOf(x)>=0;}):a.slice();}
+function selectedDescrepSubjects(term){var a=db.descrepSubjects||[],v=(db.descrepSubjectSelection||{})[String(term)];return Array.isArray(v)?v.filter(function(x){return a.indexOf(x)>=0;}):a.slice();}
 function toggleDescrepSubject(term,subject,checked){if(!db.descrepSubjectSelection)db.descrepSubjectSelection={};var a=selectedDescrepSubjects(term);if(checked&&a.indexOf(subject)<0)a.push(subject);if(!checked)a=a.filter(function(x){return x!==subject;});db.descrepSubjectSelection[String(term)]=a;saveDb();}
 function descrepForm(sid,term){
   var s=studentById(sid); if(!s) return;
   descrepCtx={sid:sid,term:term};
   var rec=descrepOf(term,sid); descrepSel={}; Object.keys(rec).forEach(function(k){ descrepSel[k]=rec[k]; });
-  var subs=timetableSubjectList();
-  db.exams.forEach(function(e){ if(subs.indexOf(e.subject)<0) subs.push(e.subject); });
-  var chosen=selectedDescrepSubjects(term);
-  var subjectPicker='<div class="panel"><h3>انتخاب درس‌های کارنامه</h3><p class="hint">فهرست درس‌ها از زنگ‌های فعال برنامه هفتگی گرفته می‌شود؛ درس‌های موردنظر را برای این دوره انتخاب کنید.</p><div class="formgrid">'+timetableSubjectList().map(function(sub){return '<label class="f"><input type="checkbox" '+(chosen.indexOf(sub)>=0?'checked':'')+' onchange="toggleDescrepSubject(\''+term+'\',\''+esc(sub)+'\',this.checked)" style="width:auto"> '+esc(sub)+'</label>';}).join('')+'</div></div>';
+  var subs=db.descrepSubjects||[];
   var rows=subs.map(function(sub){
     return '<div class="srow"><span class="sname">'+esc(sub)+'</span><span class="lvlchips">'+LEVEL_LIST.map(function(lv){
       return '<button type="button" class="lvlchip lv'+lv+(descrepSel[sub]===lv?' on':'')+'" data-descrep-for="'+esc(sub)+'" data-lvl="'+lv+'" onclick="descrepChip(this)">'+LEVELS[lv]+'</button>';
@@ -1881,7 +1892,7 @@ function descrepForm(sid,term){
   openDlg(dlgHead('📋 کارنامهٔ توصیفی — '+termLabel(term))
     +'<div class="chips" style="margin:8px 0">'+TERM_KEYS.map(function(t){return '<button type="button" class="chip'+(String(term)===String(t.key)?' on':'')+'" onclick="switchDescrepTerm(\''+sid+'\',\''+t.key+'\')">'+t.label+'</button>';}).join('')+'</div>'
     +'<p class="hint">'+esc(s.name)+' '+esc(s.family)+' · برای هر درس یک سطح بزنید؛ لمس دوباره = پاک شدن. با بستن پنجره هم خودکار ذخیره می‌شود.</p>'
-    +subjectPicker+'<div class="scoregrid">'+rows+'</div>'
+    +'<div class="scoregrid">'+rows+'</div>'
     +'<div class="btnrow"><button class="btn" onclick="saveDescrep()">💾 ذخیرهٔ کارنامه</button><button class="btn soft" onclick="printDescrep()">🖨 چاپ کارنامه</button></div>'
     +'<div class="btnrow"><button class="btn soft" onclick="closeDlg()">بستن</button></div>');
   var ctx=descrepCtx, sel=descrepSel;
@@ -1909,7 +1920,7 @@ function persistDescrep(){
 }
 function saveDescrep(){ persistDescrep(); saveDb(); closeDlg(); render(); toast('کارنامه ذخیره شد ✅'); }
 /* فهرست درس‌های کارنامه: درس‌های اصلی + درس‌های آزمون‌ها + هر درسی که جایی در کارنامهٔ این نوبت آمده */
-function descrepSubjects(term){ return timetableSubjectList(); }
+function descrepSubjects(term){ return selectedDescrepSubjects(term); }
 /* بدنهٔ چاپی کارنامهٔ یک دانش‌آموز — منبع واحد برای چاپ تکی و چاپ گروهی.
    allSubs که باشد (چاپ گروهی) همهٔ درس‌ها می‌آیند و درسِ بدون سطح «—» می‌خورد؛ وگرنه فقط درس‌های ثبت‌شده. */
 function descrepDocInner(s,term,allSubs){
