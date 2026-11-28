@@ -20,6 +20,14 @@ const server = http.createServer((req,res)=>{
   const browser=await chromium.launch({headless:true});
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,timezoneId:'Asia/Tehran'});
   const page=await context.newPage();
+  const pushedPayloads=[];
+  await context.addInitScript(()=>localStorage.setItem('dk_sync_cfg',JSON.stringify({url:'http://127.0.0.1:4173/mock/github',token:'test-token'})));
+  await page.route('**/mock/github',async route=>{
+    if(route.request().method()==='GET') return route.fulfill({status:404,body:'Not found'});
+    const body=JSON.parse(route.request().postData()||'{}');
+    pushedPayloads.push(JSON.parse(Buffer.from(body.content,'base64').toString('utf8')));
+    return route.fulfill({status:200,contentType:'application/json',body:'{}'});
+  });
   const pageErrors=[];
   page.on('pageerror',e=>pageErrors.push(e.message));
   page.on('console',m=>{if(m.type()==='error')pageErrors.push('console: '+m.text());});
@@ -36,6 +44,10 @@ const server = http.createServer((req,res)=>{
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('dk_db_v1')));
     if(saved.timetable.days.find(d=>d.key==='sat').lessons[0]!=='علوم آزمایشی') throw new Error('Timetable did not persist locally');
     if(saved.timetable.days.find(d=>d.key==='sat').lessons[5]!=='مهارت آزمایشی') throw new Error('Sixth period did not persist');
+    await page.waitForFunction(()=>window.__smokePushCount===undefined,{timeout:1000}).catch(()=>{});
+    await page.waitForTimeout(500);
+    if(!pushedPayloads.length) throw new Error('Online GitHub sync was not attempted after local save');
+    if(pushedPayloads[pushedPayloads.length-1].db.timetable.days.find(d=>d.key==='sat').lessons[0]!=='علوم آزمایشی') throw new Error('GitHub sync payload did not include timetable');
     await page.locator('#tabbar [data-tab="dash"]').click();
     await page.waitForTimeout(200);
     if(!(await page.locator('#app').innerText()).includes('یادآوری این هفته')) throw new Error('Weekly reminder missing from dashboard');
@@ -49,8 +61,14 @@ const server = http.createServer((req,res)=>{
     await page.getByRole('button',{name:/ذخیره برنامه هفتگی/}).click();
     const offlineSaved=await page.evaluate(()=>JSON.parse(localStorage.getItem('dk_db_v1')));
     if(offlineSaved.timetable.days.find(d=>d.key==='sun').lessons[0]!=='ذخیره در حالت آفلاین') throw new Error('Offline local save failed');
+    const beforeReconnect=pushedPayloads.length;
+    await context.setOffline(false);
+    await page.waitForFunction((n)=>window.__unused===undefined,{timeout:1000}).catch(()=>{});
+    await page.waitForTimeout(1200);
+    if(pushedPayloads.length<=beforeReconnect) throw new Error('Queued offline changes were not pushed after reconnect');
+    if(pushedPayloads[pushedPayloads.length-1].db.timetable.days.find(d=>d.key==='sun').lessons[0]!=='ذخیره در حالت آفلاین') throw new Error('Reconnected GitHub payload missed offline change');
     if(pageErrors.length) throw new Error('Browser errors: '+pageErrors.join(' | '));
-    console.log('PASS: mobile dashboard, timetable editing, local persistence, weekly reminder and offline reload/save');
+    console.log('PASS: mobile dashboard, timetable editing, local persistence, weekly reminder, offline reload/save and queued GitHub sync after reconnect (mock API)');
   } finally {
     await browser.close();
     await new Promise(resolve=>server.close(resolve));
