@@ -707,7 +707,7 @@ function subjectBarsSvg(rows,paired){
       if(r.stu!==null) s+='<rect x="'+(W-2-bw(r.stu)).toFixed(1)+'" y="1" width="'+bw(r.stu).toFixed(1)+'" height="11" rx="5.5" fill="var(--chart-student)"/><text x="'+(W-7-bw(r.stu)).toFixed(1)+'" y="10.5" font-size="10.5" font-weight="bold" text-anchor="end" fill="var(--chart-student)">'+faMean(r.stu)+'</text>';
       if(r.cls!==null) s+='<rect x="'+(W-2-bw(r.cls)).toFixed(1)+'" y="16" width="'+bw(r.cls).toFixed(1)+'" height="11" rx="5.5" fill="var(--chart-class)" opacity="0.8"/><text x="'+(W-7-bw(r.cls)).toFixed(1)+'" y="25.5" font-size="10.5" font-weight="bold" text-anchor="end" fill="var(--chart-class)">'+faMean(r.cls)+'</text>';
     }else{
-      if(r.cls!==null) s+='<rect x="'+(W-2-bw(r.cls)).toFixed(1)+'" y="2" width="'+bw(r.cls).toFixed(1)+'" height="12" rx="6" fill="var(--chart-student)"/><text x="'+(W-7-bw(r.cls)).toFixed(1)+'" y="12" font-size="10.5" font-weight="bold" text-anchor="end" fill="var(--chart-student)">'+faMean(r.cls)+'</text>';
+      if(r.cls!==null) s+='<rect x="'+(W-2-bw(r.cls)).toFixed(1)+'" y="2" width="'+bw(r.cls).toFixed(1)+'" height="12" rx="6" fill="var(--chart-class)"/><text x="'+(W-7-bw(r.cls)).toFixed(1)+'" y="12" font-size="10.5" font-weight="bold" text-anchor="end" fill="var(--chart-class)">'+faMean(r.cls)+'</text>';
     }
     out+=s+'</svg>';
   });
