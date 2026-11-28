@@ -255,6 +255,12 @@ table.grid td.num,table.grid th.num{text-align:center}
 .perf .sigline{border-top:1.5px solid #CBB26A;margin:26px 0 5px}
 .lvlTag{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .repPrev{border:1px solid var(--line);border-radius:14px;padding:12px;background:#FFFDF9;margin-bottom:6px}
+/* جدول‌های گزارش تمام عرض را پر می‌کنند و ستون‌ها فضای خالی ناخواسته نمی‌گذارند */
+.rep table.grid{width:100%;max-width:100%;table-layout:fixed;box-sizing:border-box}
+.rep table.grid th,.rep table.grid td{box-sizing:border-box;overflow-wrap:anywhere;word-break:normal}
+#printArea table.grid{width:100%;max-width:100%;table-layout:fixed}
+#printArea table.grid th,#printArea table.grid td{box-sizing:border-box;overflow-wrap:anywhere;word-break:normal}
+.iconbtn.beh-del{font-size:22px;font-weight:900;line-height:1;color:#C0392B;min-width:34px;min-height:34px;padding:0}
 #printArea{display:none}
 /* ===== همگام‌سازی خودکار: نقطهٔ وضعیت و بنر تعارض ===== */
 .syncst{display:none;align-items:center;gap:5px;font-size:11.5px;background:rgba(255,255,255,.55);border:1px solid #EFD586;border-radius:999px;padding:1px 9px;margin-top:5px;color:#6B5320}
@@ -1816,7 +1822,7 @@ function studentBehavior(sid){ return (db.behavior||[]).filter(function(b){ retu
 function behaviorRowHtml(b){
   return '<div class="rowitem"><div class="grow"><div class="nm">'+(b.kind==='pos'?'🌟 ':'⚠️ ')+esc(b.tag)+'</div><div class="meta">'+esc(b.date||'')+(b.note?' · '+esc(b.note):'')+'</div></div>'
     +'<button class="iconbtn" title="ویرایش" onclick="behaviorForm(\''+b.studentId+'\',\''+b.id+'\')">✏️</button>'
-    +'<button class="iconbtn red" title="حذف" onclick="delBehavior(\''+b.id+'\')">🗑</button></div>';
+    +'<button class="iconbtn red beh-del" type="button" title="حذف این مورد" aria-label="حذف این مورد" onclick="delBehavior(\''+b.id+'\')">×</button></div>';
 }
 function behKindPick(btn){ behKindSel=btn.getAttribute('data-beh-kind'); document.querySelectorAll('#behKind .chip').forEach(function(c){ c.classList.toggle('on',c===btn); }); }
 function behaviorForm(sid,bid){
