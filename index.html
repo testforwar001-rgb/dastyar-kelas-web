@@ -439,6 +439,7 @@ nav#tabbar button .ic{transition:transform .12s}
   <button data-tab="attendance"><span class="ic">🗓</span>حضور و غیاب</button>
   <button data-tab="groups"><span class="ic">👥</span>گروه‌ها</button>
   <button data-tab="plan"><span class="ic">📚</span>برنامهٔ درسی</button>
+  <button data-tab="timetable"><span class="ic">🗓</span>برنامه کلاس</button>
   <button data-tab="exams"><span class="ic">📝</span>آزمون‌ها</button>
   <button data-tab="students"><span class="ic">👧</span>دانش‌آموزان</button>
   <button data-tab="settings"><span class="ic">⚙️</span>تنظیمات</button>
@@ -456,10 +457,15 @@ nav#tabbar button .ic{transition:transform .12s}
 var LS_DB='dk_db_v1', LS_CFG='dk_sync_cfg';
 var SUBJECTS=['ریاضی','فارسی','علوم','مطالعات اجتماعی','هدیه‌های آسمان','قرآن','هنر','ورزش','تفکر و پژوهش'];
 var MONTHS=['مهر','آبان','آذر','دی','بهمن','اسفند','فروردین','اردیبهشت','خرداد'];
-function emptyDb(){return {students:[],exams:[],scores:{},plan:[],attendance:[],groups:[],gacts:[],quizzes:[],qscores:{},acts:[],wallnews:[],behavior:[],meetings:[],descrep:{},costs:[],_lv:1,_rev:0};}
+function defaultTimetable(){return {periodCount:5,startTime:'07:30',periodMinutes:50,breakAfter:2,breakMinutes:10,days:[{key:'sat',name:'شنبه',enabled:true,lessons:['قرآن','ریاضی','مطالعات اجتماعی','فارسی','فناوری']},{key:'sun',name:'یکشنبه',enabled:true,lessons:['ریاضی','آزمایشگاه','فارسی','هدیه‌های آسمان','هنر']},{key:'mon',name:'دوشنبه',enabled:true,lessons:['ریاضی','هدیه‌های آسمان','فارسی','تفکر و پژوهش','نماز']},{key:'tue',name:'سه‌شنبه',enabled:true,lessons:['قرآن','ریاضی','مطالعات اجتماعی','کتابخانه ف','']},{key:'wed',name:'چهارشنبه',enabled:true,lessons:['فارسی','ورزش','قرآن','علوم','مطالعات اجتماعی']}]};}
+function emptyDb(){return {students:[],exams:[],scores:{},plan:[],attendance:[],groups:[],gacts:[],quizzes:[],qscores:{},acts:[],wallnews:[],behavior:[],meetings:[],descrep:{},costs:[],timetable:defaultTimetable(),_lv:1,_rev:0};}
 function normalizeDb(d){
   d.students=d.students||[]; d.exams=d.exams||[]; d.scores=d.scores||{}; d.plan=d.plan||[]; d.attendance=d.attendance||[]; d.groups=d.groups||[]; d.gacts=d.gacts||[]; d.acts=d.acts||[]; d.wallnews=d.wallnews||[]; d.quizzes=d.quizzes||[]; d.qscores=d.qscores||{};
   d.behavior=d.behavior||[]; d.meetings=d.meetings||[]; d.descrep=d.descrep||{}; d.costs=d.costs||[];
+  if(!d.timetable||!Array.isArray(d.timetable.days)) d.timetable=defaultTimetable();
+  var td=defaultTimetable(); d.timetable.periodCount=Math.max(1,Math.min(8,Number(d.timetable.periodCount)||5));
+  ['startTime','periodMinutes','breakAfter','breakMinutes'].forEach(function(k){if(d.timetable[k]===undefined)d.timetable[k]=td[k];});
+  td.days.forEach(function(day){var old=d.timetable.days.filter(function(x){return x.key===day.key;})[0];if(!old){d.timetable.days.push(day);}else{old.name=day.name;old.lessons=Array.isArray(old.lessons)?old.lessons:day.lessons.slice();old.enabled=old.enabled!==false;while(old.lessons.length<8)old.lessons.push('');}});
   d._rev=d._rev||0; return d;
 }
 /* مهاجرت نمره‌های عددی ۰ تا ۲۰ به سطح‌های توصیفی ۱ تا ۴ — فقط یک بار (پرچم _lv) */
@@ -493,7 +499,7 @@ var syncDirty=false, syncConflict=false, syncBusy=false;
 try{ syncDirty=localStorage.getItem('dk_dirty')==='1'; }catch(e){}
 function markDirty(){ syncDirty=true; try{localStorage.setItem('dk_dirty','1');}catch(e){} updateSyncDot(); }
 function saveDb(){ dlgCommit=null; try{localStorage.setItem(LS_DB,JSON.stringify(db)); markDirty();}catch(e){toast('خطا در ذخیره‌سازی',true);} }
-function dbPayload(){ return {students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{},behavior:db.behavior||[],meetings:db.meetings||[],descrep:db.descrep||{},costs:db.costs||[],_lv:1}; }
+function dbPayload(){ return {students:db.students,exams:db.exams,scores:db.scores,plan:db.plan,attendance:db.attendance||[],groups:db.groups||[],gacts:db.gacts||[],acts:db.acts||[],wallnews:db.wallnews||[],quizzes:db.quizzes||[],qscores:db.qscores||{},behavior:db.behavior||[],meetings:db.meetings||[],descrep:db.descrep||{},costs:db.costs||[],timetable:db.timetable||defaultTimetable(),_lv:1}; }
 function syncCfg(){ try{return JSON.parse(localStorage.getItem(LS_CFG)||'{}');}catch(e){return {};} }
 function saveSyncCfg(c){ try{localStorage.setItem(LS_CFG,JSON.stringify(c));}catch(e){} }
 function uid(){return 'id'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
@@ -643,6 +649,7 @@ function render(){
   else if(curTab==='attendance') app.innerHTML=viewAttendance();
   else if(curTab==='groups') app.innerHTML=detailGroup?viewGroupDetail(detailGroup):(detailWall?viewWallDetail(detailWall):viewGroups());
   else if(curTab==='plan') app.innerHTML=viewPlan();
+  else if(curTab==='timetable') app.innerHTML=viewTimetable();
   else if(curTab==='settings') app.innerHTML=viewSettings();
   bindView();
 }
@@ -690,6 +697,7 @@ function viewDash(){
     +'</div>';
   h+='<button class="btn soft block" style="margin:12px 0" onclick="printClassReport()">🖨 چاپ داشبورد کلاس</button>';
   h+=voiceBtnHtml();
+  h+=todayScheduleHtml()+weeklyPlanReminderHtml();
   if(na.length){
     h+='<div class="alertStrip"><h3>⚠️ هشدارها — نیازمند توجه ('+fa(na.length)+' نفر)</h3>'
       +na.map(function(x){ return '<button class="achip" onclick="studentPopup(\''+x.student.id+'\')">'+esc(x.student.name)+' '+esc(x.student.family)+' <span style="color:var(--warn);font-size:11.5px">'+esc(x.reasons[0])+'</span></button>'; }).join('')
@@ -1092,6 +1100,54 @@ function saveScores(examId){
 }
 
 /* ===== برنامهٔ درسی ===== */
+
+/* ===== برنامه هفتگی کلاس — یک منبع داده برای صفحه و داشبورد ===== */
+function timetableDayKey(){var d=new Date().getDay();return ({6:'sat',0:'sun',1:'mon',2:'tue',3:'wed'})[d]||'';}
+function todayScheduleHtml(){
+  var key=timetableDayKey(),tt=db.timetable||defaultTimetable();
+  if(!key)return '<div class="panel"><h3>🗓 برنامه امروز</h3><p class="hint">امروز در روزهای فعال کلاس تعریف نشده است.</p></div>';
+  var day=(tt.days||[]).filter(function(x){return x.key===key;})[0];
+  if(!day||day.enabled===false)return '<div class="panel"><h3>🗓 برنامه امروز</h3><p class="hint">برای امروز برنامه‌ای فعال نشده است.</p></div>';
+  var rows=(day.lessons||[]).slice(0,tt.periodCount).map(function(x,i){return '<div class="kv"><span>زنگ '+fa(i+1)+'</span><b>'+esc(x||'—')+'</b></div>';}).join('');
+  return '<div class="panel"><h3>🗓 برنامه امروز — '+esc(day.name)+'</h3>'+rows+'<button class="btn small soft" style="margin-top:8px" onclick="go(\'timetable\')">ویرایش برنامه کلاس</button></div>';
+}
+function weeklyPlanReminderHtml(){
+  var month='',dayNum=1;
+  try{month=new Intl.DateTimeFormat('fa-IR',{month:'long'}).format(new Date());var parts=new Intl.DateTimeFormat('fa-IR',{day:'numeric'}).formatToParts(new Date());parts.forEach(function(p){if(p.type==='day')dayNum=parseInt(enDigits(p.value),10)||1;});}catch(e){}
+  var week=Math.max(1,Math.min(5,Math.ceil(dayNum/7)));
+  var rows=(db.plan||[]).filter(function(p){return p.status!=='done'&&p.month===month&&String(p.week)===String(week);});
+  return '<div class="panel"><h3>📌 یادآوری این هفته</h3>'+(rows.length?rows.map(function(p){return '<div class="kv"><span><b>'+esc(p.subject)+'</b> — '+esc(p.topic)+'</span><button class="btn small soft" onclick="go(\'plan\')">مشاهده</button></div>';}).join(''):'<p class="hint">برای هفته جاری مبحثِ انجام‌نشده‌ای در برنامه درسی ثبت نشده است. چک‌لیست برنامه درسی را بررسی کنید.</p>')+'</div>';
+}
+function viewTimetable(){
+  var tt=db.timetable||defaultTimetable();
+  var h='<p class="guide">این برنامه منبع نمایش برنامه روزانه در داشبورد است. تغییرات پس از ذخیره روی دستگاه ثبت می‌شود و با اتصال اینترنت، در صورت فعال‌بودن همگام‌سازی، به گیت‌هاب فرستاده می‌شود.</p>';
+  h+='<div class="panel"><h3>⚙️ تنظیمات زنگ‌ها</h3><div class="formgrid">'
+    +'<div><label class="f" for="tt_count">تعداد زنگ در روز</label><select id="tt_count">'+[1,2,3,4,5,6,7,8].map(function(n){return '<option value="'+n+'"'+(tt.periodCount===n?' selected':'')+'>'+fa(n)+' زنگ</option>';}).join('')+'</select></div>'
+    +'<div><label class="f" for="tt_start">ساعت شروع</label><input id="tt_start" type="time" value="'+esc(tt.startTime||'07:30')+'"></div>'
+    +'<div><label class="f" for="tt_minutes">مدت هر زنگ (دقیقه)</label><input id="tt_minutes" type="number" min="20" max="120" value="'+fa(tt.periodMinutes||50)+'"></div>'
+    +'<div><label class="f" for="tt_breakafter">زنگ تفریح پس از زنگ</label><select id="tt_breakafter">'+[1,2,3,4,5,6,7].map(function(n){return '<option value="'+n+'"'+(Number(tt.breakAfter)===n?' selected':'')+'>'+fa(n)+'</option>';}).join('')+'</select></div>'
+    +'<div><label class="f" for="tt_breakmins">مدت زنگ تفریح (دقیقه)</label><input id="tt_breakmins" type="number" min="0" max="60" value="'+fa(tt.breakMinutes===undefined?10:tt.breakMinutes)+'"></div></div></div>';
+  h+='<div class="panel"><h3>📚 درس‌های هر روز</h3>';
+  (tt.days||[]).forEach(function(day){
+    h+='<div class="panel" style="padding:9px;margin:8px 0"><label class="checkline"><input type="checkbox" id="tt_enabled_'+day.key+'" '+(day.enabled!==false?'checked':'')+'> <b>'+esc(day.name)+'</b> — فعال بودن روز</label>';
+    for(var i=0;i<8;i++)h+='<div class="formgrid" style="align-items:end"><div><label class="f" for="tt_'+day.key+'_'+i+'">زنگ '+fa(i+1)+'</label><input id="tt_'+day.key+'_'+i+'" value="'+esc((day.lessons||[])[i]||'')+'" placeholder="نام درس یا فعالیت" '+(i>=tt.periodCount?'disabled':'')+'></div></div>';
+    h+='</div>';
+  });
+  h+='<div class="btnrow"><button class="btn" onclick="saveTimetable()">💾 ذخیره برنامه هفتگی</button><button class="btn soft" onclick="printTimetable()">🖨 چاپ برنامه</button></div></div>';return h;
+}
+function saveTimetable(){
+  var old=db.timetable||defaultTimetable(),count=Math.max(1,Math.min(8,Number(document.getElementById('tt_count').value)||5));
+  var next={periodCount:count,startTime:document.getElementById('tt_start').value||'07:30',periodMinutes:Math.max(20,Math.min(120,Number(document.getElementById('tt_minutes').value)||50)),breakAfter:Number(document.getElementById('tt_breakafter').value)||2,breakMinutes:Math.max(0,Math.min(60,Number(document.getElementById('tt_breakmins').value)||0)),days:[]};
+  (old.days||defaultTimetable().days).forEach(function(day){var lessons=[];for(var i=0;i<8;i++){var el=document.getElementById('tt_'+day.key+'_'+i);lessons.push(el?el.value.trim():(day.lessons||[])[i]||'');}var en=document.getElementById('tt_enabled_'+day.key);next.days.push({key:day.key,name:day.name,enabled:!!(en&&en.checked),lessons:lessons});});
+  db.timetable=next;saveDb();render();toast('برنامه کلاس ذخیره شد؛ داشبورد هم به‌روزرسانی شد.');
+}
+function printTimetable(){
+  var tt=db.timetable||defaultTimetable(),rows='';
+  (tt.days||[]).filter(function(d){return d.enabled!==false;}).forEach(function(d){rows+='<tr><th>'+esc(d.name)+'</th>';for(var i=0;i<tt.periodCount;i++)rows+='<td>'+esc((d.lessons||[])[i]||'—')+'</td>';rows+='</tr>';});
+  var head='<tr><th>روز</th>'+Array.from({length:tt.periodCount},function(_,i){return '<th>زنگ '+fa(i+1)+'</th>';}).join('')+'</tr>';
+  printDoc('برنامه هفتگی کلاس','<table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table><p style="margin-top:12px">شروع: '+esc(tt.startTime)+' · مدت هر زنگ: '+fa(tt.periodMinutes)+' دقیقه · تفریح پس از زنگ '+fa(tt.breakAfter)+' ('+fa(tt.breakMinutes)+' دقیقه)</p>');
+}
+
 function viewPlan(){
   var h='<p class="guide">💡 راهنما: برنامهٔ درسی ادامهٔ سال را اینجا بنویسید؛ هر مبحث که تدریس شد، تیک «انجام شد» را بزنید تا پیشرفت برنامه در داشبورد دیده شود.</p>';
   h+='<button class="btn block fab" onclick="planForm()">➕ افزودن مبحث</button>';
