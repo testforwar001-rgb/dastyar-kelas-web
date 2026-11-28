@@ -6,7 +6,7 @@ const root = process.cwd();
 const mime = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.webmanifest':'application/manifest+json','.png':'image/png'};
 const server = http.createServer((req,res)=>{
   const pathname = decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
-  const file = path.join(root, pathname === '/' ? 'index.html' : pathname.replace(/^\\//,''));
+  const file = path.join(root, pathname === '/' ? 'index.html' : pathname.slice(1));
   if (!file.startsWith(root) || !fs.existsSync(file)) { res.writeHead(404); return res.end('Not found'); }
   res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');
   fs.createReadStream(file).pipe(res);
