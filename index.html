@@ -1124,13 +1124,13 @@ function viewTimetable(){
   h+='<div class="panel"><h3>⚙️ تنظیمات زنگ‌ها</h3><div class="formgrid">'
     +'<div><label class="f" for="tt_count">تعداد زنگ در روز</label><select id="tt_count">'+[1,2,3,4,5,6,7,8].map(function(n){return '<option value="'+n+'"'+(tt.periodCount===n?' selected':'')+'>'+fa(n)+' زنگ</option>';}).join('')+'</select></div>'
     +'<div><label class="f" for="tt_start">ساعت شروع</label><input id="tt_start" type="time" value="'+esc(tt.startTime||'07:30')+'"></div>'
-    +'<div><label class="f" for="tt_minutes">مدت هر زنگ (دقیقه)</label><input id="tt_minutes" type="number" min="20" max="120" value="'+fa(tt.periodMinutes||50)+'"></div>'
+    +'<div><label class="f" for="tt_minutes">مدت هر زنگ (دقیقه)</label><input id="tt_minutes" type="number" min="20" max="120" value="'+String(tt.periodMinutes||50)+'"></div>'
     +'<div><label class="f" for="tt_breakafter">زنگ تفریح پس از زنگ</label><select id="tt_breakafter">'+[1,2,3,4,5,6,7].map(function(n){return '<option value="'+n+'"'+(Number(tt.breakAfter)===n?' selected':'')+'>'+fa(n)+'</option>';}).join('')+'</select></div>'
-    +'<div><label class="f" for="tt_breakmins">مدت زنگ تفریح (دقیقه)</label><input id="tt_breakmins" type="number" min="0" max="60" value="'+fa(tt.breakMinutes===undefined?10:tt.breakMinutes)+'"></div></div></div>';
+    +'<div><label class="f" for="tt_breakmins">مدت زنگ تفریح (دقیقه)</label><input id="tt_breakmins" type="number" min="0" max="60" value="'+String(tt.breakMinutes===undefined?10:tt.breakMinutes)+'"></div></div></div>';
   h+='<div class="panel"><h3>📚 درس‌های هر روز</h3>';
   (tt.days||[]).forEach(function(day){
     h+='<div class="panel" style="padding:9px;margin:8px 0"><label class="checkline"><input type="checkbox" id="tt_enabled_'+day.key+'" '+(day.enabled!==false?'checked':'')+'> <b>'+esc(day.name)+'</b> — فعال بودن روز</label>';
-    for(var i=0;i<8;i++)h+='<div class="formgrid" style="align-items:end"><div><label class="f" for="tt_'+day.key+'_'+i+'">زنگ '+fa(i+1)+'</label><input id="tt_'+day.key+'_'+i+'" value="'+esc((day.lessons||[])[i]||'')+'" placeholder="نام درس یا فعالیت" '+(i>=tt.periodCount?'disabled':'')+'></div></div>';
+    for(var i=0;i<8;i++)h+='<div class="formgrid" style="align-items:end"><div><label class="f" for="tt_'+day.key+'_'+i+'">زنگ '+fa(i+1)+'</label><input id="tt_'+day.key+'_'+i+'" value="'+esc((day.lessons||[])[i]||'')+'" placeholder="نام درس یا فعالیت" '+''></div></div>';
     h+='</div>';
   });
   h+='<div class="btnrow"><button class="btn" onclick="saveTimetable()">💾 ذخیره برنامه هفتگی</button><button class="btn soft" onclick="printTimetable()">🖨 چاپ برنامه</button></div></div>';return h;
