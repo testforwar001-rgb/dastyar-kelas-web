@@ -569,10 +569,10 @@ function seedAnnualPlans(d){
   });
   d._annualSeedV1=1;
 }
-function emptyDb(){return {students:[],exams:[],scores:{},plan:[],attendance:[],groups:[],gacts:[],quizzes:[],qscores:{},acts:[],wallnews:[],behavior:[],meetings:[],descrep:{},costs:[],timetable:defaultTimetable(),_lv:1,_rev:0};}
+function emptyDb(){return {students:[],exams:[],scores:{},plan:[],attendance:[],groups:[],gacts:[],quizzes:[],qscores:{},acts:[],wallnews:[],behavior:[],meetings:[],descrep:{},descrepSubjectSelection:{},costs:[],timetable:defaultTimetable(),_lv:1,_rev:0};}
 function normalizeDb(d){
   d.students=d.students||[]; d.exams=d.exams||[]; d.scores=d.scores||{}; d.plan=d.plan||[]; d.attendance=d.attendance||[]; d.groups=d.groups||[]; d.gacts=d.gacts||[]; d.acts=d.acts||[]; d.wallnews=d.wallnews||[]; d.quizzes=d.quizzes||[]; d.qscores=d.qscores||{};
-  d.behavior=d.behavior||[]; d.meetings=d.meetings||[]; d.descrep=d.descrep||{}; d.costs=d.costs||[];
+  d.behavior=d.behavior||[]; d.meetings=d.meetings||[]; d.descrep=d.descrep||{}; d.descrepSubjectSelection=d.descrepSubjectSelection||{}; d.costs=d.costs||[];
   if(!d.timetable||!Array.isArray(d.timetable.days)) d.timetable=defaultTimetable();
   var td=defaultTimetable(); d.timetable.periodCount=Math.max(1,Math.min(8,Number(d.timetable.periodCount)||5));
   ['startTime','periodMinutes','breakAfter','breakMinutes'].forEach(function(k){if(d.timetable[k]===undefined)d.timetable[k]=td[k];});
@@ -1861,12 +1861,17 @@ function descrepSummaryHtml(sid){
   });
   return out||'<p class="hint">هنوز سطحی در کارنامهٔ این دانش‌آموز ثبت نشده است.</p>';
 }
+function timetableSubjectList(){var out=[],tt=db.timetable||defaultTimetable();(tt.days||[]).filter(function(d){return d.enabled!==false;}).forEach(function(d){(d.lessons||[]).slice(0,tt.periodCount||5).forEach(function(v){var x=String(v||'').trim();if(x&&out.indexOf(x)<0)out.push(x);});});return out;}
+function selectedDescrepSubjects(term){var a=timetableSubjectList(),v=(db.descrepSubjectSelection||{})[String(term)];return Array.isArray(v)?v.filter(function(x){return a.indexOf(x)>=0;}):a.slice();}
+function toggleDescrepSubject(term,subject,checked){if(!db.descrepSubjectSelection)db.descrepSubjectSelection={};var a=selectedDescrepSubjects(term);if(checked&&a.indexOf(subject)<0)a.push(subject);if(!checked)a=a.filter(function(x){return x!==subject;});db.descrepSubjectSelection[String(term)]=a;saveDb();}
 function descrepForm(sid,term){
   var s=studentById(sid); if(!s) return;
   descrepCtx={sid:sid,term:term};
   var rec=descrepOf(term,sid); descrepSel={}; Object.keys(rec).forEach(function(k){ descrepSel[k]=rec[k]; });
-  var subs=SUBJECTS.slice();
+  var subs=timetableSubjectList();
   db.exams.forEach(function(e){ if(subs.indexOf(e.subject)<0) subs.push(e.subject); });
+  var chosen=selectedDescrepSubjects(term);
+  var subjectPicker='<div class="panel"><h3>انتخاب درس‌های کارنامه</h3><p class="hint">فهرست درس‌ها از زنگ‌های فعال برنامه هفتگی گرفته می‌شود؛ درس‌های موردنظر را برای این دوره انتخاب کنید.</p><div class="formgrid">'+timetableSubjectList().map(function(sub){return '<label class="f"><input type="checkbox" '+(chosen.indexOf(sub)>=0?'checked':'')+' onchange="toggleDescrepSubject(\''+term+'\',\''+esc(sub)+'\',this.checked)" style="width:auto"> '+esc(sub)+'</label>';}).join('')+'</div></div>';
   var rows=subs.map(function(sub){
     return '<div class="srow"><span class="sname">'+esc(sub)+'</span><span class="lvlchips">'+LEVEL_LIST.map(function(lv){
       return '<button type="button" class="lvlchip lv'+lv+(descrepSel[sub]===lv?' on':'')+'" data-descrep-for="'+esc(sub)+'" data-lvl="'+lv+'" onclick="descrepChip(this)">'+LEVELS[lv]+'</button>';
@@ -1875,7 +1880,7 @@ function descrepForm(sid,term){
   openDlg(dlgHead('📋 کارنامهٔ توصیفی — '+termLabel(term))
     +'<div class="chips" style="margin:8px 0">'+TERM_KEYS.map(function(t){return '<button type="button" class="chip'+(String(term)===String(t.key)?' on':'')+'" onclick="switchDescrepTerm(\''+sid+'\',\''+t.key+'\')">'+t.label+'</button>';}).join('')+'</div>'
     +'<p class="hint">'+esc(s.name)+' '+esc(s.family)+' · برای هر درس یک سطح بزنید؛ لمس دوباره = پاک شدن. با بستن پنجره هم خودکار ذخیره می‌شود.</p>'
-    +'<div class="scoregrid">'+rows+'</div>'
+    +subjectPicker+'<div class="scoregrid">'+rows+'</div>'
     +'<div class="btnrow"><button class="btn" onclick="saveDescrep()">💾 ذخیرهٔ کارنامه</button><button class="btn soft" onclick="printDescrep()">🖨 چاپ کارنامه</button></div>'
     +'<div class="btnrow"><button class="btn soft" onclick="closeDlg()">بستن</button></div>');
   var ctx=descrepCtx, sel=descrepSel;
@@ -1903,25 +1908,19 @@ function persistDescrep(){
 }
 function saveDescrep(){ persistDescrep(); saveDb(); closeDlg(); render(); toast('کارنامه ذخیره شد ✅'); }
 /* فهرست درس‌های کارنامه: درس‌های اصلی + درس‌های آزمون‌ها + هر درسی که جایی در کارنامهٔ این نوبت آمده */
-function descrepSubjects(term){
-  var subs=SUBJECTS.slice();
-  db.exams.forEach(function(e){ if(subs.indexOf(e.subject)<0) subs.push(e.subject); });
-  var t=(db.descrep||{})[String(term)]||{};
-  Object.keys(t).forEach(function(sid){ Object.keys(t[sid]||{}).forEach(function(sub){ if(subs.indexOf(sub)<0) subs.push(sub); }); });
-  return subs;
-}
+function descrepSubjects(term){ return timetableSubjectList(); }
 /* بدنهٔ چاپی کارنامهٔ یک دانش‌آموز — منبع واحد برای چاپ تکی و چاپ گروهی.
    allSubs که باشد (چاپ گروهی) همهٔ درس‌ها می‌آیند و درسِ بدون سطح «—» می‌خورد؛ وگرنه فقط درس‌های ثبت‌شده. */
 function descrepDocInner(s,term,allSubs){
-  var rec=descrepOf(term,s.id);
+  var rec=descrepOf(term,s.id); allSubs=allSubs||selectedDescrepSubjects(term);
   var inner='<table><tr><th>دانش‌آموز</th><td>'+esc(s.name)+' '+esc(s.family)+'</td><th>نام پدر</th><td>'+esc(s.father||'—')+'</td></tr>'
     +'<tr><th>کد دانش‌آموزی</th><td>'+esc(s.code||'—')+'</td><th>کلاس</th><td>۶/۴</td></tr></table>'
     +'<h3 style="margin:14px 0 6px;font-size:14px">کارنامهٔ توصیفی — '+termLabel(term)+'</h3>';
   if(allSubs){
     inner+='<table><tr><th>درس</th><th>سطح</th></tr>'+allSubs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlLabel(rec[sub])+'</td></tr>'; }).join('')+'</table>';
   }else{
-    var subs=Object.keys(rec);
-    inner+=(subs.length?'<table><tr><th>درس</th><th>سطح</th></tr>'+subs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlLabel(rec[sub])+'</td></tr>'; }).join('')+'</table>':'<p>هنوز سطحی ثبت نشده است.</p>');
+    var subs=selectedDescrepSubjects(term);
+    inner+=(subs.length?'<table><tr><th>درس</th><th>سطح</th></tr>'+subs.map(function(sub){ return '<tr><td>'+esc(sub)+'</td><td>'+lvlLabel(rec[sub])+'</td></tr>'; }).join('')+'</table>':'<p>برای این دوره درسی انتخاب نشده است.</p>');
   }
   inner+='<div class="pfoot" style="margin-top:20px">آموزگار کلاس: مریم خانمحمدی · دبستان دخترانه حافظ</div>';
   return inner;
